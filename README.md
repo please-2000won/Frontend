@@ -1,75 +1,31 @@
-# React + TypeScript + Vite
+# 🚀 Project Name
+### Peerfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## 🌿 Branch Naming Convention
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+기능 개발 및 유지보수의 체계적인 관리를 위해 브랜치 이름은 아래 형식을 따릅니다.
 
-## React Compiler
+> `<type>/<issue-number>-<description>` 또는 `<type>/<description-summary>`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **`feat`**: 새로운 기능 추가
+* **`fix`**: 버그 수정
+* **`refactor`**: 코드 리팩토링 (기능 변경 없이 구조 개선)
+* **`chore`**: 빌드, 설정, 패키지 매니저 수정 등 기타 작업
+* **`docs`**: 문서 수정 및 추가
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 💬 Commit Message Convention
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+커밋 메시지는 변경 사항을 명확히 알 수 있도록 접두사를 붙여 작성합니다.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+> `<type>: <description>`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+* **`feat`**: 새로운 기능 추가
+* **`fix`**: 버그 수정
+* **`refactor`**: 코드 리팩토링
+* **`chore`**: 기타 작업 (설정 변경, 파일 삭제 등)
+* **`docs`**: 문서 수정
+* **`style`**: 스타일 수정 (코드 포맷팅, 세미콜론 누락 등, 로직 변경 없음)
