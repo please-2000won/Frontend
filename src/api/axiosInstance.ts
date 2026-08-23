@@ -41,7 +41,7 @@ api.interceptors.response.use(
 
         //인터셉터가 붙지 않은 axios 사용
         const refreshResponse = await axios.post(
-          `${baseURL}/api/users/refresh`,
+          `${baseURL}/api/v1/auth/refresh`,
           { refreshToken: refreshToken }
         );
 
@@ -73,7 +73,40 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    //예상 안한 에러는 컴포넌트로 던짐
+    if (error.response) {
+      const status = error.response.status;
+
+      switch (status) {
+        case 400:
+          console.warn('잘못된 요청입니다 : ', error.response.data);
+          break;
+        case 403:
+          console.warn(
+            '해당 기능에 접근 권한이 없습니다 : ',
+            error.response.data
+          );
+          break;
+        case 404:
+          console.error(
+            '요청하신 데이터를 찾을 수 없습니다 : ',
+            error.response.data
+          );
+          break;
+        case 500:
+          console.warn(
+            '서버에 일시적인 문제가 발생했습니다. : ',
+            error.response.data
+          );
+          break;
+
+        default:
+          console.error(`서버 오류 발생 (${status})`, error.response.data);
+      }
+    } else {
+      // 서버에 닿지도 못하고 인터넷이 끊겼거나 CORS 에러가 났을 때
+      alert('네트워크 연결이 불안정합니다. 인터넷 상태를 확인해주세요.');
+    }
+
     return Promise.reject(error);
   }
 );
