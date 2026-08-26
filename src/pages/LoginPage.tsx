@@ -24,7 +24,9 @@ const LoginPage = () => {
       const data = await login({ email, password });
 
       //백엔드에서 준 data 내 토큰을 zustand 스토어에 저장
-      setAuth(data.accessToken, data.refreshToken, '');
+      //리프레쉬 토큰을 아직 구현을 안했으므로 추후
+      //setAuth(data.accessToken, data.refreshToken, ''); 로 수정
+      setAuth(data.accessToken, '', '');
 
       navigate('/');
     } catch (error) {
@@ -61,7 +63,7 @@ const LoginPage = () => {
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
             <input
-              type="text"
+              type="password"
               placeholder="비밀번호"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
