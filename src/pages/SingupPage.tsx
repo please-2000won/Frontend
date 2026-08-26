@@ -126,7 +126,7 @@ const SingupPage = () => {
     !confirmError;
 
   return (
-    <div className="w-[530px] h-full items-center justify-center pt-40 mx-auto">
+    <div className="w-[530px] h-full items-center justify-center mt-40 mx-auto">
       <div className="text-black text-left font-semibold text-[32px] pb-7">
         <h1>회원가입</h1>
       </div>
@@ -140,6 +140,7 @@ const SingupPage = () => {
               placeholder="2자 이상 50자 이하"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoComplete="name"
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
             {nameError && (
@@ -155,6 +156,7 @@ const SingupPage = () => {
                 placeholder="이메일"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="new-email"
                 className="bg-gray-100 p-4 rounded-lg w-full"
               />
               <button className="w-[163px] py-4 px-4 bg-primary-mint-800 rounded-lg text-white text-[16px] font-semibold cursor-pointer">
@@ -173,6 +175,7 @@ const SingupPage = () => {
               placeholder="6자리 입력"
               value={authCode}
               onChange={(e) => setAuthCode(e.target.value)}
+              autoComplete="authCode"
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
           </div>
@@ -184,6 +187,7 @@ const SingupPage = () => {
               placeholder="8자 이상 20자 이하"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
             <span className="text-gray-200 text-[13px]">
@@ -208,6 +212,7 @@ const SingupPage = () => {
               placeholder="8자 이상 20자 이하"
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
+              autoComplete="new-confrimPassword"
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
             <span className="text-gray-200 text-[13px]">
