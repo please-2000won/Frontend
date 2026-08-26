@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/authAPI';
 import useAuthStore from '../stores/useAuthStore';
@@ -34,7 +34,25 @@ const LoginPage = () => {
     }
   };
 
-  return <div>LoginPage</div>;
+  return (
+    <div>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? '로그인 중...' : '로그인'}
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default LoginPage;
