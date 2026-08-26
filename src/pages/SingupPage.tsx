@@ -8,6 +8,7 @@ const SingupPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [authCode, setAuthCode] = useState('');
+  const [authCodeConfirm, setAuthCodeComfrim] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -41,9 +42,6 @@ const SingupPage = () => {
       setEmailError('');
     }
   }, [email]);
-
-  //인증번호 형식 -> API 연동 필요
-  useEffect(() => {}, [authCode]);
 
   //비밀번호 형식
   useEffect(() => {
@@ -117,7 +115,8 @@ const SingupPage = () => {
     }
   };
 
-  const handleCode = async () => {
+  //확인용 인증번호 받기
+  const handleAuthCode = async () => {
     if (!email || isLoading) {
       setEmailError('이메일을 먼저 입력해주세요.');
       return;
@@ -129,6 +128,7 @@ const SingupPage = () => {
 
       //수정필요
       alert(`인증번호가 발급되었습니다! [ ${result.verificationCode} ]`);
+      setAuthCodeComfrim(result.verificationCode);
     } catch (error) {
       console.error(error);
       alert('인증번호 발급에 실패하였습니다. 이메일을 다시 확인해주세요.');
@@ -136,6 +136,15 @@ const SingupPage = () => {
       setIsLoading(false);
     }
   };
+
+  //인증번호 형식 -> API 연동 필요
+  useEffect(() => {
+    if (authCode && authCode !== authCodeConfirm) {
+      setAuthCodeError('· 인증번호가 일치하지 않아요.');
+    } else {
+      setAuthCodeError('');
+    }
+  }, [authCodeConfirm]);
 
   //버튼 활성화
   const isFormValid =
@@ -186,8 +195,9 @@ const SingupPage = () => {
                 className="bg-gray-100 p-4 rounded-lg w-full"
               />
               <button
+                type="button"
                 className="w-[163px] py-4 px-4 bg-primary-mint-800 rounded-lg text-white text-[16px] font-semibold cursor-pointer"
-                onClick={handleCode}
+                onClick={handleAuthCode}
                 disabled={isLoading}
               >
                 인증코드 발송
@@ -208,6 +218,11 @@ const SingupPage = () => {
               autoComplete="one-time-code"
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
+            {authCodeError && (
+              <span className="text-[13px] text-system-red">
+                {authCodeError}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">

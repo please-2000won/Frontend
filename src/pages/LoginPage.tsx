@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api/authAPI';
+import { login, getMyInfo } from '../api/authAPI';
 import useAuthStore from '../stores/useAuthStore';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
   const setAuth = useAuthStore((state) => state.setAuth);
+  const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +28,10 @@ const LoginPage = () => {
       //백엔드에서 준 data 내 토큰을 zustand 스토어에 저장
       //리프레쉬 토큰을 아직 구현을 안했으므로 추후
       //setAuth(data.accessToken, data.refreshToken, ''); 로 수정
-      setAuth(data.accessToken, '', '');
+      setAuth(data.accessToken, '');
+
+      const userInfoData = await getMyInfo();
+      setUserInfo(userInfoData);
 
       navigate('/');
     } catch (error) {
