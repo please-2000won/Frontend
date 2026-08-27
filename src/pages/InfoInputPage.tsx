@@ -1,12 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { saveFinancial } from '../api/financial';
-import useAuthStore from '../stores/useAuthStore';
 
 import CategoryCard from '../components/info/CategoryCard';
 import CurrencyInput from '../components/info/CurrencyInput';
 
 const InfoInputPage = () => {
-  const userInfo = useAuthStore((state) => state.userInfo);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormDataState] = useState({
@@ -20,6 +20,36 @@ const InfoInputPage = () => {
     depositBondAmount: '', //예적금 및 채권
     alternativeAmount: '', //대체 고위험 자산
   });
+
+  const handleSubmit = async () => {
+    const parseNumber = (value: string) => Number(value.replace(/,/g, ''));
+    const requestData = {
+      financialProfile: {
+        age: 20, // 나이 데이터 연동 필요 -> 어디서 가져오는가? 아마 유저인포에서 받아와야될듯!
+        monthlyIncome: parseNumber(formData.monthlyIncome),
+        fixedExpense: parseNumber(formData.fixedExpense),
+        savingsGoal: parseNumber(formData.savingsGoal),
+        totalAssetAmount: parseNumber(formData.totalAssetAmount),
+        totalDebtAmount: parseNumber(formData.totalDebtAmount),
+      },
+      financialAsset: {
+        depositBondAmount: parseNumber(formData.depositBondAmount),
+        domesticStockAmount: parseNumber(formData.domesticStockAmount),
+        foreignStockAmount: parseNumber(formData.foreignStockAmount),
+        alternativeAmount: parseNumber(formData.alternativeAmount),
+      },
+    };
+
+    try {
+      setIsLoading(true);
+      await saveFinancial(requestData);
+      alert('저장했어요.');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   //항목 이름을 먼저 받은 후 입력 이벤트를 처리하는 것 -> 인풋이 많아도 이름표를 달아주면 처리가됨!
   //숫자만 적을 수 있도록 정규표현식 처리
@@ -118,10 +148,19 @@ const InfoInputPage = () => {
           </div>
         </div>
         <div className="flex gap-8 mt-8">
-          <button className="flex-1 py-4 border border-primary-mint-800 bg-white text-primary-mint-800 rounded-lg font-semibold">
+          <button
+            className="flex-1 py-4 border border-primary-mint-800 bg-white text-[16px] text-primary-mint-800 rounded-lg font-semibold cursor-pointer"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
             취소하기
           </button>
-          <button className="flex-1 py-4 border border-primary-mint-800 bg-primary-mint-800 text-white rounded-lg font-semibold">
+          <button
+            disabled={isLoading}
+            onClick={handleSubmit}
+            className="flex-1 py-4 border border-primary-mint-800 bg-primary-mint-800 text-[16px] text-white rounded-lg font-semibold cursor-pointer"
+          >
             저장하기
           </button>
         </div>
