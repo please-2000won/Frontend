@@ -1,11 +1,7 @@
 import PillButton from './PillButton';
 import ComparisonRow from './ComparisonRow';
 import AssetPieChart from './AssetPieChart';
-import {
-  AI_ANALYSIS_TEXT,
-  COMPARISON_ASSET_ROWS,
-  COMPARISON_INVEST_ROWS,
-} from './mockData';
+import { AI_ANALYSIS_TEXT, type ComparisonRowData } from './mockData';
 
 export type ComparisonViewMode = 'table' | 'chart';
 
@@ -14,6 +10,8 @@ interface ComparisonSectionProps {
   viewMode: ComparisonViewMode;
   onViewModeChange: (mode: ComparisonViewMode) => void;
   onReanalyzeClick: () => void;
+  comparisonAssetRows: ComparisonRowData[];
+  comparisonInvestRows: ComparisonRowData[];
 }
 
 const ComparisonSection = ({
@@ -21,6 +19,8 @@ const ComparisonSection = ({
   viewMode,
   onViewModeChange,
   onReanalyzeClick,
+  comparisonAssetRows,
+  comparisonInvestRows,
 }: ComparisonSectionProps) => {
   return (
     <section className="bg-system-background">
@@ -98,7 +98,7 @@ const ComparisonSection = ({
                 자산 정보
               </div>
               <div className="flex flex-col gap-4">
-                {COMPARISON_ASSET_ROWS.map((row) => (
+                {comparisonAssetRows.map((row) => (
                   <ComparisonRow key={row.label} {...row} />
                 ))}
               </div>
@@ -108,7 +108,7 @@ const ComparisonSection = ({
               </div>
               {viewMode === 'table' ? (
                 <div className="flex flex-col gap-4">
-                  {COMPARISON_INVEST_ROWS.map((row) => (
+                  {comparisonInvestRows.map((row) => (
                     <ComparisonRow key={row.label} {...row} />
                   ))}
                 </div>

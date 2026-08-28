@@ -1,11 +1,13 @@
 import Tag from './Tag';
 import PillButton from './PillButton';
 import dividerLine from '../../assets/main/divider-line.svg';
-import { ASSET_CARDS, INVEST_CARDS } from './mockData';
+import type { AssetCardData, InvestCardData } from './mockData';
 
 interface AssetInfoSectionProps {
   name: string;
   hasAssetInfo: boolean;
+  assetCards: AssetCardData[];
+  investCards: InvestCardData[];
   onWriteClick: () => void;
   onEditClick: () => void;
 }
@@ -13,6 +15,8 @@ interface AssetInfoSectionProps {
 const AssetInfoSection = ({
   name,
   hasAssetInfo,
+  assetCards,
+  investCards,
   onWriteClick,
   onEditClick,
 }: AssetInfoSectionProps) => {
@@ -58,13 +62,13 @@ const AssetInfoSection = ({
               자산 정보
             </h2>
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-              {ASSET_CARDS.map((card) => (
+              {assetCards.map((card) => (
                 <div
                   key={card.tag}
-                  className="flex w-full flex-col gap-5 rounded-[16px] bg-white p-[26px] sm:w-[530px]"
+                  className="flex w-full flex-col items-start gap-5 rounded-[16px] bg-white p-[26px] sm:w-[530px]"
                 >
                   <Tag>{card.tag}</Tag>
-                  <div className="flex flex-col gap-[15px] text-[20px] font-medium tracking-[-1px]">
+                  <div className="flex w-full flex-col gap-[15px] text-[20px] font-medium tracking-[-1px]">
                     {card.rows.map((row) => (
                       <div
                         key={row.label}
@@ -88,14 +92,14 @@ const AssetInfoSection = ({
             <h2 className="text-[24px] font-semibold tracking-[-1.2px] text-primary-mint-900">
               투자 정보
             </h2>
-            <div className="grid grid-cols-2 gap-4">
-              {INVEST_CARDS.map((card) => (
+            <div className="grid grid-cols-2 gap-x-5 gap-y-4">
+              {investCards.map((card) => (
                 <div
                   key={card.tag}
-                  className="flex flex-col gap-[45px] rounded-[16px] bg-white p-[26px]"
+                  className="flex flex-col items-start gap-[45px] rounded-[16px] bg-white p-[26px]"
                 >
                   <Tag>{card.tag}</Tag>
-                  <p className="text-right text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">
+                  <p className="w-full text-right text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">
                     {card.amount}
                   </p>
                 </div>

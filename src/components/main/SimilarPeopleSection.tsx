@@ -20,10 +20,10 @@ const SimilarPeopleSection = () => {
             <button
               key={`${person.nickname}-${index}`}
               type="button"
-              className="flex flex-1 flex-col gap-[45px] rounded-[16px] bg-white p-[26px] text-left transition-shadow hover:shadow-md"
+              className="flex flex-1 flex-col items-start gap-[45px] rounded-[16px] bg-white p-[26px] text-left transition-shadow hover:shadow-md"
             >
               <Tag>{person.similarity}</Tag>
-              <p className="text-right text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">
+              <p className="w-full text-right text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">
                 {person.nickname}
               </p>
             </button>
