@@ -1,10 +1,10 @@
-import type { FinancialInfoResponse } from '../api/financialInfoAPI';
-import type { AssetCardData, ComparisonRowData, InvestCardData } from '../constants/main/mockData';
+import type { MyFinancialResult } from '../api/financial';
+import type { AssetCardData, InvestCardData, PeerFinancialProfile } from '../constants/main/mockData';
 
-const formatWon = (amount: number) => `${amount.toLocaleString('ko-KR')}원`;
+export const formatWon = (amount: number) => `${amount.toLocaleString('ko-KR')}원`;
 const formatExpenseWon = (amount: number) => `-${Math.abs(amount).toLocaleString('ko-KR')}원`;
 
-export const mapToAssetCards = (info: FinancialInfoResponse): AssetCardData[] => {
+export const mapToAssetCards = (info: MyFinancialResult): AssetCardData[] => {
   const { financialProfile } = info;
   const { monthlyIncome, fixedExpense, savingsGoal, totalAssetAmount, totalDebtAmount, netAssetAmount } =
     financialProfile;
@@ -30,7 +30,7 @@ export const mapToAssetCards = (info: FinancialInfoResponse): AssetCardData[] =>
   ];
 };
 
-export const mapToInvestCards = (info: FinancialInfoResponse): InvestCardData[] => {
+export const mapToInvestCards = (info: MyFinancialResult): InvestCardData[] => {
   const { financialAsset } = info;
 
   return [
@@ -41,29 +41,19 @@ export const mapToInvestCards = (info: FinancialInfoResponse): InvestCardData[] 
   ];
 };
 
-// Peer Group 평균은 아직 API가 없어 더미 데이터(peerRows)를 그대로 유지하고,
-// "나" 값만 실제 응답으로 대체한다.
-export const mapToComparisonAssetRows = (
-  info: FinancialInfoResponse,
-  peerRows: ComparisonRowData[]
-): ComparisonRowData[] => {
+// Peer Group 비교 / Peer 1:1 비교 차트에서 공통으로 쓰는 원본 수치 프로필
+export const mapToProfile = (info: MyFinancialResult): PeerFinancialProfile => {
   const { monthlyIncome, fixedExpense, savingsGoal, netAssetAmount } = info.financialProfile;
-  const myValues = [formatWon(monthlyIncome - fixedExpense - savingsGoal), formatWon(netAssetAmount)];
+  const { domesticStockAmount, foreignStockAmount, depositBondAmount, alternativeAmount } =
+    info.financialAsset;
 
-  return peerRows.map((row, index) => ({ ...row, my: myValues[index] ?? row.my }));
+  return {
+    totalIncome: monthlyIncome - fixedExpense - savingsGoal,
+    cash: netAssetAmount,
+    domesticStock: domesticStockAmount,
+    foreignStock: foreignStockAmount,
+    depositBond: depositBondAmount,
+    alternative: alternativeAmount,
+  };
 };
 
-export const mapToComparisonInvestRows = (
-  info: FinancialInfoResponse,
-  peerRows: ComparisonRowData[]
-): ComparisonRowData[] => {
-  const { domesticStockAmount, foreignStockAmount, depositBondAmount, alternativeAmount } = info.financialAsset;
-  const myValues = [
-    formatWon(domesticStockAmount),
-    formatWon(foreignStockAmount),
-    formatWon(depositBondAmount),
-    formatWon(alternativeAmount),
-  ];
-
-  return peerRows.map((row, index) => ({ ...row, my: myValues[index] ?? row.my }));
-};

@@ -1,26 +1,31 @@
 import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import AssetInfoSection from '../components/main/sections/AssetInfoSection';
-import ComparisonSection, {
-  type ComparisonViewMode,
-} from '../components/main/sections/ComparisonSection';
+import ComparisonSection from '../components/main/sections/ComparisonSection';
 import SimilarPeopleSection from '../components/main/sections/SimilarPeopleSection';
+import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import { useMainPageData } from '../hooks/useMainPageData';
+import useAuthStore from '../stores/useAuthStore';
+import type { SimilarPersonData } from '../constants/main/mockData';
+
+const DEFAULT_NAME = '회원';
 
 const MainPage = () => {
-  const {
-    name,
-    hasAssetInfo: hasFetchedAssetInfo,
-    assetCards,
-    investCards,
-    comparisonAssetRows,
-    comparisonInvestRows,
-  } = useMainPageData();
+  const navigate = useNavigate();
+  const accessToken = useAuthStore((state) => state.accessToken);
+  // 팀원이 로그인 시 채워두는 유저 정보(useAuthStore.userInfo)를 그대로 재사용한다.
+  const name = useAuthStore((state) => state.userInfo?.name) ?? DEFAULT_NAME;
 
-  // API로 자산 정보를 받아오지 못했을 때 데모용으로 상태를 눌러볼 수 있도록 로컬 토글도 함께 둔다.
-  const [isManuallyToggled, setIsManuallyToggled] = useState(false);
-  const [viewMode, setViewMode] = useState<ComparisonViewMode>('table');
+  const { hasAssetInfo, assetCards, investCards, myProfile } = useMainPageData();
 
-  const hasAssetInfo = hasFetchedAssetInfo || isManuallyToggled;
+  const [selectedPeer, setSelectedPeer] = useState<SimilarPersonData | null>(null);
+
+  // 비로그인 사용자는 메인페이지를 볼 수 없고 로그인 화면으로 이동해야 한다.
+  if (!accessToken) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const goToInfoInput = () => navigate('/infoInput');
 
   return (
     <div className="flex flex-col">
@@ -29,18 +34,23 @@ const MainPage = () => {
         hasAssetInfo={hasAssetInfo}
         assetCards={assetCards}
         investCards={investCards}
-        onWriteClick={() => setIsManuallyToggled(true)}
-        onEditClick={() => setIsManuallyToggled(false)}
+        onWriteClick={goToInfoInput}
+        onEditClick={goToInfoInput}
       />
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
         onReanalyzeClick={() => {}}
-        comparisonAssetRows={comparisonAssetRows}
-        comparisonInvestRows={comparisonInvestRows}
+        myProfile={myProfile}
       />
-      {hasAssetInfo && <SimilarPeopleSection />}
+      {hasAssetInfo && <SimilarPeopleSection onSelectPeer={setSelectedPeer} />}
+      {selectedPeer && (
+        <PeerCompareModal
+          myName={name}
+          myProfile={myProfile}
+          peer={selectedPeer}
+          onClose={() => setSelectedPeer(null)}
+        />
+      )}
     </div>
   );
 };

@@ -15,21 +15,39 @@ export interface InvestCardData {
   amount: string;
 }
 
-export interface ComparisonRowData {
-  label: string;
-  my: string;
-  peer: string;
-}
-
-export interface PieLegendItem {
-  colorClassName: string;
-  label: string;
+export interface PeerFinancialProfile {
+  totalIncome: number;
+  cash: number;
+  domesticStock: number;
+  foreignStock: number;
+  depositBond: number;
+  alternative: number;
 }
 
 export interface SimilarPersonData {
   similarity: string;
   nickname: string;
+  financialProfile: PeerFinancialProfile;
 }
+
+export const DEFAULT_MY_PROFILE: PeerFinancialProfile = {
+  totalIncome: 100000,
+  cash: 100000,
+  domesticStock: 100000,
+  foreignStock: 100000,
+  depositBond: 100000,
+  alternative: 100000,
+};
+
+// Peer Group 평균 API가 아직 없어 사용하는 더미 데이터
+export const DEFAULT_PEER_GROUP_PROFILE: PeerFinancialProfile = {
+  totalIncome: 3200000,
+  cash: 850000,
+  domesticStock: 700000,
+  foreignStock: 550000,
+  depositBond: 600000,
+  alternative: 200000,
+};
 
 export const ASSET_CARDS: AssetCardData[] = [
   {
@@ -58,32 +76,43 @@ export const INVEST_CARDS: InvestCardData[] = [
   { tag: '대체·고위험 자산', amount: '100,000원' },
 ];
 
-export const COMPARISON_ASSET_ROWS: ComparisonRowData[] = [
-  { label: '총 수입', my: '100,000원', peer: '100,000원' },
-  { label: '현금', my: '100,000원', peer: '100,000원' },
-];
-
-export const COMPARISON_INVEST_ROWS: ComparisonRowData[] = [
-  { label: '국내 주식', my: '100,000원', peer: '100,000원' },
-  { label: '해외 주식', my: '100,000원', peer: '100,000원' },
-  { label: '예·적금 및 채권', my: '100,000원', peer: '100,000원' },
-  { label: '대체·고위험 자산', my: '100,000원', peer: '100,000원' },
-];
-
-export const PIE_LEGEND: PieLegendItem[] = [
-  { colorClassName: 'bg-primary-mint-500', label: '국내 주식 25%' },
-  { colorClassName: 'bg-primary-mint-300', label: '국내 주식 25%' },
-  { colorClassName: 'bg-primary-mint-900', label: '국내 주식 25%' },
-  {
-    colorClassName: 'bg-white border border-primary-mint-800',
-    label: '국내 주식 25%',
-  },
-];
-
 export const SIMILAR_PEOPLE: SimilarPersonData[] = [
-  { similarity: '유사도 70%', nickname: '사나운고양이815' },
-  { similarity: '유사도 70%', nickname: '사나운고양이815' },
-  { similarity: '유사도 70%', nickname: '사나운고양이815' },
+  {
+    similarity: '유사도 70%',
+    nickname: '행복한강아지404',
+    financialProfile: {
+      totalIncome: 3500000,
+      cash: 640000,
+      domesticStock: 800000,
+      foreignStock: 500000,
+      depositBond: 450000,
+      alternative: 150000,
+    },
+  },
+  {
+    similarity: '유사도 65%',
+    nickname: '느긋한거북이213',
+    financialProfile: {
+      totalIncome: 2900000,
+      cash: 1200000,
+      domesticStock: 400000,
+      foreignStock: 900000,
+      depositBond: 700000,
+      alternative: 50000,
+    },
+  },
+  {
+    similarity: '유사도 62%',
+    nickname: '용감한사자678',
+    financialProfile: {
+      totalIncome: 4100000,
+      cash: 300000,
+      domesticStock: 1500000,
+      foreignStock: 600000,
+      depositBond: 200000,
+      alternative: 400000,
+    },
+  },
 ];
 
 export const AI_ANALYSIS_TEXT =
