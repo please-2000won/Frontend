@@ -151,7 +151,7 @@ const AdminPage = () => {
       setIsLoggingIn(true);
       setLoginError('');
       const data = await adminLogin({ email: loginEmail, password: loginPassword });
-      setAuth(data.accessToken, '', '');
+      setAuth(data.accessToken, '');
     } catch {
       setLoginError('로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.');
     } finally {

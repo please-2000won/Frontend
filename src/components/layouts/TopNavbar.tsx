@@ -1,7 +1,7 @@
 import useAuthStore from '../../stores/useAuthStore';
 
 const TopNavbar = () => {
-  const name = useAuthStore((state) => state.name);
+  const name = useAuthStore((state) => state.userInfo?.name);
 
   return (
     <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-white">
