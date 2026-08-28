@@ -1,11 +1,26 @@
 import api from './axiosInstance';
 
 // 백엔드 공통 응답 구조 작성필요
+export interface ApiResponse<T> {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: T; // 실제 데이터는 여기에 들어감
+}
 
 export interface SignupRequest {
   name: string;
   email: string;
+  verificationCode: string;
   password: string;
+}
+export interface EmailCodeRequest {
+  email: string;
+}
+
+export interface EmailCodeResult {
+  email: string;
+  verificationCode: string;
 }
 
 export interface LoginRequest {
@@ -13,10 +28,10 @@ export interface LoginRequest {
   password: string;
 }
 
-//토큰
+//로그인 시 받는 토큰 타입
 export interface AuthTokens {
   accessToken: string;
-  refreshToken: string;
+  tokenType: string;
 }
 
 // 내정보 조회
@@ -27,30 +42,41 @@ export interface UserInfo {
   nickname: string;
 }
 
-//회원가입
+//회원가입 API
 //성공 여부 확인
 export const signup = async (signupData: SignupRequest): Promise<void> => {
-  await api.post('/api/v1/auth/signup', signupData);
+  await api.post<ApiResponse<void>>('/api/v1/auth/signup', signupData);
 };
 
-//로그인
+//이메일 인증번호 발급 API
+export const sendEmailCode = async (
+  codeData: EmailCodeRequest
+): Promise<EmailCodeResult> => {
+  const response = await api.post<ApiResponse<EmailCodeResult>>(
+    '/api/v1/auth/email-code',
+    codeData
+  );
+  return response.data.result;
+};
+
+//로그인 API
 export const login = async (credentials: LoginRequest): Promise<AuthTokens> => {
-  const response = await api.post<AuthTokens>(
+  const response = await api.post<ApiResponse<AuthTokens>>(
     '/api/v1/auth/login',
     credentials
   );
 
-  return response.data;
+  return response.data.result;
 };
 
-//로그아웃
+//로그아웃 API
 export const logout = async (): Promise<void> => {
-  await api.post('api/v1/auth/logout');
+  await api.post<ApiResponse<void>>('/api/v1/auth/logout');
 };
 
-//내 정보 조회
+//내 정보 조회 API
 export const getMyInfo = async (): Promise<UserInfo> => {
-  const response = await api.get<UserInfo>('/api/v1/users/me');
+  const response = await api.get<ApiResponse<UserInfo>>('/api/v1/users/me');
 
-  return response.data;
+  return response.data.result;
 };

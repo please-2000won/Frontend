@@ -6,6 +6,7 @@ import MainLayout from './components/layouts/MainLayout';
 import MainPage from '../src/pages/MainPage';
 import LoginPage from '../src/pages/LoginPage';
 import SignupPage from '../src/pages/SingupPage';
+import InfoInputPage from './pages/InfoInputPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<MainPage />} />
+          <Route path="/infoInput" element={<InfoInputPage />} />
         </Route>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />

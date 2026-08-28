@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup } from '../api/authAPI';
+import { sendEmailCode, signup } from '../api/authAPI';
 
 const SingupPage = () => {
   const navigate = useNavigate();
@@ -8,6 +8,7 @@ const SingupPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [authCode, setAuthCode] = useState('');
+  const [authCodeConfirm, setAuthCodeComfrim] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -41,9 +42,6 @@ const SingupPage = () => {
       setEmailError('');
     }
   }, [email]);
-
-  //인증번호 형식 -> API 연동 필요
-  useEffect(() => {}, [authCode]);
 
   //비밀번호 형식
   useEffect(() => {
@@ -83,7 +81,7 @@ const SingupPage = () => {
 
   //확인 비밀번호 형식
   useEffect(() => {
-    if (password.length > 0 && password !== passwordConfirm) {
+    if (passwordConfirm.length > 0 && password !== passwordConfirm) {
       //입력된 문자가 있다면 일치 여부에 맞춤
       setConfirmError('· 비밀번호가 일치하지 않아요.');
     } else {
@@ -106,7 +104,7 @@ const SingupPage = () => {
 
     try {
       setIsLoading(true);
-      await signup({ name, email, password });
+      await signup({ name, email, verificationCode: authCode, password });
 
       alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
       navigate('/login');
@@ -116,8 +114,45 @@ const SingupPage = () => {
       setIsLoading(false);
     }
   };
+
+  //확인용 인증번호 받기
+  const handleAuthCode = async () => {
+    if (!email || isLoading) {
+      setEmailError('이메일을 먼저 입력해주세요.');
+      return;
+    }
+    try {
+      setIsLoading(true);
+
+      const result = await sendEmailCode({ email });
+
+      //수정필요
+      alert(`인증번호가 발급되었습니다! [ ${result.verificationCode} ]`);
+      setAuthCodeComfrim(result.verificationCode);
+    } catch (error) {
+      console.error(error);
+      alert('인증번호 발급에 실패하였습니다. 이메일을 다시 확인해주세요.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  //인증번호 형식 -> API 연동 필요
+  useEffect(() => {
+    if (authCode && authCode !== authCodeConfirm) {
+      setAuthCodeError('· 인증번호가 일치하지 않아요.');
+    } else {
+      setAuthCodeError('');
+    }
+  }, [authCodeConfirm]);
+
   //버튼 활성화
   const isFormValid =
+    name.length > 0 &&
+    email.length > 0 &&
+    authCode.length > 0 &&
+    password.length > 0 &&
+    passwordConfirm.length > 0 &&
     !nameError &&
     !emailError &&
     !authCodeError &&
@@ -159,7 +194,12 @@ const SingupPage = () => {
                 autoComplete="new-email"
                 className="bg-gray-100 p-4 rounded-lg w-full"
               />
-              <button className="w-[163px] py-4 px-4 bg-primary-mint-800 rounded-lg text-white text-[16px] font-semibold cursor-pointer">
+              <button
+                type="button"
+                className="w-[163px] py-4 px-4 bg-primary-mint-800 rounded-lg text-white text-[16px] font-semibold cursor-pointer"
+                onClick={handleAuthCode}
+                disabled={isLoading}
+              >
                 인증코드 발송
               </button>
             </div>
@@ -175,9 +215,14 @@ const SingupPage = () => {
               placeholder="6자리 입력"
               value={authCode}
               onChange={(e) => setAuthCode(e.target.value)}
-              autoComplete="authCode"
+              autoComplete="one-time-code"
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
+            {authCodeError && (
+              <span className="text-[13px] text-system-red">
+                {authCodeError}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -212,7 +257,7 @@ const SingupPage = () => {
               placeholder="8자 이상 20자 이하"
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
-              autoComplete="new-confrimPassword"
+              autoComplete="new-password"
               className="bg-gray-100 p-4 w-full rounded-lg"
             />
             <span className="text-gray-200 text-[13px]">
