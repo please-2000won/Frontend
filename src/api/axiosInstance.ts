@@ -45,14 +45,14 @@ api.interceptors.response.use(
           { refreshToken: refreshToken }
         );
 
-        //백엔드에서 보내준 새 엑세스 토큰 꺼냄(응답 구조에 따른 수정 필요!!!)
-        const newAccessToken = refreshResponse.data.accessToken;
+        //백엔드에서 보내준 새 엑세스 토큰 꺼냄
+        const newAccessToken = refreshResponse.data.result.accessToken;
 
         if (newAccessToken) {
           useAuthStore.setState({ accessToken: newAccessToken });
 
           //백에서 리프레쉬 토큰도 새로 발급해줬다면 교체
-          if (refreshResponse.data.refreshToken) {
+          if (refreshResponse.data.result?.refreshToken) {
             useAuthStore.setState({
               refreshToken: refreshResponse.data.refreshToken,
             });
