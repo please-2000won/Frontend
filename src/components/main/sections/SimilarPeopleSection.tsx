@@ -1,7 +1,11 @@
 import Tag from '../ui/Tag';
-import { SIMILAR_PEOPLE } from '../../../constants/main/mockData';
+import { SIMILAR_PEOPLE, type SimilarPersonData } from '../../../constants/main/mockData';
 
-const SimilarPeopleSection = () => {
+interface SimilarPeopleSectionProps {
+  onSelectPeer: (peer: SimilarPersonData) => void;
+}
+
+const SimilarPeopleSection = ({ onSelectPeer }: SimilarPeopleSectionProps) => {
   return (
     <section className="bg-primary-mint-200">
       <div className="mx-auto flex max-w-[1080px] flex-col gap-8 px-5 py-16">
@@ -20,7 +24,8 @@ const SimilarPeopleSection = () => {
             <button
               key={`${person.nickname}-${index}`}
               type="button"
-              className="flex flex-1 flex-col items-start gap-[45px] rounded-[16px] bg-white p-[26px] text-left transition-shadow hover:shadow-md"
+              onClick={() => onSelectPeer(person)}
+              className="flex flex-1 cursor-pointer flex-col items-start gap-[45px] rounded-[16px] bg-white p-[26px] text-left transition-shadow hover:shadow-md"
             >
               <Tag>{person.similarity}</Tag>
               <p className="w-full text-right text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">

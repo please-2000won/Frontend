@@ -1,27 +1,22 @@
 import PillButton from '../ui/PillButton';
-import ComparisonRow from '../ui/ComparisonRow';
-import AssetPieChart from '../ui/AssetPieChart';
-import { AI_ANALYSIS_TEXT, type ComparisonRowData } from '../../../constants/main/mockData';
-
-export type ComparisonViewMode = 'table' | 'chart';
+import PeerBarChart from '../ui/PeerBarChart';
+import PeerPieChart from '../ui/PeerPieChart';
+import {
+  AI_ANALYSIS_TEXT,
+  DEFAULT_PEER_GROUP_PROFILE,
+  type PeerFinancialProfile,
+} from '../../../constants/main/mockData';
+import { buildComparisonGroups } from '../../../utils/buildComparisonGroups';
 
 interface ComparisonSectionProps {
   hasAssetInfo: boolean;
-  viewMode: ComparisonViewMode;
-  onViewModeChange: (mode: ComparisonViewMode) => void;
   onReanalyzeClick: () => void;
-  comparisonAssetRows: ComparisonRowData[];
-  comparisonInvestRows: ComparisonRowData[];
+  myProfile: PeerFinancialProfile;
 }
 
-const ComparisonSection = ({
-  hasAssetInfo,
-  viewMode,
-  onViewModeChange,
-  onReanalyzeClick,
-  comparisonAssetRows,
-  comparisonInvestRows,
-}: ComparisonSectionProps) => {
+const ComparisonSection = ({ hasAssetInfo, onReanalyzeClick, myProfile }: ComparisonSectionProps) => {
+  const groups = buildComparisonGroups(myProfile, DEFAULT_PEER_GROUP_PROFILE);
+
   return (
     <section className="bg-system-background">
       <div className="mx-auto flex max-w-[1080px] flex-col gap-8 px-5 py-16">
@@ -56,68 +51,28 @@ const ComparisonSection = ({
               </p>
             </div>
 
-            <div className="flex items-center justify-end">
-              <div className="inline-flex overflow-hidden rounded-[100px] border border-primary-mint-900 text-[14px] font-semibold tracking-[-0.7px]">
-                <button
-                  type="button"
-                  onClick={() => onViewModeChange('table')}
-                  className={`px-5 py-2 transition-colors ${
-                    viewMode === 'table'
-                      ? 'bg-primary-mint-900 text-white'
-                      : 'bg-white text-primary-mint-900'
-                  }`}
-                >
-                  표로 보기
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onViewModeChange('chart')}
-                  className={`px-5 py-2 transition-colors ${
-                    viewMode === 'chart'
-                      ? 'bg-primary-mint-900 text-white'
-                      : 'bg-white text-primary-mint-900'
-                  }`}
-                >
-                  차트로 보기
-                </button>
-              </div>
+            <div className="flex flex-col gap-10">
+              {groups.map((group) => (
+                <PeerBarChart
+                  key={group.title}
+                  title={group.title}
+                  metrics={group.metrics}
+                  myLabel="나"
+                  otherLabel="Peer Group 평균"
+                />
+              ))}
             </div>
 
-            <div className="flex flex-col gap-5">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 border-b-2 border-primary-mint-900 py-2 text-center text-[20px] font-semibold tracking-[-1.2px] text-primary-mint-900 sm:text-[24px]">
-                  나
-                </div>
-                <div className="w-10 shrink-0" />
-                <div className="flex-1 border-b-2 border-primary-mint-900 py-2 text-center text-[20px] font-semibold tracking-[-1.2px] text-primary-mint-900 sm:text-[24px]">
-                  Peer Group 평균
-                </div>
-              </div>
-
-              <div className="rounded-[4px] bg-primary-mint-900 py-[5px] text-center text-[16px] font-bold tracking-[-0.8px] text-white">
-                자산 정보
-              </div>
-              <div className="flex flex-col gap-4">
-                {comparisonAssetRows.map((row) => (
-                  <ComparisonRow key={row.label} {...row} />
-                ))}
-              </div>
-
-              <div className="rounded-[4px] bg-primary-mint-900 py-[5px] text-center text-[16px] font-bold tracking-[-0.8px] text-white">
-                투자 정보
-              </div>
-              {viewMode === 'table' ? (
-                <div className="flex flex-col gap-4">
-                  {comparisonInvestRows.map((row) => (
-                    <ComparisonRow key={row.label} {...row} />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-10 py-6 sm:flex-row sm:gap-16">
-                  <AssetPieChart title="나" />
-                  <AssetPieChart title="Peer Group 평균" />
-                </div>
-              )}
+            <div className="flex flex-col gap-4">
+              <h3 className="text-[20px] font-semibold tracking-[-1px] text-primary-mint-900">
+                투자 자산 비중
+              </h3>
+              <PeerPieChart
+                myLabel="나"
+                myProfile={myProfile}
+                otherLabel="Peer Group 평균"
+                otherProfile={DEFAULT_PEER_GROUP_PROFILE}
+              />
             </div>
           </>
         )}
