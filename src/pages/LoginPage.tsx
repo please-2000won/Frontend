@@ -2,12 +2,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, getMyInfo } from '../api/authAPI';
 import useAuthStore from '../stores/useAuthStore';
+import useGuestModeStore from '../stores/useGuestModeStore';
 
 const LoginPage = () => {
   const navigate = useNavigate();
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
+  const enableGuestMode = useGuestModeStore((state) => state.enableGuestMode);
+  const disableGuestMode = useGuestModeStore((state) => state.disableGuestMode);
+
+  const handleGuestClick = () => {
+    enableGuestMode();
+    navigate('/');
+  };
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,6 +37,7 @@ const LoginPage = () => {
       //리프레쉬 토큰을 아직 구현을 안했으므로 추후
       //setAuth(data.accessToken, data.refreshToken, ''); 로 수정
       setAuth(data.accessToken, '');
+      disableGuestMode();
 
       const userInfoData = await getMyInfo();
       setUserInfo(userInfoData);
@@ -92,6 +101,13 @@ const LoginPage = () => {
             >
               이메일로 시작하기
             </div>
+            <button
+              type="button"
+              onClick={handleGuestClick}
+              className="py-4 w-full text-gray-700 text-center text-[16px] underline"
+            >
+              로그인 없이 목데이터로 둘러보기
+            </button>
           </div>
         </form>
       </div>
