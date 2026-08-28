@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import AssetInfoSection from '../components/main/AssetInfoSection';
+import AssetInfoSection from '../components/main/sections/AssetInfoSection';
 import ComparisonSection, {
   type ComparisonViewMode,
-} from '../components/main/ComparisonSection';
-import SimilarPeopleSection from '../components/main/SimilarPeopleSection';
-import { useMainPageData } from '../components/main/useMainPageData';
+} from '../components/main/sections/ComparisonSection';
+import SimilarPeopleSection from '../components/main/sections/SimilarPeopleSection';
+import { useMainPageData } from '../hooks/useMainPageData';
 
 const MainPage = () => {
   const {

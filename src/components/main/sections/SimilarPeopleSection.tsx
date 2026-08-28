@@ -1,5 +1,5 @@
-import Tag from './Tag';
-import { SIMILAR_PEOPLE } from './mockData';
+import Tag from '../ui/Tag';
+import { SIMILAR_PEOPLE } from '../../../constants/main/mockData';
 
 const SimilarPeopleSection = () => {
   return (

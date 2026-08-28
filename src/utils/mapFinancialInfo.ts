@@ -1,5 +1,5 @@
-import type { FinancialInfoResponse } from '../../api/financialInfoAPI';
-import type { AssetCardData, ComparisonRowData, InvestCardData } from './mockData';
+import type { FinancialInfoResponse } from '../api/financialInfoAPI';
+import type { AssetCardData, ComparisonRowData, InvestCardData } from '../constants/main/mockData';
 
 const formatWon = (amount: number) => `${amount.toLocaleString('ko-KR')}원`;
 const formatExpenseWon = (amount: number) => `-${Math.abs(amount).toLocaleString('ko-KR')}원`;

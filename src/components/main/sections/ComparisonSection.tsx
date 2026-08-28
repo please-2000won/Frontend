@@ -1,7 +1,7 @@
-import PillButton from './PillButton';
-import ComparisonRow from './ComparisonRow';
-import AssetPieChart from './AssetPieChart';
-import { AI_ANALYSIS_TEXT, type ComparisonRowData } from './mockData';
+import PillButton from '../ui/PillButton';
+import ComparisonRow from '../ui/ComparisonRow';
+import AssetPieChart from '../ui/AssetPieChart';
+import { AI_ANALYSIS_TEXT, type ComparisonRowData } from '../../../constants/main/mockData';
 
 export type ComparisonViewMode = 'table' | 'chart';
 

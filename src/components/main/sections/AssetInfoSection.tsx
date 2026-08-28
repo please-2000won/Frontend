@@ -1,7 +1,7 @@
-import Tag from './Tag';
-import PillButton from './PillButton';
-import dividerLine from '../../assets/main/divider-line.svg';
-import type { AssetCardData, InvestCardData } from './mockData';
+import Tag from '../ui/Tag';
+import PillButton from '../ui/PillButton';
+import dividerLine from '../../../assets/main/divider-line.svg';
+import type { AssetCardData, InvestCardData } from '../../../constants/main/mockData';
 
 interface AssetInfoSectionProps {
   name: string;

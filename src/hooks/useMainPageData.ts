@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getFinancialInfo } from '../../api/financialInfoAPI';
-import { getMyInfo } from '../../api/userAPI';
+import { getFinancialInfo } from '../api/financialInfoAPI';
+import { getMyInfo } from '../api/userAPI';
 import {
   ASSET_CARDS,
   COMPARISON_ASSET_ROWS,
@@ -9,13 +9,13 @@ import {
   type AssetCardData,
   type ComparisonRowData,
   type InvestCardData,
-} from './mockData';
+} from '../constants/main/mockData';
 import {
   mapToAssetCards,
   mapToComparisonAssetRows,
   mapToComparisonInvestRows,
   mapToInvestCards,
-} from './mapFinancialInfo';
+} from '../utils/mapFinancialInfo';
 
 interface MainPageData {
   isLoading: boolean;

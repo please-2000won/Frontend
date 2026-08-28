@@ -1,5 +1,5 @@
-import pieChart from '../../assets/main/asset-pie-chart.svg';
-import { PIE_LEGEND } from './mockData';
+import pieChart from '../../../assets/main/asset-pie-chart.svg';
+import { PIE_LEGEND } from '../../../constants/main/mockData';
 
 interface AssetPieChartProps {
   title: string;
