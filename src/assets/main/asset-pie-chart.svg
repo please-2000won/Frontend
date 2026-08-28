@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="265" height="265" viewBox="0 0 265 265" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="chart">
+<g clip-path="url(#clip0_0_4)">
+<path id="Rectangle 2" d="M0 0H132.5V132.5H0V0Z" fill="#B5E6E3"/>
+<path id="Rectangle 3" d="M132.5 0H265V132.5H132.5V0Z" fill="#75E0D7"/>
+<path id="Rectangle 4" d="M0 132.5H132.5V265H0V132.5Z" fill="#00897E"/>
+<path id="Rectangle 5" d="M132.5 132.5H265V265H132.5V132.5Z" fill="white"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_4">
+<rect width="265" height="265" rx="132.5" fill="white"/>
+</clipPath>
+</defs>
+</svg>
