@@ -10,6 +10,7 @@ const InfoInputPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormDataState] = useState({
+    age: '',
     monthlyIncome: '', //월수입
     fixedExpense: '', //고정지출
     savingsGoal: '', //월 저축 -> 이거 디자인에선 반복됨!!
@@ -25,7 +26,7 @@ const InfoInputPage = () => {
     const parseNumber = (value: string) => Number(value.replace(/,/g, ''));
     const requestData = {
       financialProfile: {
-        age: 20, // 나이 데이터 연동 필요 -> 어디서 가져오는가? 아마 유저인포에서 받아와야될듯!
+        age: parseNumber(formData.age), // 나이 데이터 연동 필요 -> 어디서 가져오는가? 아마 유저인포에서 받아와야될듯!
         monthlyIncome: parseNumber(formData.monthlyIncome),
         fixedExpense: parseNumber(formData.fixedExpense),
         savingsGoal: parseNumber(formData.savingsGoal),
@@ -68,7 +69,7 @@ const InfoInputPage = () => {
 
   return (
     <div>
-      <div className="w-[1080px] my-[144px] mx-auto">
+      <div className="max-w-[1080px] my-[64px] mx-auto">
         <div className="mb-8">
           <h1 className="text-[32px] font-semibold text-black">정보 입력</h1>
         </div>
@@ -77,7 +78,7 @@ const InfoInputPage = () => {
             자산 정보
           </h2>
           <div className="flex flex-col gap-0.5">
-            <CategoryCard title="총 수입">
+            <CategoryCard title="월 현금 흐름">
               <div className="grid grid-cols-3 gap-5">
                 <CurrencyInput
                   label="월 수입"
@@ -97,8 +98,17 @@ const InfoInputPage = () => {
               </div>
             </CategoryCard>
 
-            <CategoryCard title="현금">
+            {/* 2. 자산 현황 & 나이 */}
+            <CategoryCard title="자산 및 프로필">
               <div className="grid grid-cols-3 gap-5">
+                <CurrencyInput
+                  label="나이"
+                  value={formData.age}
+                  onChange={handleChange('age')}
+                  unit="세"
+                  type="number"
+                />
+
                 <CurrencyInput
                   label="총 자산 금액"
                   value={formData.totalAssetAmount}
@@ -109,7 +119,6 @@ const InfoInputPage = () => {
                   value={formData.totalDebtAmount}
                   onChange={handleChange('totalDebtAmount')}
                 />
-                {/*뭔가 안맞는것 같으니 일단 대충 처리 ^^ */}
               </div>
             </CategoryCard>
           </div>

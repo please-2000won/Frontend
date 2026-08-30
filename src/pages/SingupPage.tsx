@@ -12,7 +12,8 @@ const SingupPage = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const [isCodeLoading, setIsCodeLoading] = useState(false);
 
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -98,12 +99,12 @@ const SingupPage = () => {
       !authCode ||
       !password ||
       !passwordConfirm ||
-      isLoading
+      isLoginLoading
     )
       return;
 
     try {
-      setIsLoading(true);
+      setIsLoginLoading(true);
       await signup({ name, email, verificationCode: authCode, password });
 
       alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
@@ -111,18 +112,18 @@ const SingupPage = () => {
     } catch (error) {
       alert('회원가입에 실패하였습니다. 다시 시도해주세요.');
     } finally {
-      setIsLoading(false);
+      setIsLoginLoading(false);
     }
   };
 
   //확인용 인증번호 받기
   const handleAuthCode = async () => {
-    if (!email || isLoading) {
+    if (!email || isLoginLoading) {
       setEmailError('이메일을 먼저 입력해주세요.');
       return;
     }
     try {
-      setIsLoading(true);
+      setIsCodeLoading(true);
 
       const result = await sendEmailCode({ email });
 
@@ -132,19 +133,17 @@ const SingupPage = () => {
     } catch (error) {
       console.error(error);
       alert('인증번호 발급에 실패하였습니다. 이메일을 다시 확인해주세요.');
-    } finally {
-      setIsLoading(false);
+      setIsCodeLoading(false);
     }
   };
 
-  //인증번호 형식 -> API 연동 필요
   useEffect(() => {
     if (authCode && authCode !== authCodeConfirm) {
       setAuthCodeError('· 인증번호가 일치하지 않아요.');
     } else {
       setAuthCodeError('');
     }
-  }, [authCodeConfirm]);
+  }, [authCode, authCodeConfirm]);
 
   //버튼 활성화
   const isFormValid =
@@ -155,129 +154,129 @@ const SingupPage = () => {
     passwordConfirm.length > 0 &&
     !nameError &&
     !emailError &&
-    !authCodeError &&
     !pwLengthError &&
     !pwFormatError &&
     !confirmError;
 
   return (
-    <div className="w-[530px] h-full items-center justify-center mt-40 mx-auto">
-      <div className="text-black text-left font-semibold text-[32px] pb-7">
-        <h1>회원가입</h1>
-      </div>
+    <div className="flex min-h-screen w-full py-12 justify-center">
+      <div className="w-[530px] flex flex-col my-auto">
+        <div className="text-black text-left font-semibold text-[32px] pb-7">
+          <h1>회원가입</h1>
+        </div>
 
-      <div className="flex flex-col">
-        <form onSubmit={handleSignup} className="flex flex-col gap-7">
-          <div className="flex flex-col gap-2">
-            <p>이름</p>
-            <input
-              type="text"
-              placeholder="2자 이상 50자 이하"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoComplete="name"
-              className="bg-gray-100 p-4 w-full rounded-lg"
-            />
-            {nameError && (
-              <span className="text-[13px] text-system-red">{nameError} </span>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p>이메일</p>
-            <div className="flex gap-7 justify-between">
+        <div className="flex flex-col">
+          <form onSubmit={handleSignup} className="flex flex-col gap-7">
+            <div className="flex flex-col gap-2">
+              <p>이름</p>
               <input
-                type="email"
-                placeholder="이메일"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="new-email"
-                className="bg-gray-100 p-4 rounded-lg w-full"
+                type="text"
+                placeholder="2자 이상 50자 이하"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                autoComplete="name"
+                className="bg-gray-100 p-4 w-full rounded-lg"
               />
-              <button
-                type="button"
-                className="w-[163px] py-4 px-4 bg-primary-mint-800 rounded-lg text-white text-[16px] font-semibold cursor-pointer"
-                onClick={handleAuthCode}
-                disabled={isLoading}
-              >
-                인증코드 발송
-              </button>
+              {nameError && (
+                <span className="text-[13px] text-system-red">
+                  {nameError}{' '}
+                </span>
+              )}
             </div>
-            {emailError && (
-              <span className="text-[13px] text-system-red">{emailError}</span>
-            )}
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <p>인증코드</p>
-            <input
-              type="text"
-              placeholder="6자리 입력"
-              value={authCode}
-              onChange={(e) => setAuthCode(e.target.value)}
-              autoComplete="one-time-code"
-              className="bg-gray-100 p-4 w-full rounded-lg"
-            />
-            {authCodeError && (
-              <span className="text-[13px] text-system-red">
-                {authCodeError}
-              </span>
-            )}
-          </div>
+            <div className="flex flex-col gap-2">
+              <p>이메일</p>
+              <div className="flex gap-7 justify-between">
+                <input
+                  type="email"
+                  placeholder="이메일"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="new-email"
+                  className="bg-gray-100 p-4 rounded-lg w-full"
+                />
+                <button
+                  type="button"
+                  className={`w-[163px] py-4 px-4 rounded-lg  text-[16px] font-semibold cursor-pointer ${isCodeLoading ? 'bg-white border border-primary-mint-800 text-primary-mint-800' : 'bg-primary-mint-800 border text-white border-primary-mint-800'}`}
+                  onClick={handleAuthCode}
+                  disabled={isCodeLoading}
+                >
+                  인증코드 발송
+                </button>
+              </div>
+              {emailError && (
+                <span className="text-[13px] text-system-red">
+                  {emailError}
+                </span>
+              )}
+            </div>
 
-          <div className="flex flex-col gap-2">
-            <p>비밀번호</p>
-            <input
-              type="password"
-              placeholder="8자 이상 20자 이하"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
-              className="bg-gray-100 p-4 w-full rounded-lg"
-            />
-            <span className="text-gray-200 text-[13px]">
-              · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
-            </span>
-            {pwFormatError && (
-              <span className="text-[13px] text-system-red">
-                {pwFormatError}
-              </span>
-            )}
-            {pwLengthError && (
-              <span className="text-[13px] text-system-red">
-                {pwLengthError}
-              </span>
-            )}
-          </div>
+            <div className="flex flex-col gap-2">
+              <p>인증코드</p>
+              <input
+                type="text"
+                placeholder="6자리 입력"
+                value={authCode}
+                onChange={(e) => setAuthCode(e.target.value)}
+                autoComplete="one-time-code"
+                className="bg-gray-100 p-4 w-full rounded-lg"
+              />
+            </div>
 
-          <div className="flex flex-col gap-2">
-            <p>비밀번호 확인</p>
-            <input
-              type="password"
-              placeholder="8자 이상 20자 이하"
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
-              autoComplete="new-password"
-              className="bg-gray-100 p-4 w-full rounded-lg"
-            />
-            <span className="text-gray-200 text-[13px]">
-              · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
-            </span>
-            {confirmError && (
-              <span className="text-[13px] text-system-red">
-                {confirmError}
+            <div className="flex flex-col gap-2">
+              <p>비밀번호</p>
+              <input
+                type="password"
+                placeholder="8자 이상 20자 이하"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+                className="bg-gray-100 p-4 w-full rounded-lg"
+              />
+              <span className="text-gray-200 text-[13px]">
+                · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
               </span>
-            )}
-          </div>
+              {pwFormatError && (
+                <span className="text-[13px] text-system-red">
+                  {pwFormatError}
+                </span>
+              )}
+              {pwLengthError && (
+                <span className="text-[13px] text-system-red">
+                  {pwLengthError}
+                </span>
+              )}
+            </div>
 
-          <button
-            type="submit"
-            disabled={isLoading && isFormValid}
-            className={`${isFormValid ? 'bg-gray-300' : 'bg-primary-mint-800'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer`}
-          >
-            {!isLoading ? '가입 진행 중...' : '가입하기'}
-          </button>
-        </form>
+            <div className="flex flex-col gap-2">
+              <p>비밀번호 확인</p>
+              <input
+                type="password"
+                placeholder="8자 이상 20자 이하"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                autoComplete="new-password"
+                className="bg-gray-100 p-4 w-full rounded-lg"
+              />
+              <span className="text-gray-200 text-[13px]">
+                · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
+              </span>
+              {confirmError && (
+                <span className="text-[13px] text-system-red">
+                  {confirmError}
+                </span>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={!isFormValid && isLoginLoading}
+              className={`${isFormValid ? 'bg-primary-mint-800' : 'bg-gray-300'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer`}
+            >
+              {isLoginLoading ? '가입 진행 중...' : '가입하기'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

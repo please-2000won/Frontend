@@ -52,64 +52,67 @@ const LoginPage = () => {
 
   return (
     <div className="flex h-screen w-full">
-      <div className="flex flex-col w-1/2 bg-primary-mint-300 justify-end pl-20 pb-10">
-        <h1 className="text-[48px] text-primary-mint-900 font-semibold ">
+      <div className="flex flex-col w-1/2 bg-primary-mint-300 justify-end pl-20 pb-10 ">
+        <h1 className="text-[48px] text-primary-mint-900 font-semibold mx-3 ">
           나와 비슷한 사람들은
           <br />
           어떻게 모으고 있을까?
         </h1>
       </div>
-      <div className="flex flex-col w-[438px] mx-auto mt-100 gap-5">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-black text-[32px] font-semibold">로그인</h1>
-          <p className="text-[16px]">
-            이메일로 로그인하고, 본인의 투자 행동을 점검해요.
-          </p>
-        </div>
-        <form onSubmit={handleLogin}>
-          <div className="pt-5 flex flex-col gap-3">
-            <input
-              type="text"
-              placeholder="이메일"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              className="bg-gray-100 p-4 w-full rounded-lg"
-            />
-            <input
-              type="password"
-              placeholder="비밀번호"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              className="bg-gray-100 p-4 w-full rounded-lg"
-            />
+      <div className="flex flex-col w-1/2 items-center justify-center">
+        <div className="flex flex-col w-[438px] mx-auto gap-5">
+          <div className="flex flex-col gap-3">
+            <h1 className="text-black text-[32px] font-semibold">로그인</h1>
+            <p className="text-[16px]">
+              이메일로 로그인하고, 본인의 투자 행동을 점검해요.
+            </p>
           </div>
-          <div className="pt-5 flex flex-col gap-3">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`py-4 w-full rounded-lg text-white text-[16px] ${email && password ? 'bg-primary-mint-800' : 'bg-gray-300'}`}
-            >
-              {isLoading ? '로그인 중...' : '로그인'}
-            </button>
-            <div
-              className="py-4 w-full bg-white text-primary-mint-800 border border-primiary-800 rounded-lg text-center text-[16px]"
-              onClick={() => {
-                navigate('/Signup');
-              }}
-            >
-              이메일로 시작하기
+          <form onSubmit={handleLogin}>
+            <div className="pt-5 flex flex-col gap-3">
+              <input
+                type="text"
+                placeholder="이메일"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                className="bg-gray-100 p-4 w-full rounded-lg"
+              />
+              <input
+                type="password"
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                className="bg-gray-100 p-4 w-full rounded-lg"
+              />
             </div>
-            <button
-              type="button"
-              onClick={handleGuestClick}
-              className="py-4 w-full text-gray-700 text-center text-[16px] underline"
-            >
-              로그인 없이 목데이터로 둘러보기
-            </button>
-          </div>
-        </form>
+            <div className="pt-5 flex flex-col gap-3">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`py-4 w-full rounded-lg text-white text-[16px] cursor-pointer ${email && password ? 'bg-primary-mint-800' : 'bg-gray-300'}`}
+              >
+                {isLoading ? '로그인 중...' : '로그인'}
+              </button>
+              <div
+                className="py-4 w-full bg-white text-primary-mint-800 border border-primiary-mint-800 rounded-lg text-center text-[16px] cursor-pointer"
+                onClick={() => {
+                  navigate('/Signup');
+                }}
+              >
+                이메일로 시작하기
+              </div>
+            </div>
+          </form>
+
+          <button
+            type="button"
+            onClick={handleGuestClick}
+            className="py-4 w-full text-gray-700 text-center text-[16px] underline cursor-pointer"
+          >
+            로그인 없이 목데이터로 둘러보기
+          </button>
+        </div>
       </div>
     </div>
   );
