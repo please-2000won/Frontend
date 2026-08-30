@@ -137,14 +137,13 @@ const SingupPage = () => {
     }
   };
 
-  /*인증번호 형식 -> API 연동 필요 -> 아마 필요 없을듯?? 왜냐면 일단 인증번호..도 같이 받는거같음
   useEffect(() => {
     if (authCode && authCode !== authCodeConfirm) {
       setAuthCodeError('· 인증번호가 일치하지 않아요.');
     } else {
       setAuthCodeError('');
     }
-  }, [authCode, authCodeConfirm]);*/
+  }, [authCode, authCodeConfirm]);
 
   //버튼 활성화
   const isFormValid =
@@ -155,7 +154,6 @@ const SingupPage = () => {
     passwordConfirm.length > 0 &&
     !nameError &&
     !emailError &&
-    !authCodeError &&
     !pwLengthError &&
     !pwFormatError &&
     !confirmError;
@@ -223,11 +221,6 @@ const SingupPage = () => {
                 autoComplete="one-time-code"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
-              {authCodeError && (
-                <span className="text-[13px] text-system-red">
-                  {authCodeError}
-                </span>
-              )}
             </div>
 
             <div className="flex flex-col gap-2">
