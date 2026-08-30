@@ -275,7 +275,7 @@ const SingupPage = () => {
             disabled={isLoading && isFormValid}
             className={`${isFormValid ? 'bg-gray-300' : 'bg-primary-mint-800'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer`}
           >
-            {isLoading ? '가입 진행 중...' : '가입하기'}
+            {!isLoading ? '가입 진행 중...' : '가입하기'}
           </button>
         </form>
       </div>

@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
+import useGuestModeStore from '../../stores/useGuestModeStore';
 
 const TopNavbar = () => {
   const userInfo = useAuthStore((state) => state.userInfo);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const isGuestMode = useGuestModeStore((state) => state.isGuestMode);
+  const disableGuestMode = useGuestModeStore((state) => state.disableGuestMode);
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -25,6 +28,7 @@ const TopNavbar = () => {
 
   const handleLogout = () => {
     clearAuth();
+    disableGuestMode();
     setIsOpen(false);
     navigate('/login');
   };
@@ -32,6 +36,18 @@ const TopNavbar = () => {
   return (
     <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-white">
       <div className="mx-auto flex h-full max-w-[1080px] items-center justify-end px-5">
+        {!userInfo && isGuestMode && (
+          <div className="flex items-center gap-3">
+            <span className="text-[16px] text-gray-700">게스트로 둘러보는 중</span>
+            <button
+              type="button"
+              onClick={() => navigate('/login')}
+              className="cursor-pointer rounded-full border border-primary-mint-900 px-4 py-1.5 text-[14px] font-semibold text-primary-mint-900"
+            >
+              로그인하기
+            </button>
+          </div>
+        )}
         {userInfo && (
           <div ref={containerRef} className="group relative">
             <button

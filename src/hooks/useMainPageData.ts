@@ -18,8 +18,17 @@ interface MainPageData {
   myProfile: PeerFinancialProfile;
 }
 
+// 게스트 모드일 때는 API를 호출하지 않고 이 목데이터를 그대로 보여준다.
+const GUEST_DATA: MainPageData = {
+  isLoading: false,
+  hasAssetInfo: true,
+  assetCards: ASSET_CARDS,
+  investCards: INVEST_CARDS,
+  myProfile: DEFAULT_MY_PROFILE,
+};
+
 // 실제 API 응답이 있으면 그 값을, 실패하거나 데이터가 없으면 더미 데이터를 사용한다.
-export const useMainPageData = () => {
+export const useMainPageData = (isGuestMode: boolean) => {
   const [data, setData] = useState<MainPageData>({
     isLoading: true,
     hasAssetInfo: false,
@@ -29,6 +38,8 @@ export const useMainPageData = () => {
   });
 
   useEffect(() => {
+    if (isGuestMode) return;
+
     let cancelled = false;
 
     const fetchData = async () => {
@@ -54,7 +65,7 @@ export const useMainPageData = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isGuestMode]);
 
-  return data;
+  return isGuestMode ? GUEST_DATA : data;
 };
