@@ -14,7 +14,10 @@ const TopNavbar = () => {
     if (!isOpen) return;
 
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -30,7 +33,7 @@ const TopNavbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-white">
+    <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-system-background">
       <div className="mx-auto flex h-full max-w-[1080px] items-center justify-end px-5">
         {userInfo && (
           <div ref={containerRef} className="group relative">
