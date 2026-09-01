@@ -65,7 +65,7 @@ export const ASSET_CARDS: AssetCardData[] = [
       { label: '보유 자산', value: '2,000,000원', emphasis: true },
       { label: '부채', value: '-1,000,000원' },
     ],
-    total: '100,000원',
+    total: '1,000,000원',
   },
 ];
 
