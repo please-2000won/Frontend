@@ -17,7 +17,7 @@ const SingupPage = () => {
 
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [authCodeError, setAuthCodeError] = useState('');
+
   const [pwLengthError, setPwLengthError] = useState('');
   const [pwFormatError, setPwFormatError] = useState('');
   const [confirmError, setConfirmError] = useState('');
@@ -130,6 +130,7 @@ const SingupPage = () => {
       //수정필요
       alert(`인증번호가 발급되었습니다! [ ${result.verificationCode} ]`);
       setAuthCodeComfrim(result.verificationCode);
+      console.log(authCodeConfirm);
     } catch (error) {
       console.error(error);
       alert('인증번호 발급에 실패하였습니다. 이메일을 다시 확인해주세요.');
@@ -137,21 +138,21 @@ const SingupPage = () => {
     }
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (authCode && authCode !== authCodeConfirm) {
       setAuthCodeError('· 인증번호가 일치하지 않아요.');
     } else {
       setAuthCodeError('');
     }
-  }, [authCode, authCodeConfirm]);
+  }, [authCode, authCodeConfirm]);*/
 
   //버튼 활성화
   const isFormValid =
     name.length > 0 &&
     email.length > 0 &&
-    authCode.length > 0 &&
     password.length > 0 &&
     passwordConfirm.length > 0 &&
+    !authCode &&
     !nameError &&
     !emailError &&
     !pwLengthError &&
