@@ -6,7 +6,7 @@ import MainLayout from './components/layouts/MainLayout';
 import MainPage from '../src/pages/MainPage';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SingupPage';
-import InfoInputPage from './pages/auth/InfoInputPage';
+import InfoInputPage from './pages/InfoInputPage';
 import WithdrawPage from './pages/auth/WithDrawPage';
 
 function App() {

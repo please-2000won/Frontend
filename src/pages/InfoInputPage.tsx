@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveFinancial } from '../../api/financial';
+import { saveFinancial, getMyFinancial } from '../api/financial';
 
-import CategoryCard from '../../components/info/CategoryCard';
-import CurrencyInput from '../../components/info/CurrencyInput';
+import CategoryCard from '../components/info/CategoryCard';
+import CurrencyInput from '../components/info/CurrencyInput';
 
 const InfoInputPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  // 초기 데이터 로딩 상태
+  const [isFetching, setIsFetching] = useState(true);
 
   const [formData, setFormDataState] = useState({
     age: '',
@@ -44,7 +46,7 @@ const InfoInputPage = () => {
     try {
       setIsLoading(true);
       await saveFinancial(requestData);
-      alert('저장했어요.');
+      alert('내 자산 정보를 저장했어요!');
       navigate('/');
     } catch (error) {
       console.error(error);
@@ -52,6 +54,53 @@ const InfoInputPage = () => {
       setIsLoading(false);
     }
   };
+
+  //자산 정보 불러오기
+  useEffect(() => {
+    const fetchMyInfo = async () => {
+      try {
+        setIsFetching(true);
+        const response = await getMyFinancial();
+
+        if (response) {
+          const formatNum = (val?: number) =>
+            val !== undefined && val !== null
+              ? Number(val).toLocaleString('ko-KR')
+              : '';
+
+          setFormDataState({
+            age: formatNum(response.financialProfile?.age),
+            monthlyIncome: formatNum(response.financialProfile?.monthlyIncome),
+            fixedExpense: formatNum(response.financialProfile?.fixedExpense),
+            savingsGoal: formatNum(response.financialProfile?.savingsGoal),
+            totalAssetAmount: formatNum(
+              response.financialProfile?.totalAssetAmount
+            ),
+            totalDebtAmount: formatNum(
+              response.financialProfile?.totalDebtAmount
+            ),
+            domesticStockAmount: formatNum(
+              response.financialAsset?.domesticStockAmount
+            ),
+            foreignStockAmount: formatNum(
+              response.financialAsset?.foreignStockAmount
+            ),
+            depositBondAmount: formatNum(
+              response.financialAsset?.depositBondAmount
+            ),
+            alternativeAmount: formatNum(
+              response.financialAsset?.alternativeAmount
+            ),
+          });
+        }
+      } catch (error) {
+        console.error('기존 자산 정보를 불러오는 데 실패하였습니다.', error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchMyInfo();
+  }, []);
 
   //항목 이름을 먼저 받은 후 입력 이벤트를 처리하는 것 -> 인풋이 많아도 이름표를 달아주면 처리가됨!
   //숫자만 적을 수 있도록 정규표현식 처리
