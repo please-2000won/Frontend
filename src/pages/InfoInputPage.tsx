@@ -117,6 +117,15 @@ const InfoInputPage = () => {
       setFormDataState((prev) => ({ ...prev, [field]: formattedValue }));
     };
 
+  // 데이터를 불러오는 중일 때 보여줄 UI (선택 사항)
+  if (isFetching) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        정보를 불러오는 중입니다...
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="max-w-[1080px] my-[64px] mx-auto">
