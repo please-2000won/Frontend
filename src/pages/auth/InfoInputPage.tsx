@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveFinancial } from '../api/financial';
+import { saveFinancial } from '../../api/financial';
 
-import CategoryCard from '../components/info/CategoryCard';
-import CurrencyInput from '../components/info/CurrencyInput';
+import CategoryCard from '../../components/info/CategoryCard';
+import CurrencyInput from '../../components/info/CurrencyInput';
 
 const InfoInputPage = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const InfoInputPage = () => {
     const parseNumber = (value: string) => Number(value.replace(/,/g, ''));
     const requestData = {
       financialProfile: {
-        age: parseNumber(formData.age), // 나이 데이터 연동 필요 -> 어디서 가져오는가? 아마 유저인포에서 받아와야될듯!
+        age: parseNumber(formData.age),
         monthlyIncome: parseNumber(formData.monthlyIncome),
         fixedExpense: parseNumber(formData.fixedExpense),
         savingsGoal: parseNumber(formData.savingsGoal),
@@ -45,6 +45,7 @@ const InfoInputPage = () => {
       setIsLoading(true);
       await saveFinancial(requestData);
       alert('저장했어요.');
+      navigate('/');
     } catch (error) {
       console.error(error);
     } finally {

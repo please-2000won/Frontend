@@ -57,7 +57,7 @@ export const ASSET_CARDS: AssetCardData[] = [
       { label: '고정 지출', value: '-1,000,000원' },
       { label: '저축', value: '-1,000,000원' },
     ],
-    total: '100,000원',
+    total: '1,000,000원',
   },
   {
     tag: '현금',

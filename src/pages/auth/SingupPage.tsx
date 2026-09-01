@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sendEmailCode, signup } from '../api/authAPI';
+import { sendEmailCode, signup } from '../../api/authAPI';
 
 const SingupPage = () => {
   const navigate = useNavigate();
@@ -152,7 +152,7 @@ const SingupPage = () => {
     email.length > 0 &&
     password.length > 0 &&
     passwordConfirm.length > 0 &&
-    !authCode &&
+    authCode.length > 0 &&
     !nameError &&
     !emailError &&
     !pwLengthError &&

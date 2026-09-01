@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, getMyInfo } from '../api/authAPI';
-import useAuthStore from '../stores/useAuthStore';
-import useGuestModeStore from '../stores/useGuestModeStore';
+import { login, getMyInfo } from '../../api/authAPI';
+import useAuthStore from '../../stores/useAuthStore';
+import useGuestModeStore from '../../stores/useGuestModeStore';
+import logo from '../../assets/logo/logo.svg';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -51,9 +52,12 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex h-screen w-full">
-      <div className="flex flex-col w-1/2 bg-primary-mint-300 justify-end pl-20 pb-10 ">
-        <h1 className="text-[48px] text-primary-mint-900 font-semibold mx-3 ">
+    <div className="flex flex-col mid:flex-row h-screen w-full">
+      <div className="flex mid:flex-col w-1/2 bg-primary-mint-300 justify-between pl-20 py-10">
+        <div>
+          <img src={logo} alt="peerfolio" className="w-[311px] h-[67px] " />
+        </div>
+        <h1 className="text-[48px] mid:text-[48px] text-primary-mint-900 font-semibold mx-3 ">
           나와 비슷한 사람들은
           <br />
           어떻게 모으고 있을까?

@@ -4,9 +4,10 @@ import AuthLayout from './components/layouts/AuthLayout';
 import MainLayout from './components/layouts/MainLayout';
 
 import MainPage from '../src/pages/MainPage';
-import LoginPage from '../src/pages/LoginPage';
-import SignupPage from '../src/pages/SingupPage';
-import InfoInputPage from './pages/InfoInputPage';
+import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SingupPage';
+import InfoInputPage from './pages/auth/InfoInputPage';
+import WithdrawPage from './pages/auth/WithDrawPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/withdraw" element={<WithdrawPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
