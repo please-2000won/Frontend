@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getMyFinancial } from '../api/financial';
+import { getMyFinancial, type MyFinancialResult } from '../api/financial';
 import {
   ASSET_CARDS,
   DEFAULT_MY_PROFILE,
@@ -16,6 +16,8 @@ interface MainPageData {
   assetCards: AssetCardData[];
   investCards: InvestCardData[];
   myProfile: PeerFinancialProfile;
+  // 챗봇 컨텍스트로 넘기기 위한 원본 응답
+  financialInfo: MyFinancialResult | null;
 }
 
 // 게스트 모드일 때는 API를 호출하지 않고 이 목데이터를 그대로 보여준다.
@@ -25,6 +27,7 @@ const GUEST_DATA: MainPageData = {
   assetCards: ASSET_CARDS,
   investCards: INVEST_CARDS,
   myProfile: DEFAULT_MY_PROFILE,
+  financialInfo: null,
 };
 
 // 실제 API 응답이 있으면 그 값을, 실패하거나 데이터가 없으면 더미 데이터를 사용한다.
@@ -35,6 +38,7 @@ export const useMainPageData = (isGuestMode: boolean) => {
     assetCards: ASSET_CARDS,
     investCards: INVEST_CARDS,
     myProfile: DEFAULT_MY_PROFILE,
+    financialInfo: null,
   });
 
   useEffect(() => {
@@ -53,6 +57,7 @@ export const useMainPageData = (isGuestMode: boolean) => {
           assetCards: mapToAssetCards(info),
           investCards: mapToInvestCards(info),
           myProfile: mapToProfile(info),
+          financialInfo: info,
         });
       } catch {
         if (cancelled) return;

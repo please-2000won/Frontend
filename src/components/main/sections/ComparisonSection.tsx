@@ -1,23 +1,28 @@
 import PillButton from '../ui/PillButton';
 import PeerBarChart from '../ui/PeerBarChart';
 import PeerPieChart from '../ui/PeerPieChart';
-import type { PeerFinancialProfile } from '../../../constants/main/mockData';
+import RiskAnalysisCard from '../ui/RiskAnalysisCard';
+import type { PeerFinancialProfile, RiskInfo } from '../../../constants/main/mockData';
 import { buildComparisonGroups } from '../../../utils/buildComparisonGroups';
 
 interface ComparisonSectionProps {
   hasAssetInfo: boolean;
   onReanalyzeClick: () => void;
+  onAskChatbot: () => void;
   myProfile: PeerFinancialProfile;
   peerGroupProfile: PeerFinancialProfile;
   aiAnalysisText: string;
+  risk: RiskInfo | null;
 }
 
 const ComparisonSection = ({
   hasAssetInfo,
   onReanalyzeClick,
+  onAskChatbot,
   myProfile,
   peerGroupProfile,
   aiAnalysisText,
+  risk,
 }: ComparisonSectionProps) => {
   const groups = buildComparisonGroups(myProfile, peerGroupProfile);
 
@@ -47,13 +52,25 @@ const ComparisonSection = ({
         {hasAssetInfo && (
           <>
             <div className="flex flex-col gap-5 rounded-[32px] border border-gray-300 bg-white p-8">
-              <h3 className="text-[24px] font-semibold tracking-[-1.2px] text-primary-mint-900">
-                AI 분석
-              </h3>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <h3 className="text-[24px] font-semibold tracking-[-1.2px] text-primary-mint-900">
+                  AI 분석
+                </h3>
+                <button
+                  type="button"
+                  onClick={onAskChatbot}
+                  className="flex shrink-0 cursor-pointer items-center gap-2 rounded-full bg-primary-mint-800 px-5 py-2.5 text-[16px] font-semibold text-white transition-colors hover:bg-primary-mint-900"
+                >
+                  <span aria-hidden>🤖</span>
+                  챗봇에게 질문하기
+                </button>
+              </div>
               <p className="text-[16px] font-medium leading-[1.3] tracking-[-0.5px] text-gray-800 sm:text-[20px]">
                 {aiAnalysisText}
               </p>
             </div>
+
+            {risk && <RiskAnalysisCard risk={risk} />}
 
             <div className="flex flex-col gap-10">
               {groups.map((group) => (

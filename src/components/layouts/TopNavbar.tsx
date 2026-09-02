@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo/logo.svg';
 import useAuthStore from '../../stores/useAuthStore';
 import useGuestModeStore from '../../stores/useGuestModeStore';
+import { clearAnalysisStorage } from '../../utils/analysisStorage';
 
 const TopNavbar = () => {
   const userInfo = useAuthStore((state) => state.userInfo);
@@ -33,6 +34,7 @@ const TopNavbar = () => {
   const handleLogout = () => {
     clearAuth();
     disableGuestMode();
+    clearAnalysisStorage();
     setIsOpen(false);
     navigate('/login');
   };
@@ -69,28 +71,30 @@ const TopNavbar = () => {
             </button>
 
             <div
-              className={`absolute top-full right-0 z-20 mt-2 w-[220px] rounded-[12px] border border-gray-100 bg-white p-5 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 ${
+              className={`absolute top-full right-0 z-20 w-[220px] pt-2 transition-opacity group-hover:visible group-hover:opacity-100 ${
                 isOpen ? 'visible opacity-100' : 'invisible opacity-0'
               }`}
             >
-              <p className="text-[13px] text-gray-300">닉네임</p>
-              <p className="mb-4 text-[18px] font-semibold text-primary-mint-900">
-                {userInfo.nickname}
-              </p>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red mb-3"
-              >
-                로그아웃
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/withdraw')}
-                className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red"
-              >
-                회원탈퇴
-              </button>
+              <div className="rounded-[12px] border border-gray-100 bg-white p-5 shadow-lg">
+                <p className="text-[13px] text-gray-300">닉네임</p>
+                <p className="mb-4 text-[18px] font-semibold text-primary-mint-900">
+                  {userInfo.nickname}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red mb-3"
+                >
+                  로그아웃
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/withdraw')}
+                  className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red"
+                >
+                  회원탈퇴
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -32,8 +32,12 @@ export interface BenchmarkResult {
 }
 
 export interface RiskResult {
-  riskLevel: string;
-  summary: string;
+  riskLevel: string; // LOW, MEDIUM, HIGH
+  summary: string; // 위험 분석 요약
+  // 아래 세부 점수는 백엔드 배포 시점에 따라 아직 응답에 없을 수 있어 optional 처리
+  incomeBalanceRiskScore?: number; // 수입·고정지출·저축목표 균형 위험도
+  debtRiskScore?: number; // 보유자산 대비 부채 위험도
+  investmentConcentrationRiskScore?: number; // 특정 투자자산 편중 위험도
 }
 
 export interface AnalysisResponse {
