@@ -29,4 +29,6 @@ body {
   --color-primary-mint-500: #75e0d7;
   --color-primary-mint-300: #b5e6e3;
   --color-primary-mint-200: #cceaeb;
+
+  --breakpoint-mid: 900px;
 }

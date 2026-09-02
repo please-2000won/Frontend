@@ -42,6 +42,10 @@ export interface UserInfo {
   nickname: string;
 }
 
+export interface WithDrawRequest {
+  password: string;
+}
+
 //회원가입 API
 //성공 여부 확인
 export const signup = async (signupData: SignupRequest): Promise<void> => {
@@ -77,6 +81,15 @@ export const logout = async (): Promise<void> => {
 //내 정보 조회 API
 export const getMyInfo = async (): Promise<UserInfo> => {
   const response = await api.get<ApiResponse<UserInfo>>('/api/v1/users/me');
+
+  return response.data.result;
+};
+
+//회원 탈퇴 API (delete 인자 전달시 묶어서 전달 필요)
+export const withDraw = async (data: WithDrawRequest): Promise<void> => {
+  const response = await api.delete<ApiResponse<void>>('/api/v1/users/me', {
+    data: data,
+  });
 
   return response.data.result;
 };
