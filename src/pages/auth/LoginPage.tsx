@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, getMyInfo } from '../api/authAPI';
-import useAuthStore from '../stores/useAuthStore';
-import useGuestModeStore from '../stores/useGuestModeStore';
+import { login, getMyInfo } from '../../api/authAPI';
+import useAuthStore from '../../stores/useAuthStore';
+import useGuestModeStore from '../../stores/useGuestModeStore';
+import logo from '../../assets/logo/logo.svg';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -51,16 +52,23 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex h-screen w-full">
-      <div className="flex flex-col w-1/2 bg-primary-mint-300 justify-end pl-20 pb-10 ">
-        <h1 className="text-[48px] text-primary-mint-900 font-semibold mx-3 ">
+    <div className="flex flex-col mid:flex-row min-h-screen w-full">
+      <div className="flex flex-col w-full mid:w-1/2 bg-primary-mint-300 justify-center mid:justify-between px-8 py-16 mid:pl-20 mid:py-10 gap-6 mid:gap-0">
+        <div>
+          <img
+            src={logo}
+            alt="peerfolio"
+            className="w-[160px] mid:w-[311px] h-[auto] mid:h-[67px]"
+          />
+        </div>
+        <h1 className="text-[32px] mid:text-[48px] text-primary-mint-900 font-semibold mt-0 mid:mx-3 break-keep">
           나와 비슷한 사람들은
           <br />
           어떻게 모으고 있을까?
         </h1>
       </div>
-      <div className="flex flex-col w-1/2 items-center justify-center">
-        <div className="flex flex-col w-[438px] mx-auto gap-5">
+      <div className="flex flex-col w-full mid:w-1/2 items-center justify-center my-auto">
+        <div className="flex flex-col w-[90%] max-w-[438px] mx-auto gap-5">
           <div className="flex flex-col gap-3">
             <h1 className="text-black text-[32px] font-semibold">로그인</h1>
             <p className="text-[16px]">

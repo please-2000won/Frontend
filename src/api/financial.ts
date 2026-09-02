@@ -47,7 +47,7 @@ export interface MyFinancialResult {
 export const saveFinancial = async (
   data: FinacialSaveRequest
 ): Promise<void> => {
-  await api.post<ApiResponse<void>>('/api/v1/financial-info', data);
+  await api.put<ApiResponse<void>>('/api/v1/financial-info', data);
 };
 
 //내 금융정보 조회(요청 리퀘 없고, 응답 있음)

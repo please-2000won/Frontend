@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LogoBlack from '../../assets/LogoBlack.svg';
 import useAuthStore from '../../stores/useAuthStore';
 import useGuestModeStore from '../../stores/useGuestModeStore';
+import logo from '../../assets/logo/logo.svg';
 
 const TopNavbar = () => {
   const userInfo = useAuthStore((state) => state.userInfo);
@@ -40,16 +41,14 @@ const TopNavbar = () => {
   return (
     <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-system-background">
       <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between px-5">
-        <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="cursor-pointer"
-        >
-          <img src={LogoBlack} alt="Peerfolio" className="h-8" />
-        </button>
+        <div>
+          <img src={logo} alt="peerfolio" className="w-[186px] h-[40px]" />
+        </div>
         {!userInfo && isGuestMode && (
           <div className="flex items-center gap-3">
-            <span className="text-[16px] text-gray-700">게스트로 둘러보는 중</span>
+            <span className="text-[16px] text-gray-700">
+              게스트로 둘러보는 중
+            </span>
             <button
               type="button"
               onClick={() => navigate('/login')}
@@ -82,9 +81,16 @@ const TopNavbar = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red"
+                className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red mb-3"
               >
                 로그아웃
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/withdraw')}
+                className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red"
+              >
+                회원탈퇴
               </button>
             </div>
           </div>

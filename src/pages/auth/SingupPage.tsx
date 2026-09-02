@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sendEmailCode, signup } from '../api/authAPI';
+import { sendEmailCode, signup } from '../../api/authAPI';
 
 const SingupPage = () => {
   const navigate = useNavigate();
@@ -128,12 +128,13 @@ const SingupPage = () => {
       const result = await sendEmailCode({ email });
 
       //수정필요
-      alert(`인증번호가 발급되었습니다! [ ${result.verificationCode} ]`);
+      alert(`인증번호가 발급되었습니다! 메일함에서 확인해주세요.`);
       setAuthCodeComfrim(result.verificationCode);
       console.log(authCodeConfirm);
     } catch (error) {
       console.error(error);
       alert('인증번호 발급에 실패하였습니다. 이메일을 다시 확인해주세요.');
+    } finally {
       setIsCodeLoading(false);
     }
   };
@@ -152,7 +153,7 @@ const SingupPage = () => {
     email.length > 0 &&
     password.length > 0 &&
     passwordConfirm.length > 0 &&
-    !authCode &&
+    authCode.length > 0 &&
     !nameError &&
     !emailError &&
     !pwLengthError &&
@@ -202,7 +203,7 @@ const SingupPage = () => {
                   onClick={handleAuthCode}
                   disabled={isCodeLoading}
                 >
-                  인증코드 발송
+                  {isCodeLoading ? '발송 중...' : '인증코드 발송'}
                 </button>
               </div>
               {emailError && (
