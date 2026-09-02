@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LogoBlack from '../../assets/LogoBlack.svg';
+import logo from '../../assets/logo/logo.svg';
 import useAuthStore from '../../stores/useAuthStore';
 import useGuestModeStore from '../../stores/useGuestModeStore';
-import logo from '../../assets/logo/logo.svg';
 
 const TopNavbar = () => {
   const userInfo = useAuthStore((state) => state.userInfo);
