@@ -5,6 +5,7 @@ import ComparisonSection from '../components/main/sections/ComparisonSection';
 import SimilarPeopleSection from '../components/main/sections/SimilarPeopleSection';
 import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import { useMainPageData } from '../hooks/useMainPageData';
+import { usePeerGroupAnalysis } from '../hooks/usePeerGroupAnalysis';
 import useAuthStore from '../stores/useAuthStore';
 import useGuestModeStore from '../stores/useGuestModeStore';
 import type { SimilarPersonData } from '../constants/main/mockData';
@@ -21,6 +22,10 @@ const MainPage = () => {
   const name = userName ?? (isGuestMode ? GUEST_NAME : DEFAULT_NAME);
 
   const { hasAssetInfo, assetCards, investCards, myProfile } = useMainPageData(isGuestMode);
+  const { peerGroupProfile, aiAnalysisText, reanalyze } = usePeerGroupAnalysis(
+    isGuestMode,
+    hasAssetInfo
+  );
 
   const [selectedPeer, setSelectedPeer] = useState<SimilarPersonData | null>(null);
 
@@ -43,8 +48,10 @@ const MainPage = () => {
       />
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
-        onReanalyzeClick={() => {}}
+        onReanalyzeClick={reanalyze}
         myProfile={myProfile}
+        peerGroupProfile={peerGroupProfile}
+        aiAnalysisText={aiAnalysisText}
       />
       {hasAssetInfo && <SimilarPeopleSection onSelectPeer={setSelectedPeer} />}
       {selectedPeer && (

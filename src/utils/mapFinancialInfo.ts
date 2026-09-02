@@ -1,3 +1,4 @@
+import type { AnalysisResponse } from '../api/analysis';
 import type { MyFinancialResult } from '../api/financial';
 import type { AssetCardData, InvestCardData, PeerFinancialProfile } from '../constants/main/mockData';
 
@@ -54,6 +55,20 @@ export const mapToProfile = (info: MyFinancialResult): PeerFinancialProfile => {
     foreignStock: foreignStockAmount,
     depositBond: depositBondAmount,
     alternative: alternativeAmount,
+  };
+};
+
+// Peer Group 비교 차트에서 쓰는 피어 그룹 평균 프로필 (/api/v1/analysis 응답 매핑)
+export const mapToPeerGroupProfile = (analysis: AnalysisResponse): PeerFinancialProfile => {
+  const { profile, investment } = analysis.benchmarkResult;
+
+  return {
+    totalIncome: profile.averageMonthlyIncome,
+    cash: profile.averageTotalAssetAmount,
+    domesticStock: investment.averageDomesticStockAmount,
+    foreignStock: investment.averageForeignStockAmount,
+    depositBond: investment.averageDepositBondAmount,
+    alternative: investment.averageAlternativeAmount,
   };
 };
 

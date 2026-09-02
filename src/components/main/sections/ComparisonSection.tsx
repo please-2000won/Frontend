@@ -1,21 +1,25 @@
 import PillButton from '../ui/PillButton';
 import PeerBarChart from '../ui/PeerBarChart';
 import PeerPieChart from '../ui/PeerPieChart';
-import {
-  AI_ANALYSIS_TEXT,
-  DEFAULT_PEER_GROUP_PROFILE,
-  type PeerFinancialProfile,
-} from '../../../constants/main/mockData';
+import type { PeerFinancialProfile } from '../../../constants/main/mockData';
 import { buildComparisonGroups } from '../../../utils/buildComparisonGroups';
 
 interface ComparisonSectionProps {
   hasAssetInfo: boolean;
   onReanalyzeClick: () => void;
   myProfile: PeerFinancialProfile;
+  peerGroupProfile: PeerFinancialProfile;
+  aiAnalysisText: string;
 }
 
-const ComparisonSection = ({ hasAssetInfo, onReanalyzeClick, myProfile }: ComparisonSectionProps) => {
-  const groups = buildComparisonGroups(myProfile, DEFAULT_PEER_GROUP_PROFILE);
+const ComparisonSection = ({
+  hasAssetInfo,
+  onReanalyzeClick,
+  myProfile,
+  peerGroupProfile,
+  aiAnalysisText,
+}: ComparisonSectionProps) => {
+  const groups = buildComparisonGroups(myProfile, peerGroupProfile);
 
   return (
     <section className="bg-system-background">
@@ -47,7 +51,7 @@ const ComparisonSection = ({ hasAssetInfo, onReanalyzeClick, myProfile }: Compar
                 AI 분석
               </h3>
               <p className="text-[16px] font-medium leading-[1.3] tracking-[-0.5px] text-gray-800 sm:text-[20px]">
-                {AI_ANALYSIS_TEXT}
+                {aiAnalysisText}
               </p>
             </div>
 
@@ -71,7 +75,7 @@ const ComparisonSection = ({ hasAssetInfo, onReanalyzeClick, myProfile }: Compar
                 myLabel="나"
                 myProfile={myProfile}
                 otherLabel="Peer Group 평균"
-                otherProfile={DEFAULT_PEER_GROUP_PROFILE}
+                otherProfile={peerGroupProfile}
               />
             </div>
           </>

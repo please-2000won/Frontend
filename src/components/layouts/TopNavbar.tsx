@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LogoBlack from '../../assets/LogoBlack.svg';
 import useAuthStore from '../../stores/useAuthStore';
 import useGuestModeStore from '../../stores/useGuestModeStore';
 
@@ -38,7 +39,14 @@ const TopNavbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-system-background">
-      <div className="mx-auto flex h-full max-w-[1080px] items-center justify-end px-5">
+      <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between px-5">
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="cursor-pointer"
+        >
+          <img src={LogoBlack} alt="Peerfolio" className="h-8" />
+        </button>
         {!userInfo && isGuestMode && (
           <div className="flex items-center gap-3">
             <span className="text-[16px] text-gray-700">게스트로 둘러보는 중</span>
