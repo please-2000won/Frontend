@@ -1,4 +1,6 @@
+import type { AnalysisResponse } from '../api/analysis';
 import type { MyFinancialResult } from '../api/financial';
+import type { PeerFinancialSummary } from '../api/peers';
 import type { AssetCardData, InvestCardData, PeerFinancialProfile } from '../constants/main/mockData';
 
 export const formatWon = (amount: number) => `${amount.toLocaleString('ko-KR')}원`;
@@ -9,20 +11,21 @@ export const mapToAssetCards = (info: MyFinancialResult): AssetCardData[] => {
   const { monthlyIncome, fixedExpense, savingsGoal, totalAssetAmount, totalDebtAmount, netAssetAmount } =
     financialProfile;
 
+  // 라벨은 정보 입력 폼과 통일한다.
   return [
     {
       tag: '총 수입',
       rows: [
         { label: '월 수입', value: formatWon(monthlyIncome), emphasis: true },
-        { label: '고정 지출', value: formatExpenseWon(fixedExpense) },
-        { label: '저축', value: formatExpenseWon(savingsGoal) },
+        { label: '월 고정 지출', value: formatExpenseWon(fixedExpense) },
+        { label: '월 저축 계획', value: formatExpenseWon(savingsGoal) },
       ],
       total: formatWon(monthlyIncome - fixedExpense - savingsGoal),
     },
     {
-      tag: '현금',
+      tag: '보유 자산',
       rows: [
-        { label: '보유 자산', value: formatWon(totalAssetAmount), emphasis: true },
+        { label: '현금', value: formatWon(totalAssetAmount), emphasis: true },
         { label: '부채', value: formatExpenseWon(totalDebtAmount) },
       ],
       total: formatWon(netAssetAmount),
@@ -54,6 +57,36 @@ export const mapToProfile = (info: MyFinancialResult): PeerFinancialProfile => {
     foreignStock: foreignStockAmount,
     depositBond: depositBondAmount,
     alternative: alternativeAmount,
+  };
+};
+
+// 피어 1:1 비교 API(/api/v1/peers/{id}) 응답의 me/peer 요약을 차트용 프로필로 변환
+export const mapSummaryToProfile = (
+  summary: PeerFinancialSummary
+): PeerFinancialProfile => {
+  const { totalIncome, cash, investmentAsset } = summary;
+
+  return {
+    totalIncome,
+    cash,
+    domesticStock: investmentAsset.domesticStockAmount,
+    foreignStock: investmentAsset.foreignStockAmount,
+    depositBond: investmentAsset.depositBondAmount,
+    alternative: investmentAsset.alternativeAmount,
+  };
+};
+
+// Peer Group 비교 차트에서 쓰는 피어 그룹 평균 프로필 (/api/v1/analysis 응답 매핑)
+export const mapToPeerGroupProfile = (analysis: AnalysisResponse): PeerFinancialProfile => {
+  const { profile, investment } = analysis.benchmarkResult;
+
+  return {
+    totalIncome: profile.averageMonthlyIncome,
+    cash: profile.averageTotalAssetAmount,
+    domesticStock: investment.averageDomesticStockAmount,
+    foreignStock: investment.averageForeignStockAmount,
+    depositBond: investment.averageDepositBondAmount,
+    alternative: investment.averageAlternativeAmount,
   };
 };
 

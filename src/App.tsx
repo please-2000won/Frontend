@@ -7,6 +7,7 @@ import MainPage from '../src/pages/MainPage';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SingupPage';
 import InfoInputPage from './pages/InfoInputPage';
+import ChatbotPage from './pages/ChatbotPage';
 import WithdrawPage from './pages/auth/WithDrawPage';
 
 function App() {
@@ -16,6 +17,8 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<MainPage />} />
           <Route path="/infoInput" element={<InfoInputPage />} />
+          {/* 챗봇 경로 확정 전까지 쓰는 임시 라우트 */}
+          <Route path="/chatbot" element={<ChatbotPage />} />
         </Route>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />

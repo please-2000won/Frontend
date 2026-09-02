@@ -48,17 +48,23 @@ const buildRadarData = (my: PeerFinancialProfile, other: PeerFinancialProfile): 
 interface RadarTooltipProps {
   active?: boolean;
   payload?: { payload: RadarDatum }[];
+  myName: string;
+  peerName: string;
 }
 
-const RadarTooltip = ({ active, payload }: RadarTooltipProps) => {
+const RadarTooltip = ({ active, payload, myName, peerName }: RadarTooltipProps) => {
   if (!active || !payload?.length) return null;
   const datum = payload[0].payload;
 
   return (
     <div className="rounded-lg border border-gray-100 bg-white p-3 text-[13px] shadow-md">
       <p className="mb-1 font-semibold text-primary-mint-900">{datum.axis}</p>
-      <p className="text-gray-700">나: {formatWon(datum.myRaw)}</p>
-      <p className="text-gray-700">상대: {formatWon(datum.otherRaw)}</p>
+      <p className="text-gray-800">
+        {myName}: {formatWon(datum.myRaw)}
+      </p>
+      <p className="text-gray-800">
+        {peerName}: {formatWon(datum.otherRaw)}
+      </p>
     </div>
   );
 };
@@ -77,7 +83,7 @@ const PeerCompareRadarChart = ({
         <PolarGrid stroke="#e5e5e5" />
         <PolarAngleAxis dataKey="axis" tick={{ fontSize: 13, fill: '#555' }} />
         <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-        <Tooltip content={<RadarTooltip />} />
+        <Tooltip content={<RadarTooltip myName={myName} peerName={peerName} />} />
         <Radar
           name={myName}
           dataKey="my"

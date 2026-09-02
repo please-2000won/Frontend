@@ -1,6 +1,11 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { formatWon } from '../../../utils/mapFinancialInfo';
 import type { ComparisonMetric } from '../../../utils/buildComparisonGroups';
+import {
+  TOOLTIP_CONTENT_STYLE,
+  TOOLTIP_ITEM_STYLE,
+  TOOLTIP_LABEL_STYLE,
+} from './chartTooltipStyle';
 
 interface PeerBarChartProps {
   title: string;
@@ -11,6 +16,10 @@ interface PeerBarChartProps {
 
 const MY_COLOR = '#00897e';
 const OTHER_COLOR = '#b5e6e3';
+
+// 값이 아주 작아도(0 제외) 최소 너비만큼은 보이도록 한다.
+const minBarSize = (value: number | null | undefined) =>
+  value != null && value > 0 ? 4 : 0;
 
 const PeerBarChart = ({ title, metrics, myLabel, otherLabel }: PeerBarChartProps) => {
   return (
@@ -35,14 +44,28 @@ const PeerBarChart = ({ title, metrics, myLabel, otherLabel }: PeerBarChartProps
             width={110}
             tick={{ fontSize: 14, fill: '#013e39' }}
           />
-          <Tooltip formatter={(value) => formatWon(Number(value))} />
+          <Tooltip
+            formatter={(value) => formatWon(Number(value))}
+            contentStyle={TOOLTIP_CONTENT_STYLE}
+            labelStyle={TOOLTIP_LABEL_STYLE}
+            itemStyle={TOOLTIP_ITEM_STYLE}
+            cursor={{ fill: 'rgba(0, 137, 126, 0.06)' }}
+          />
           <Legend wrapperStyle={{ fontSize: 13 }} />
-          <Bar dataKey="my" name={myLabel} fill={MY_COLOR} radius={[0, 6, 6, 0]} animationDuration={700} />
+          <Bar
+            dataKey="my"
+            name={myLabel}
+            fill={MY_COLOR}
+            radius={[0, 6, 6, 0]}
+            minPointSize={minBarSize}
+            animationDuration={700}
+          />
           <Bar
             dataKey="other"
             name={otherLabel}
             fill={OTHER_COLOR}
             radius={[0, 6, 6, 0]}
+            minPointSize={minBarSize}
             animationDuration={700}
           />
         </BarChart>

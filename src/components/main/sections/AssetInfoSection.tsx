@@ -61,14 +61,16 @@ const AssetInfoSection = ({
             <h2 className="text-[24px] font-semibold tracking-[-1.2px] text-primary-mint-900">
               자산 정보
             </h2>
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+            {/* 왼쪽은 항목 3개, 오른쪽은 2개라 높이가 다르므로
+                items-stretch + 행 영역 flex-1로 구분선과 합계 줄을 맞춘다. */}
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-stretch">
               {assetCards.map((card) => (
                 <div
                   key={card.tag}
                   className="flex w-full flex-col items-start gap-5 rounded-[16px] bg-white p-[26px] sm:w-[530px]"
                 >
                   <Tag>{card.tag}</Tag>
-                  <div className="flex w-full flex-col gap-[15px] text-[20px] font-medium tracking-[-1px]">
+                  <div className="flex w-full flex-1 flex-col justify-between gap-[15px] text-[20px] font-medium tracking-[-1px]">
                     {card.rows.map((row) => (
                       <div
                         key={row.label}

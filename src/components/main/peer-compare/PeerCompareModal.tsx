@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { PeerFinancialProfile, SimilarPersonData } from '../../../constants/main/mockData';
+import type { PeerFinancialProfile } from '../../../constants/main/mockData';
 import { buildComparisonGroups } from '../../../utils/buildComparisonGroups';
 import PeerBarChart from '../ui/PeerBarChart';
 import PeerPieChart from '../ui/PeerPieChart';
@@ -10,7 +10,8 @@ type PeerCompareViewMode = 'bar' | 'pie' | 'radar';
 interface PeerCompareModalProps {
   myName: string;
   myProfile: PeerFinancialProfile;
-  peer: SimilarPersonData;
+  peerName: string;
+  peerProfile: PeerFinancialProfile;
   onClose: () => void;
 }
 
@@ -20,7 +21,13 @@ const VIEW_MODE_OPTIONS: { mode: PeerCompareViewMode; label: string }[] = [
   { mode: 'radar', label: '레이더 차트' },
 ];
 
-const PeerCompareModal = ({ myName, myProfile, peer, onClose }: PeerCompareModalProps) => {
+const PeerCompareModal = ({
+  myName,
+  myProfile,
+  peerName,
+  peerProfile,
+  onClose,
+}: PeerCompareModalProps) => {
   const [viewMode, setViewMode] = useState<PeerCompareViewMode>('bar');
 
   useEffect(() => {
@@ -31,7 +38,7 @@ const PeerCompareModal = ({ myName, myProfile, peer, onClose }: PeerCompareModal
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const groups = buildComparisonGroups(myProfile, peer.financialProfile);
+  const groups = buildComparisonGroups(myProfile, peerProfile);
 
   return (
     <div
@@ -48,7 +55,7 @@ const PeerCompareModal = ({ myName, myProfile, peer, onClose }: PeerCompareModal
               나
             </span>
             <span className="text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">
-              {peer.nickname}
+              {peerName}
             </span>
           </div>
           <button
@@ -88,7 +95,7 @@ const PeerCompareModal = ({ myName, myProfile, peer, onClose }: PeerCompareModal
                 title={group.title}
                 metrics={group.metrics}
                 myLabel="나"
-                otherLabel={peer.nickname}
+                otherLabel={peerName}
               />
             ))}
           </div>
@@ -97,16 +104,16 @@ const PeerCompareModal = ({ myName, myProfile, peer, onClose }: PeerCompareModal
           <PeerPieChart
             myLabel="나"
             myProfile={myProfile}
-            otherLabel={peer.nickname}
-            otherProfile={peer.financialProfile}
+            otherLabel={peerName}
+            otherProfile={peerProfile}
           />
         )}
         {viewMode === 'radar' && (
           <PeerCompareRadarChart
             myName={myName}
-            peerName={peer.nickname}
+            peerName={peerName}
             myProfile={myProfile}
-            peerProfile={peer.financialProfile}
+            peerProfile={peerProfile}
           />
         )}
       </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { withDraw } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
+import { clearAnalysisStorage } from '../../utils/analysisStorage';
 
 const WithdrawPage = () => {
   const navigate = useNavigate();
@@ -23,8 +24,9 @@ const WithdrawPage = () => {
 
         alert('회원탈퇴가 완료되었습니다. 이용해주셔서 감사합니다.');
         clearAuth();
+        clearAnalysisStorage();
         navigate('/login');
-      } catch (error) {
+      } catch {
         alert('회원탈퇴에 실패하였습니다. 비밀번호를 다시 확인해주세요.');
       } finally {
         setIsLoading(false);

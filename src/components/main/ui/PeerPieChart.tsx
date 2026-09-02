@@ -1,6 +1,11 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { formatWon } from '../../../utils/mapFinancialInfo';
 import type { PeerFinancialProfile } from '../../../constants/main/mockData';
+import {
+  TOOLTIP_CONTENT_STYLE,
+  TOOLTIP_ITEM_STYLE,
+  TOOLTIP_LABEL_STYLE,
+} from './chartTooltipStyle';
 
 const CATEGORIES = [
   { key: 'domesticStock', name: '국내 주식', color: '#013e39' },
@@ -37,13 +42,19 @@ const InvestmentPieChart = ({ label, profile }: InvestmentPieChartProps) => {
             innerRadius={48}
             outerRadius={90}
             paddingAngle={2}
+            minAngle={3}
             animationDuration={700}
           >
             {data.map((entry) => (
               <Cell key={entry.name} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip formatter={(value, name) => [formatWon(Number(value)), name]} />
+          <Tooltip
+            formatter={(value, name) => [formatWon(Number(value)), name]}
+            contentStyle={TOOLTIP_CONTENT_STYLE}
+            labelStyle={TOOLTIP_LABEL_STYLE}
+            itemStyle={TOOLTIP_ITEM_STYLE}
+          />
         </PieChart>
       </ResponsiveContainer>
       <div className="flex flex-col gap-1.5">
