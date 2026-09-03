@@ -16,7 +16,7 @@ const AnalysisLoadingModal = ({ open }: AnalysisLoadingModalProps) => {
           aria-label="분석 중"
         />
         <div className="flex flex-col items-center gap-1 text-center">
-          <p className="text-[18px] font-semibold tracking-[-0.9px] text-primary-mint-900">
+          <p className="text-[18px] font-semibold text-primary-mint-900">
             AI가 분석하고 있어요
           </p>
           <p className="text-[14px] font-medium text-gray-700">

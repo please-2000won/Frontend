@@ -44,7 +44,7 @@ const LoginPage = () => {
       setUserInfo(userInfoData);
 
       navigate('/');
-    } catch (error) {
+    } catch {
       alert('로그인에 실패하였습니다. 이메일과 비밀번호를 확인해주세요.');
     } finally {
       setIsLoading(false);
@@ -97,19 +97,20 @@ const LoginPage = () => {
             <div className="pt-5 flex flex-col gap-3">
               <button
                 type="submit"
-                disabled={isLoading}
-                className={`py-4 w-full rounded-lg text-white text-[16px] cursor-pointer ${email && password ? 'bg-primary-mint-800' : 'bg-gray-300'}`}
+                disabled={isLoading || !email || !password}
+                className={`py-4 w-full rounded-lg text-white text-[16px] cursor-pointer disabled:cursor-not-allowed ${email && password ? 'bg-primary-mint-800' : 'bg-gray-300'}`}
               >
                 {isLoading ? '로그인 중...' : '로그인'}
               </button>
-              <div
-                className="py-4 w-full bg-white text-primary-mint-800 border border-primiary-mint-800 rounded-lg text-center text-[16px] cursor-pointer"
+              <button
+                type="button"
+                className="py-4 w-full bg-white text-primary-mint-800 border border-primary-mint-800 rounded-lg text-center text-[16px] font-semibold cursor-pointer"
                 onClick={() => {
-                  navigate('/Signup');
+                  navigate('/signup');
                 }}
               >
                 이메일로 시작하기
-              </div>
+              </button>
             </div>
           </form>
 

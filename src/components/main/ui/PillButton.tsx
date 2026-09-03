@@ -25,7 +25,7 @@ const PillButton = ({
 }: PillButtonProps) => {
   return (
     <button
-      className={`shrink-0 cursor-pointer whitespace-nowrap rounded-[100px] font-semibold tracking-[-0.8px] transition-colors ${VARIANT_CLASSNAMES[variant]} ${SIZE_CLASSNAMES[size]} ${className}`}
+      className={`shrink-0 cursor-pointer whitespace-nowrap rounded-[100px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${VARIANT_CLASSNAMES[variant]} ${SIZE_CLASSNAMES[size]} ${className}`}
       {...props}
     >
       {children}

@@ -64,7 +64,7 @@ const TopNavbar = () => {
             <button
               type="button"
               onClick={() => setIsOpen((prev) => !prev)}
-              className="cursor-pointer text-[24px] tracking-[-1.2px] text-black"
+              className="cursor-pointer text-[24px] text-black"
             >
               <span className="font-semibold">{userInfo.name}</span>
               <span className="font-medium"> 님</span>
@@ -76,7 +76,7 @@ const TopNavbar = () => {
               }`}
             >
               <div className="rounded-[12px] border border-gray-100 bg-white p-5 shadow-lg">
-                <p className="text-[13px] text-gray-300">닉네임</p>
+                <p className="text-[13px] text-gray-700">닉네임</p>
                 <p className="mb-4 text-[18px] font-semibold text-primary-mint-900">
                   {userInfo.nickname}
                 </p>

@@ -47,10 +47,10 @@ const WithdrawPage = () => {
         <div className="flex flex-col">
           <form onSubmit={handleWithdraw} className="flex flex-col gap-7">
             <div className="bg-gray-100 p-6 rounded-lg flex flex-col gap-2">
-              <p className="font-semibold text-[16px] text-system-red text-red-500">
+              <p className="font-semibold text-[16px] text-system-red">
                 탈퇴 전 반드시 확인해주세요!
               </p>
-              <ul className="text-[14px] text-gray-600 list-disc list-inside">
+              <ul className="text-[14px] text-gray-700 list-disc list-inside">
                 <li>탈퇴 시 모든 계정 정보 및 이용 내역이 삭제됩니다.</li>
                 <li>삭제된 데이터는 어떠한 경우에도 복구할 수 없습니다.</li>
               </ul>
@@ -92,7 +92,7 @@ const WithdrawPage = () => {
               disabled={!isFormValid || isLoading}
               className={`${
                 isFormValid ? 'bg-red-500' : 'bg-gray-300'
-              } px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer mt-4`}
+              } px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer disabled:cursor-not-allowed mt-4`}
             >
               {isLoading ? '탈퇴 처리 중...' : '탈퇴하기'}
             </button>
@@ -100,8 +100,9 @@ const WithdrawPage = () => {
             {/* 취소 버튼 (옵션) */}
             <button
               type="button"
+              disabled={isLoading}
               onClick={() => navigate(-1)}
-              className="px-20 py-4 text-[16px] font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer"
+              className="px-20 py-4 text-[16px] font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer disabled:cursor-not-allowed"
             >
               취소
             </button>

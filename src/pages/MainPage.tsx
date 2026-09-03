@@ -30,7 +30,13 @@ const MainPage = () => {
     useMainPageData(isGuestMode);
   const { peerGroupProfile, aiAnalysisText, risk, analysis, isAnalyzing, isStale, reanalyze } =
     usePeerGroupAnalysis(isGuestMode, hasAssetInfo, userInfo?.userId, financialInfo);
-  const { peers, getComparison } = useSimilarPeers(isGuestMode, hasAssetInfo);
+  const {
+    peers,
+    isLoading: isPeersLoading,
+    isError: isPeersError,
+    getComparison,
+    refetch: refetchPeers,
+  } = useSimilarPeers(isGuestMode, hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
 
@@ -56,6 +62,12 @@ const MainPage = () => {
     if (payload) setCompare(payload);
   };
 
+  // 재분석하면 피어 매칭도 새로 갱신되므로 추천 피어를 다시 불러온다.
+  const handleReanalyze = async () => {
+    await reanalyze();
+    await refetchPeers();
+  };
+
   return (
     <div className="flex flex-col">
       <AssetInfoSection
@@ -68,7 +80,7 @@ const MainPage = () => {
       />
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
-        onReanalyzeClick={reanalyze}
+        onReanalyzeClick={handleReanalyze}
         onAskChatbot={() => navigate(CHATBOT_PATH)}
         myProfile={myProfile}
         peerGroupProfile={peerGroupProfile}
@@ -77,7 +89,12 @@ const MainPage = () => {
         isStale={isStale}
       />
       {hasAssetInfo && (
-        <SimilarPeopleSection peers={peers} onSelectPeer={handleSelectPeer} />
+        <SimilarPeopleSection
+          peers={peers}
+          isLoading={isPeersLoading}
+          isError={isPeersError}
+          onSelectPeer={handleSelectPeer}
+        />
       )}
       {compare && (
         <PeerCompareModal

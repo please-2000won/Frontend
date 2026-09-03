@@ -5,6 +5,8 @@ html,
 body {
   font-family: var(--font-sans);
   background-color: var(--color-system-background);
+  /* 자간은 전역적으로 -2.5%로 통일한다. (em 단위라 글자 크기에 비례) */
+  letter-spacing: -0.025em;
 }
 
 /*색상 설정*/
