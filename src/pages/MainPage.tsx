@@ -28,8 +28,8 @@ const MainPage = () => {
 
   const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
     useMainPageData(isGuestMode);
-  const { peerGroupProfile, aiAnalysisText, risk, analysis, isAnalyzing, reanalyze } =
-    usePeerGroupAnalysis(isGuestMode, hasAssetInfo, userInfo?.userId);
+  const { peerGroupProfile, aiAnalysisText, risk, analysis, isAnalyzing, isStale, reanalyze } =
+    usePeerGroupAnalysis(isGuestMode, hasAssetInfo, userInfo?.userId, financialInfo);
   const { peers, getComparison } = useSimilarPeers(isGuestMode, hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
@@ -74,6 +74,7 @@ const MainPage = () => {
         peerGroupProfile={peerGroupProfile}
         aiAnalysisText={aiAnalysisText}
         risk={risk}
+        isStale={isStale}
       />
       {hasAssetInfo && (
         <SimilarPeopleSection peers={peers} onSelectPeer={handleSelectPeer} />

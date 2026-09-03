@@ -13,6 +13,8 @@ interface ComparisonSectionProps {
   peerGroupProfile: PeerFinancialProfile;
   aiAnalysisText: string;
   risk: RiskInfo | null;
+  // 현재 분석 결과가 예전 자산 정보 기준일 때 true
+  isStale?: boolean;
 }
 
 const ComparisonSection = ({
@@ -23,6 +25,7 @@ const ComparisonSection = ({
   peerGroupProfile,
   aiAnalysisText,
   risk,
+  isStale = false,
 }: ComparisonSectionProps) => {
   const groups = buildComparisonGroups(myProfile, peerGroupProfile);
 
@@ -51,6 +54,26 @@ const ComparisonSection = ({
 
         {hasAssetInfo && (
           <>
+            {isStale && (
+              <div className="flex items-start gap-3 rounded-[16px] border border-amber-300 bg-amber-50 px-5 py-4">
+                <span aria-hidden className="text-[16px] leading-[1.4]">
+                  ⚠️
+                </span>
+                <p className="text-[14px] font-medium leading-[1.5] text-amber-800">
+                  자산 정보가 변경되어 현재 분석 결과는 이전 정보를 기준으로 해요.
+                  최신 비교 결과를 보려면{' '}
+                  <button
+                    type="button"
+                    onClick={onReanalyzeClick}
+                    className="cursor-pointer font-semibold text-amber-900 underline underline-offset-2"
+                  >
+                    다시 분석하기
+                  </button>
+                  를 눌러 주세요.
+                </p>
+              </div>
+            )}
+
             <div className="flex flex-col gap-5 rounded-[32px] border border-gray-300 bg-white p-8">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <h3 className="text-[24px] font-semibold tracking-[-1.2px] text-primary-mint-900">
