@@ -99,7 +99,7 @@ const RiskAnalysisCard = ({ risk }: RiskAnalysisCardProps) => {
         <span className="text-[16px] font-semibold text-primary-mint-900">
           위험 분석 요약
         </span>
-        <p className="text-[16px] font-medium leading-[1.5] text-gray-800 sm:text-[20px]">
+        <p className="whitespace-pre-line text-[16px] font-medium leading-[1.5] text-gray-800 sm:text-[20px]">
           {risk.summary}
         </p>
       </div>

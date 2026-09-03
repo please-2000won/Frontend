@@ -94,7 +94,7 @@ const ComparisonSection = ({
                   챗봇에게 질문하기
                 </button>
               </div>
-              <p className="text-[16px] font-medium leading-[1.5] text-gray-800 sm:text-[20px]">
+              <p className="whitespace-pre-line text-[16px] font-medium leading-[1.5] text-gray-800 sm:text-[20px]">
                 {aiAnalysisText}
               </p>
             </div>
