@@ -24,7 +24,7 @@ const minBarSize = (value: number | null | undefined) =>
 const PeerBarChart = ({ title, metrics, myLabel, otherLabel }: PeerBarChartProps) => {
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-[20px] font-semibold tracking-[-1px] text-primary-mint-900">{title}</h3>
+      <h3 className="text-[20px] font-semibold text-primary-mint-900">{title}</h3>
       <ResponsiveContainer width="100%" height={metrics.length * 72 + 20}>
         <BarChart
           data={metrics}
@@ -36,7 +36,7 @@ const PeerBarChart = ({ title, metrics, myLabel, otherLabel }: PeerBarChartProps
           <XAxis
             type="number"
             tickFormatter={(value: number) => formatWon(value)}
-            tick={{ fontSize: 12, fill: '#999' }}
+            tick={{ fontSize: 12, fill: '#555555' }}
           />
           <YAxis
             type="category"
