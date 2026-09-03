@@ -18,7 +18,7 @@ export interface EmailCodeRequest {
   email: string;
 }
 
-export interface EmailCodeResult {
+export interface EmailCodeResponse {
   email: string;
   verificationCode: string;
 }
@@ -55,8 +55,8 @@ export const signup = async (signupData: SignupRequest): Promise<void> => {
 //이메일 인증번호 발급 API
 export const sendEmailCode = async (
   codeData: EmailCodeRequest
-): Promise<EmailCodeResult> => {
-  const response = await api.post<ApiResponse<EmailCodeResult>>(
+): Promise<EmailCodeResponse> => {
+  const response = await api.post<ApiResponse<EmailCodeResponse>>(
     '/api/v1/auth/email-code',
     codeData
   );

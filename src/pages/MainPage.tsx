@@ -7,16 +7,25 @@ import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
 import { useMainPageData } from '../hooks/useMainPageData';
 import { usePeerGroupAnalysis } from '../hooks/usePeerGroupAnalysis';
-import { useSimilarPeers, type PeerComparePayload } from '../hooks/useSimilarPeers';
+import {
+  useSimilarPeers,
+  type PeerComparePayload,
+} from '../hooks/useSimilarPeers';
 import { saveChatbotContext } from '../utils/analysisStorage';
 import useAuthStore from '../stores/useAuthStore';
 import useGuestModeStore from '../stores/useGuestModeStore';
+
+import { useOutletContext } from 'react-router-dom';
 
 const DEFAULT_NAME = '회원';
 const GUEST_NAME = '게스트';
 
 // 챗봇 경로가 확정되지 않아 임시로 사용하는 경로
 const CHATBOT_PATH = '/chatbot';
+
+type ChatContextType = {
+  setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -28,11 +37,20 @@ const MainPage = () => {
 
   const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
     useMainPageData(isGuestMode);
-  const { peerGroupProfile, aiAnalysisText, risk, analysis, isAnalyzing, reanalyze } =
-    usePeerGroupAnalysis(isGuestMode, hasAssetInfo, userInfo?.userId);
+
+  const {
+    peerGroupProfile,
+    aiAnalysisText,
+    risk,
+    analysis,
+    isAnalyzing,
+    reanalyze,
+  } = usePeerGroupAnalysis(isGuestMode, hasAssetInfo, userInfo?.userId);
   const { peers, getComparison } = useSimilarPeers(isGuestMode, hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
+
+  const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
   // 챗봇 페이지로 넘길 컨텍스트(내 금융정보 + 분석 결과)를 로컬스토리지에 담아둔다.
   useEffect(() => {
@@ -69,7 +87,7 @@ const MainPage = () => {
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
         onReanalyzeClick={reanalyze}
-        onAskChatbot={() => navigate(CHATBOT_PATH)}
+        onAskChatbot={() => setIsChatOpen(true)}
         myProfile={myProfile}
         peerGroupProfile={peerGroupProfile}
         aiAnalysisText={aiAnalysisText}
