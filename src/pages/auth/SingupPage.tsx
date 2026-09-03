@@ -18,6 +18,7 @@ const SingupPage = () => {
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
 
+  const [authCodeError, setAuthCodeError] = useState('');
   const [pwLengthError, setPwLengthError] = useState('');
   const [pwFormatError, setPwFormatError] = useState('');
   const [confirmError, setConfirmError] = useState('');
@@ -90,6 +91,7 @@ const SingupPage = () => {
     }
   }, [password, passwordConfirm]);
 
+  // 회원가입
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -110,7 +112,11 @@ const SingupPage = () => {
       alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
       navigate('/login');
     } catch (error) {
-      alert('회원가입에 실패하였습니다. 다시 시도해주세요.');
+      if ((error = 'AUTH_400_2')) {
+        setAuthCodeError('인증번호가 일치하지 않아요.');
+      } else {
+        alert('회원가입에 실패하였습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsLoginLoading(false);
     }
@@ -151,8 +157,6 @@ const SingupPage = () => {
   const isFormValid =
     name.length > 0 &&
     email.length > 0 &&
-    password.length > 0 &&
-    passwordConfirm.length > 0 &&
     authCode.length > 0 &&
     !nameError &&
     !emailError &&
@@ -179,11 +183,13 @@ const SingupPage = () => {
                 autoComplete="name"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
-              {nameError && (
-                <span className="text-[13px] text-system-red">
-                  {nameError}{' '}
-                </span>
-              )}
+              <div className="h-5">
+                {nameError && (
+                  <span className="text-[13px] text-system-red">
+                    {nameError}{' '}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -206,11 +212,13 @@ const SingupPage = () => {
                   {isCodeLoading ? '발송 중...' : '인증코드 발송'}
                 </button>
               </div>
-              {emailError && (
-                <span className="text-[13px] text-system-red">
-                  {emailError}
-                </span>
-              )}
+              <div className="h-5">
+                {emailError && (
+                  <span className="text-[13px] text-system-red">
+                    {emailError}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -223,6 +231,13 @@ const SingupPage = () => {
                 autoComplete="one-time-code"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
+              <div className="h-5">
+                {authCodeError && (
+                  <span className="text-[13px] text-system-red">
+                    {authCodeError}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -238,16 +253,18 @@ const SingupPage = () => {
               <span className="text-gray-200 text-[13px]">
                 · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
               </span>
-              {pwFormatError && (
-                <span className="text-[13px] text-system-red">
-                  {pwFormatError}
-                </span>
-              )}
-              {pwLengthError && (
-                <span className="text-[13px] text-system-red">
-                  {pwLengthError}
-                </span>
-              )}
+              <div className="flex flex-col h-5">
+                {pwFormatError && (
+                  <span className="text-[13px] text-system-red">
+                    {pwFormatError}
+                  </span>
+                )}
+                {pwLengthError && (
+                  <span className="text-[13px] text-system-red">
+                    {pwLengthError}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -263,11 +280,13 @@ const SingupPage = () => {
               <span className="text-gray-200 text-[13px]">
                 · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
               </span>
-              {confirmError && (
-                <span className="text-[13px] text-system-red">
-                  {confirmError}
-                </span>
-              )}
+              <div className="flex flex-col h-5">
+                {confirmError && (
+                  <span className="text-[13px] text-system-red">
+                    {confirmError}
+                  </span>
+                )}
+              </div>
             </div>
 
             <button
