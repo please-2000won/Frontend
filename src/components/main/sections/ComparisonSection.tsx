@@ -1,4 +1,3 @@
-import PillButton from '../ui/PillButton';
 import PeerBarChart from '../ui/PeerBarChart';
 import PeerPieChart from '../ui/PeerPieChart';
 import RiskAnalysisCard from '../ui/RiskAnalysisCard';
@@ -31,31 +30,24 @@ const ComparisonSection = ({
 
   return (
     <section className="bg-system-background">
-      <div className="mx-auto flex max-w-[1080px] flex-col gap-8 px-5 py-16">
-        <div className="flex items-start justify-between gap-5">
-          <div className="flex flex-col gap-5 text-primary-mint-900">
-            <h2 className="text-[32px] font-semibold leading-tight sm:text-[40px]">
-              나와 비슷한 사람들은
-              <br />
-              얼마나 벌고 어떻게 투자할까?
-            </h2>
-            <p className="text-[16px] font-medium leading-relaxed sm:text-[20px]">
-              다른 사람들의 통계를 기반으로,
-              <br />
-              객관적인 관점에서 본인의 투자행동을 바라볼 수 있어요.
-            </p>
-          </div>
-          {hasAssetInfo && (
-            <PillButton variant="outline" onClick={onReanalyzeClick}>
-              다시 분석하기
-            </PillButton>
-          )}
+      <div className="mx-auto flex max-w-[1080px] flex-col gap-6 px-5 py-12">
+        <div className="flex flex-col gap-5 text-primary-mint-900">
+          <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.04em] sm:text-[34px]">
+            나와 비슷한 사람들은
+            <br />
+            얼마나 벌고 어떻게 투자할까?
+          </h2>
+          <p className="text-[16px] font-medium leading-relaxed sm:text-[20px]">
+            다른 사람들의 통계를 기반으로,
+            <br />
+            객관적인 관점에서 본인의 투자행동을 바라볼 수 있어요.
+          </p>
         </div>
 
         {hasAssetInfo && (
           <>
             {isStale && (
-              <div className="flex flex-col gap-4 rounded-[20px] border-2 border-amber-400 bg-amber-50 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <div className="flex flex-col gap-4 rounded-2xl border-2 border-amber-400 bg-amber-50 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 <div className="flex items-start gap-4">
                   <span aria-hidden className="text-[32px] leading-none">
                     ⚠️
@@ -80,21 +72,21 @@ const ComparisonSection = ({
               </div>
             )}
 
-            <div className="flex flex-col gap-5 rounded-[32px] border border-gray-300 bg-white p-8">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <h3 className="text-[24px] font-semibold text-primary-mint-900">
+            <div className="flex flex-col gap-4 rounded-2xl border border-gray-300 bg-white p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="text-[18px] font-semibold tracking-[-0.04em] text-primary-mint-900">
                   AI 분석
                 </h3>
                 <button
                   type="button"
                   onClick={onAskChatbot}
-                  className="flex shrink-0 cursor-pointer items-center gap-2 rounded-full bg-primary-mint-800 px-5 py-2.5 text-[16px] font-semibold text-white transition-colors hover:bg-primary-mint-900"
+                  className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-primary-mint-800 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-primary-mint-900"
                 >
                   <span aria-hidden>🤖</span>
                   챗봇에게 질문하기
                 </button>
               </div>
-              <p className="whitespace-pre-line text-[16px] font-medium leading-[1.5] text-gray-800 sm:text-[20px]">
+              <p className="whitespace-pre-line text-[14px] font-medium leading-[1.6] text-gray-800 sm:text-[15px]">
                 {aiAnalysisText}
               </p>
             </div>
@@ -114,7 +106,7 @@ const ComparisonSection = ({
             </div>
 
             <div className="flex flex-col gap-4">
-              <h3 className="text-[20px] font-semibold text-primary-mint-900">
+              <h3 className="text-[18px] font-semibold tracking-[-0.04em] text-primary-mint-900">
                 투자 자산 비중
               </h3>
               <PeerPieChart

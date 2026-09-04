@@ -82,7 +82,7 @@ const ChatLayout = () => {
       <TopNavbar />
 
       {/* 네브바 아래 영역 */}
-      <div className="flex flex-1 min-h-0 pt-[80px]">
+      <div className="flex flex-1 min-h-0 pt-[60px]">
         {/* 왼쪽: 챗봇 열리면 50%, 닫히면 100% */}
         <motion.div
           animate={{

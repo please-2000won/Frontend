@@ -20,7 +20,7 @@ const ChatbotPage = () => {
         곧 이곳에서 AI 분석 결과에 대해 자유롭게 질문할 수 있어요. (임시 페이지입니다.)
       </p>
 
-      <div className="rounded-[16px] border border-gray-100 bg-white p-6">
+      <div className="rounded-2xl border border-gray-100 bg-white p-5">
         <p className="mb-3 text-[14px] font-semibold text-primary-mint-900">
           챗봇에 전달될 컨텍스트
         </p>

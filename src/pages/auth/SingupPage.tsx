@@ -114,7 +114,14 @@ const SingupPage = () => {
       alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
       navigate('/login');
     } catch (error) {
-      if ((error = 'AUTH_400_2')) {
+      const res = (
+        error as {
+          response?: { status?: number; data?: { code?: string } };
+        }
+      )?.response;
+      if (res?.status === 409) {
+        setEmailError('이미 가입된 이메일이에요.');
+      } else if (res?.status === 400 || res?.data?.code === 'AUTH_400_2') {
         setAuthCodeError('인증번호가 일치하지 않아요.');
       } else {
         alert('회원가입에 실패하였습니다. 다시 시도해주세요.');
@@ -142,8 +149,14 @@ const SingupPage = () => {
       setAuthCodeComfrim(result.verificationCode);
       console.log(authCodeConfirm);
     } catch (error) {
-      console.error(error);
-      alert('인증번호 발급에 실패하였습니다. 이메일을 다시 확인해주세요.');
+      const status = (error as { response?: { status?: number } })?.response
+        ?.status;
+      if (status === 409) {
+        setEmailError('이미 가입된 이메일이에요.');
+      } else {
+        console.error(error);
+        alert('인증번호 발급에 실패하였습니다. 이메일을 다시 확인해주세요.');
+      }
     } finally {
       setIsCodeLoading(false);
     }
@@ -169,8 +182,8 @@ const SingupPage = () => {
     !confirmError;
 
   return (
-    <div className="flex min-h-screen w-full py-12 justify-center">
-      <div className="w-[530px] flex flex-col my-auto">
+    <div className="flex min-h-screen w-full py-12 px-5 justify-center">
+      <div className="w-full max-w-[530px] flex flex-col my-auto">
         <div className="text-black text-left font-semibold text-[32px] pb-7">
           <h1>회원가입</h1>
         </div>
@@ -198,18 +211,18 @@ const SingupPage = () => {
 
             <div className="flex flex-col gap-2">
               <p>이메일</p>
-              <div className="flex gap-7 justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                 <input
                   type="email"
                   placeholder="이메일"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="new-email"
-                  className="bg-gray-100 p-4 rounded-lg w-full"
+                  className="bg-gray-100 p-4 rounded-lg w-full sm:flex-1 sm:min-w-0"
                 />
                 <button
                   type="button"
-                  className={`w-[163px] py-4 px-4 rounded-lg  text-[16px] font-semibold cursor-pointer disabled:cursor-not-allowed ${isCodeLoading ? 'bg-white border border-primary-mint-800 text-primary-mint-800' : 'bg-primary-mint-800 border text-white border-primary-mint-800'}`}
+                  className={`w-full sm:w-auto shrink-0 whitespace-nowrap py-4 px-5 rounded-lg text-[16px] font-semibold cursor-pointer disabled:cursor-not-allowed ${isCodeLoading ? 'bg-white border border-primary-mint-800 text-primary-mint-800' : 'bg-primary-mint-800 border text-white border-primary-mint-800'}`}
                   onClick={handleAuthCode}
                   disabled={isCodeLoading}
                 >

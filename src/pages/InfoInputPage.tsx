@@ -10,7 +10,7 @@ import { FIELD_HINTS } from '../constants/fieldHints';
 
 // 헤더의 태그 칩
 const Chip = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-block w-fit rounded-md bg-primary-mint-900 px-[10px] py-[5px] text-[16px] font-bold text-white">
+  <span className="inline-block w-fit rounded-md bg-primary-mint-900 px-2.5 py-1 text-[13px] font-bold text-white">
     {children}
   </span>
 );
@@ -187,21 +187,26 @@ const InfoInputPage = () => {
 
   return (
     <div>
-      <div className="max-w-[1080px] my-[64px] mx-auto">
-        <div className="mb-8 flex flex-col gap-3">
-          <h1 className="text-[32px] font-semibold text-black">정보 입력</h1>
-          <p className="rounded-lg bg-primary-mint-200 px-4 py-3 text-[15px] font-medium text-primary-mint-900">
-            입력한 값이 실제에 가까울수록 또래 비교와 분석 결과가 정확해져요. 정확한
-            금액을 모르면 대략적인 값이라도 최대한 가깝게 적어주세요.
+      <div className="max-w-[1080px] my-10 sm:my-[64px] mx-auto px-5">
+        <div className="mb-8 flex flex-col gap-2">
+          <h1 className="text-[24px] font-semibold tracking-[-0.04em] text-black">정보 입력</h1>
+          <p className="text-[14px] text-gray-700">
+            입력한 값이 실제에 가까울수록 또래 비교와 분석 결과가 정확해져요.
           </p>
         </div>
         <div className="mb-8">
-          <h2 className="text-primary-mint-900 text-[24px] font-semibold mb-[22px]">
-            재무 현황
-          </h2>
+          <div className="mb-[22px] flex flex-col gap-1.5">
+            <h2 className="text-primary-mint-900 text-[18px] font-semibold tracking-[-0.04em]">
+              재무 현황
+            </h2>
+            <p className="text-[14px] text-gray-700">
+              매달 들어오고 나가는 돈과 현재 가진 현금성 자산·부채를 입력해 주세요.
+              세전이 아닌 실수령액 기준으로 적어주세요.
+            </p>
+          </div>
           <div className="flex flex-col gap-0.5">
             <CategoryCard title="월 가용 금액">
-              <div className="grid grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <CurrencyInput
                   label="월 수입"
                   value={formData.monthlyIncome}
@@ -223,49 +228,56 @@ const InfoInputPage = () => {
               </div>
             </CategoryCard>
 
-            {/* 프로필(나이) + 현금성 자산 현황(보유 현금성 자산/부채) */}
-            <CategoryCard
-              title={
-                <div className="grid grid-cols-3 gap-5">
+            {/* 프로필(나이) + 현금성 자산 현황(보유 현금성 자산/부채)
+                세로로 좁아지면 각 칩이 자기 필드 바로 위에 오도록 컬럼 단위로 배치한다. */}
+            <CategoryCard>
+              <div className="flex flex-col gap-8 sm:flex-row sm:gap-5">
+                <div className="flex flex-col gap-3 sm:w-1/3">
                   <Chip>프로필</Chip>
-                  <Chip>현금성 자산 현황</Chip>
-                  <span />
+                  <CurrencyInput
+                    label="나이 (만)"
+                    value={formData.age}
+                    onChange={handleChange('age')}
+                    unit="세"
+                    type="number"
+                    hint={FIELD_HINTS['나이 (만)']}
+                  />
                 </div>
-              }
-            >
-              <div className="grid grid-cols-3 gap-5">
-                <CurrencyInput
-                  label="나이 (만)"
-                  value={formData.age}
-                  onChange={handleChange('age')}
-                  unit="세"
-                  type="number"
-                  hint={FIELD_HINTS['나이 (만)']}
-                />
-                <CurrencyInput
-                  label="보유 현금성 자산"
-                  value={formData.totalAssetAmount}
-                  onChange={handleChange('totalAssetAmount')}
-                  hint={FIELD_HINTS['보유 현금성 자산']}
-                />
-                <CurrencyInput
-                  label="부채"
-                  value={formData.totalDebtAmount}
-                  onChange={handleChange('totalDebtAmount')}
-                  hint={FIELD_HINTS['부채']}
-                />
+                <div className="flex flex-col gap-3 sm:w-2/3">
+                  <Chip>현금성 자산 현황</Chip>
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <CurrencyInput
+                      label="보유 현금성 자산"
+                      value={formData.totalAssetAmount}
+                      onChange={handleChange('totalAssetAmount')}
+                      hint={FIELD_HINTS['보유 현금성 자산']}
+                    />
+                    <CurrencyInput
+                      label="부채"
+                      value={formData.totalDebtAmount}
+                      onChange={handleChange('totalDebtAmount')}
+                      hint={FIELD_HINTS['부채']}
+                    />
+                  </div>
+                </div>
               </div>
             </CategoryCard>
           </div>
         </div>
         <div>
-          <h2 className="text-primary-mint-900 text-[24px] font-semibold mb-[22px]">
-            투자 현황
-          </h2>
+          <div className="mb-[22px] flex flex-col gap-1.5">
+            <h2 className="text-primary-mint-900 text-[18px] font-semibold tracking-[-0.04em]">
+              투자 현황
+            </h2>
+            <p className="text-[14px] text-gray-700">
+              보유한 투자 자산을 유형별 평가 금액으로 입력해 주세요. 해당 자산이
+              없으면 0으로 두면 돼요.
+            </p>
+          </div>
           <div>
             <div>
               <CategoryCard title="투자 자산">
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <CurrencyInput
                     label="국내 주식"
                     value={formData.domesticStockAmount}
@@ -295,7 +307,7 @@ const InfoInputPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-8 mt-8">
+        <div className="flex flex-col-reverse gap-3 mt-8 sm:flex-row sm:gap-8">
           <button
             type="button"
             disabled={isLoading}

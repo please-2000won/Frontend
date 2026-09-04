@@ -11,20 +11,21 @@ export interface ComparisonGroup {
   metrics: ComparisonMetric[];
 }
 
-// 경제적 여건(수입/현금)과 투자 자산(주식/예적금 등)을 구분해서 보여주기 위한 그룹핑
+// 재무 현황(가용 금액/현금성 자산)과 투자 현황을 구분해서 보여주기 위한 그룹핑.
+// 라벨은 정보 입력 폼과 동일하게 맞춘다.
 export const buildComparisonGroups = (
   my: PeerFinancialProfile,
   other: PeerFinancialProfile
 ): ComparisonGroup[] => [
   {
-    title: '경제적 여건',
+    title: '재무 현황',
     metrics: [
-      { label: '총 수입', my: my.totalIncome, other: other.totalIncome },
-      { label: '현금', my: my.cash, other: other.cash },
+      { label: '월 가용 금액', my: my.totalIncome, other: other.totalIncome },
+      { label: '현금성 자산', my: my.cash, other: other.cash },
     ],
   },
   {
-    title: '투자 자산',
+    title: '투자 현황',
     metrics: [
       { label: '국내 주식', my: my.domesticStock, other: other.domesticStock },
       { label: '해외 주식', my: my.foreignStock, other: other.foreignStock },
