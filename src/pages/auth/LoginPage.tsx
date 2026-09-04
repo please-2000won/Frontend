@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, getMyInfo } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
@@ -7,9 +7,11 @@ import logo from '../../assets/logo/logo.svg';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
+
   const enableGuestMode = useGuestModeStore((state) => state.enableGuestMode);
   const disableGuestMode = useGuestModeStore((state) => state.disableGuestMode);
 
@@ -50,6 +52,18 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (accessToken) {
+      alert('잘못된 접근입니다.');
+      navigate('/', { replace: true });
+    }
+  }, [accessToken, navigate]);
+
+  // 토큰이 있을 경우, 찰나의 순간이라도 로그인 폼이 화면에 깜빡이는 것을 방지
+  if (accessToken) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col mid:flex-row min-h-screen w-full">
