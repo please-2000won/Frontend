@@ -50,6 +50,7 @@ const ChatLayout = () => {
           text: response.result.answer,
           isBot: true,
         };
+        console.log(messages);
         setMessages((prev) => [...prev, botResponse]);
       } else {
         throw new Error(response.message || 'API 응답 실패');
@@ -62,7 +63,7 @@ const ChatLayout = () => {
         text: '서버와 연결이 불안정합니다. 다시 시도해주세요.',
         isBot: true,
       };
-      console.log(messages);
+
       setMessages((prev) => [...prev, errorResponse]);
     } finally {
       setIsLoading(false);
@@ -130,7 +131,7 @@ const ChatLayout = () => {
                       )}
                       <div className="flex gap-2 items-end">
                         <div
-                          className={`px-5 py-3 rounded-2xl shadow-sm leading-relaxed text-[20px] break-all ${
+                          className={`px-5 py-3 rounded-2xl shadow-sm leading-relaxed text-[16px] break-all ${
                             msg.isBot
                               ? 'bg-white text-black border border-gray-100 rounded-bl-sm py-4 whitespace-pre-wrap'
                               : 'bg-primary-mint-900 text-white rounded-br-sm'
