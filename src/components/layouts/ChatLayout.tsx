@@ -130,7 +130,7 @@ const ChatLayout = () => {
                       )}
                       <div className="flex gap-2 items-end">
                         <div
-                          className={`px-5 py-3 rounded-2xl shadow-sm leading-relaxed text-[20px] break-all ${
+                          className={`px-5 py-3 rounded-2xl shadow-sm leading-relaxed text-[16px] break-all ${
                             msg.isBot
                               ? 'bg-white text-black border border-gray-100 rounded-bl-sm py-4 whitespace-pre-wrap'
                               : 'bg-primary-mint-900 text-white rounded-br-sm'
