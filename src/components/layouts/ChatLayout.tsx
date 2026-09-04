@@ -14,13 +14,13 @@ interface Message {
 }
 
 const ChatLayout = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [messages, setMessages] = useState([
     { id: 1, text: '어떤 데이터 분석을 도와드릴까요?', isBot: true },
   ]);
 
   const [inputValue, setInputValue] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //해당 요소를 부르는게 useRef
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -41,6 +41,7 @@ const ChatLayout = () => {
     setInputValue('');
 
     try {
+      setIsLoading(true);
       const response = await postChatMessage({ message: userText });
 
       if (response.isSuccess) {
@@ -64,7 +65,6 @@ const ChatLayout = () => {
       console.log(messages);
       setMessages((prev) => [...prev, errorResponse]);
     } finally {
-      // 💡 통신이 성공하든 실패하든 로딩 상태를 끝냅니다.
       setIsLoading(false);
     }
   };
@@ -156,6 +156,29 @@ const ChatLayout = () => {
                     </div>
                   </div>
                 ))}
+                {isLoading && (
+                  <div className="flex gap-3 w-full">
+                    <div className="flex flex-col gap-3 max-w-[55%] items-start">
+                      <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0 mt-1"></div>
+                      <div className="flex gap-2 items-end">
+                        <div className="px-5 py-5 rounded-2xl shadow-sm bg-white border border-gray-100 rounded-bl-sm flex items-center gap-2">
+                          <div
+                            className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce"
+                            style={{ animationDelay: '0ms' }}
+                          ></div>
+                          <div
+                            className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce"
+                            style={{ animationDelay: '150ms' }}
+                          ></div>
+                          <div
+                            className="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce"
+                            style={{ animationDelay: '300ms' }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
               {/*입력창*/}
@@ -167,7 +190,7 @@ const ChatLayout = () => {
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
                   placeholder="무엇이든 물어보세요!"
-                  className="flex flex-1 p-4 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-mint-900 disabled:cursor-not-allowed "
+                  className="flex flex-1 p-4 bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-mint-900 disabled:cursor-not-allowed "
                 />
                 <button
                   onClick={handleSendMessage}
