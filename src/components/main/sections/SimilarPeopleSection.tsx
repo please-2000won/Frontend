@@ -23,12 +23,12 @@ const SimilarPeopleSection = ({
       <div className="mx-auto flex max-w-[1080px] flex-col gap-8 px-5 py-16">
         <div className="flex flex-col gap-5 text-primary-mint-900">
           <h2 className="text-[32px] font-semibold sm:text-[40px]">
-            나와 유사한 사람들은 어떨까?
+            Peer Group 사람들은 어떨까?
           </h2>
           <p className="text-[16px] font-medium leading-relaxed sm:text-[20px]">
-            Peer Group에서 가장 유사도가 높은 사람들이에요.
+            Peer Group에서 무작위로 뽑은 3명이에요.
             <br />
-            프로필을 눌러 정보를 확인할 수 있어요.
+            프로필을 눌러 나와 비교해 볼 수 있어요.
           </p>
         </div>
 

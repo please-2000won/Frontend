@@ -14,6 +14,8 @@ const SingupPage = () => {
 
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isCodeLoading, setIsCodeLoading] = useState(false);
+  // 인증코드 발송 여부 (발송 후 스팸함 안내를 보여준다)
+  const [codeSent, setCodeSent] = useState(false);
 
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -133,8 +135,10 @@ const SingupPage = () => {
 
       const result = await sendEmailCode({ email });
 
-      //수정필요
-      alert(`인증번호가 발급되었습니다! 메일함에서 확인해주세요.`);
+      alert(
+        '인증번호가 발급되었습니다! 메일함을 확인해주세요.\n메일이 보이지 않으면 스팸함도 확인해주세요.'
+      );
+      setCodeSent(true);
       setAuthCodeComfrim(result.verificationCode);
       console.log(authCodeConfirm);
     } catch (error) {
@@ -232,10 +236,16 @@ const SingupPage = () => {
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
               <div className="h-5">
-                {authCodeError && (
+                {authCodeError ? (
                   <span className="text-[13px] text-system-red">
                     {authCodeError}
                   </span>
+                ) : (
+                  codeSent && (
+                    <span className="text-[13px] text-gray-700">
+                      메일이 보이지 않으면 스팸함을 확인해주세요.
+                    </span>
+                  )
                 )}
               </div>
             </div>

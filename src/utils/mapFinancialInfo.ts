@@ -14,7 +14,7 @@ export const mapToAssetCards = (info: MyFinancialResult): AssetCardData[] => {
   // 라벨은 정보 입력 폼과 통일한다.
   return [
     {
-      tag: '총 수입',
+      tag: '월 가용 금액',
       rows: [
         { label: '월 수입', value: formatWon(monthlyIncome), emphasis: true },
         { label: '월 고정 지출', value: formatExpenseWon(fixedExpense) },
@@ -23,9 +23,13 @@ export const mapToAssetCards = (info: MyFinancialResult): AssetCardData[] => {
       total: formatWon(monthlyIncome - fixedExpense - savingsGoal),
     },
     {
-      tag: '보유 자산',
+      tag: '현금성 자산 현황',
       rows: [
-        { label: '현금', value: formatWon(totalAssetAmount), emphasis: true },
+        {
+          label: '보유 현금성 자산',
+          value: formatWon(totalAssetAmount),
+          emphasis: true,
+        },
         { label: '부채', value: formatExpenseWon(totalDebtAmount) },
       ],
       total: formatWon(netAssetAmount),

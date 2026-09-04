@@ -6,6 +6,7 @@ import { createAnalysis } from '../api/analysis';
 import CategoryCard from '../components/info/CategoryCard';
 import CurrencyInput from '../components/info/CurrencyInput';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
+import { FIELD_HINTS } from '../constants/fieldHints';
 
 // 헤더의 태그 칩
 const Chip = ({ children }: { children: React.ReactNode }) => (
@@ -13,6 +14,20 @@ const Chip = ({ children }: { children: React.ReactNode }) => (
     {children}
   </span>
 );
+
+const EMPTY_FORM = {
+  age: '',
+  monthlyIncome: '',
+  fixedExpense: '',
+  savingsGoal: '',
+  totalAssetAmount: '',
+  totalDebtAmount: '',
+  domesticStockAmount: '',
+  foreignStockAmount: '',
+  depositBondAmount: '',
+  alternativeAmount: '',
+};
+
 
 const InfoInputPage = () => {
   const navigate = useNavigate();
@@ -23,20 +38,17 @@ const InfoInputPage = () => {
   // 초기 데이터 로딩 상태
   const [isFetching, setIsFetching] = useState(true);
 
-  const [formData, setFormDataState] = useState({
-    age: '',
-    monthlyIncome: '', //월수입
-    fixedExpense: '', //고정지출
-    savingsGoal: '', //월 저축 -> 이거 디자인에선 반복됨!!
-    totalAssetAmount: '', //총 자산 금액
-    totalDebtAmount: '', //총 부채금액
-    domesticStockAmount: '', //국내 주식
-    foreignStockAmount: '', //해외 주식
-    depositBondAmount: '', //예적금 및 채권
-    alternativeAmount: '', //대체 고위험 자산
-  });
+  const [formData, setFormDataState] = useState(EMPTY_FORM);
+  // 불러온 직후의 값. 이것과 같으면 "변경 없음"으로 보고 저장을 막는다.
+  const [initialFormData, setInitialFormData] = useState(EMPTY_FORM);
+
+  const isDirty =
+    JSON.stringify(formData) !== JSON.stringify(initialFormData);
 
   const handleSubmit = async () => {
+    // 기존 정보를 수정하는데 바뀐 값이 없으면 요청하지 않는다.
+    if (hasExistingInfo && !isDirty) return;
+
     const parseNumber = (value: string) => Number(value.replace(/,/g, ''));
     const requestData = {
       financialProfile: {
@@ -76,7 +88,15 @@ const InfoInputPage = () => {
 
       navigate('/');
     } catch (error) {
-      console.error(error);
+      const status = (error as { response?: { status?: number } })?.response
+        ?.status;
+      if (status === 409) {
+        // 서버가 "변경 사항 없음"으로 판단한 경우: 수정하지 않고 안내만 한다.
+        alert('변경된 내용이 없어 저장하지 않았어요.');
+      } else {
+        console.error(error);
+        alert('저장에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +125,7 @@ const InfoInputPage = () => {
               ? Number(val).toLocaleString('ko-KR')
               : '';
 
-          setFormDataState({
+          const loaded = {
             age: formatNum(response.financialProfile?.age),
             monthlyIncome: formatNum(response.financialProfile?.monthlyIncome),
             fixedExpense: formatNum(response.financialProfile?.fixedExpense),
@@ -128,7 +148,9 @@ const InfoInputPage = () => {
             alternativeAmount: formatNum(
               response.financialAsset?.alternativeAmount
             ),
-          });
+          };
+          setFormDataState(loaded);
+          setInitialFormData(loaded);
         }
       } catch (error) {
         console.error('기존 자산 정보를 불러오는 데 실패하였습니다.', error);
@@ -171,35 +193,38 @@ const InfoInputPage = () => {
         </div>
         <div className="mb-8">
           <h2 className="text-primary-mint-900 text-[24px] font-semibold mb-[22px]">
-            기본 정보
+            재무 현황
           </h2>
           <div className="flex flex-col gap-0.5">
-            <CategoryCard title="수입">
+            <CategoryCard title="월 가용 금액">
               <div className="grid grid-cols-3 gap-5">
                 <CurrencyInput
                   label="월 수입"
                   value={formData.monthlyIncome}
                   onChange={handleChange('monthlyIncome')}
+                  hint={FIELD_HINTS['월 수입']}
                 />
                 <CurrencyInput
                   label="월 고정 지출"
                   value={formData.fixedExpense}
                   onChange={handleChange('fixedExpense')}
+                  hint={FIELD_HINTS['월 고정 지출']}
                 />
                 <CurrencyInput
                   label="월 저축 계획"
                   value={formData.savingsGoal}
                   onChange={handleChange('savingsGoal')}
+                  hint={FIELD_HINTS['월 저축 계획']}
                 />
               </div>
             </CategoryCard>
 
-            {/* 프로필(나이) + 보유 자산(현금/부채) */}
+            {/* 프로필(나이) + 현금성 자산 현황(보유 현금성 자산/부채) */}
             <CategoryCard
               title={
                 <div className="grid grid-cols-3 gap-5">
                   <Chip>프로필</Chip>
-                  <Chip>보유 자산</Chip>
+                  <Chip>현금성 자산 현황</Chip>
                   <span />
                 </div>
               }
@@ -211,16 +236,19 @@ const InfoInputPage = () => {
                   onChange={handleChange('age')}
                   unit="세"
                   type="number"
+                  hint={FIELD_HINTS['나이 (만)']}
                 />
                 <CurrencyInput
-                  label="현금"
+                  label="보유 현금성 자산"
                   value={formData.totalAssetAmount}
                   onChange={handleChange('totalAssetAmount')}
+                  hint={FIELD_HINTS['보유 현금성 자산']}
                 />
                 <CurrencyInput
                   label="부채"
                   value={formData.totalDebtAmount}
                   onChange={handleChange('totalDebtAmount')}
+                  hint={FIELD_HINTS['부채']}
                 />
               </div>
             </CategoryCard>
@@ -228,7 +256,7 @@ const InfoInputPage = () => {
         </div>
         <div>
           <h2 className="text-primary-mint-900 text-[24px] font-semibold mb-[22px]">
-            투자 정보
+            투자 현황
           </h2>
           <div>
             <div>
@@ -238,21 +266,25 @@ const InfoInputPage = () => {
                     label="국내 주식"
                     value={formData.domesticStockAmount}
                     onChange={handleChange('domesticStockAmount')}
+                    hint={FIELD_HINTS['국내 주식']}
                   />
                   <CurrencyInput
                     label="해외 주식"
                     value={formData.foreignStockAmount}
                     onChange={handleChange('foreignStockAmount')}
+                    hint={FIELD_HINTS['해외 주식']}
                   />
                   <CurrencyInput
                     label="예·적금 및 채권"
                     value={formData.depositBondAmount}
                     onChange={handleChange('depositBondAmount')}
+                    hint={FIELD_HINTS['예·적금 및 채권']}
                   />
                   <CurrencyInput
                     label="대체·고위험 자산"
                     value={formData.alternativeAmount}
                     onChange={handleChange('alternativeAmount')}
+                    hint={FIELD_HINTS['대체·고위험 자산']}
                   />
                 </div>
               </CategoryCard>
@@ -272,7 +304,7 @@ const InfoInputPage = () => {
           </button>
           <button
             type="button"
-            disabled={isLoading}
+            disabled={isLoading || (hasExistingInfo && !isDirty)}
             onClick={handleSubmit}
             className="flex-1 py-4 border border-primary-mint-800 bg-primary-mint-800 text-[16px] text-white rounded-lg font-semibold cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           >

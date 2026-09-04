@@ -1,7 +1,9 @@
 import Tag from '../ui/Tag';
 import PillButton from '../ui/PillButton';
+import InfoTooltip from '../../InfoTooltip';
 import dividerLine from '../../../assets/main/divider-line.svg';
 import type { AssetCardData, InvestCardData } from '../../../constants/main/mockData';
+import { FIELD_HINTS } from '../../../constants/fieldHints';
 
 interface AssetInfoSectionProps {
   name: string;
@@ -59,7 +61,7 @@ const AssetInfoSection = ({
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-[33px]">
             <h2 className="text-[24px] font-semibold text-primary-mint-900">
-              자산 정보
+              재무 현황
             </h2>
             {/* 왼쪽은 항목 3개, 오른쪽은 2개라 높이가 다르므로
                 items-stretch + 행 영역 flex-1로 구분선과 합계 줄을 맞춘다. */}
@@ -69,14 +71,24 @@ const AssetInfoSection = ({
                   key={card.tag}
                   className="flex w-full flex-col items-start gap-5 rounded-[16px] bg-white p-[26px] sm:w-[530px]"
                 >
-                  <Tag>{card.tag}</Tag>
+                  <div className="flex items-center gap-1.5">
+                    <Tag>{card.tag}</Tag>
+                    {FIELD_HINTS[card.tag] && (
+                      <InfoTooltip text={FIELD_HINTS[card.tag]} placement="bottom" />
+                    )}
+                  </div>
                   <div className="flex w-full flex-1 flex-col justify-between gap-[15px] text-[20px] font-medium">
                     {card.rows.map((row) => (
                       <div
                         key={row.label}
                         className={`flex items-center justify-between ${row.emphasis ? 'text-primary-mint-900' : 'text-gray-700'}`}
                       >
-                        <span>{row.label}</span>
+                        <span className="flex items-center gap-1.5">
+                          {row.label}
+                          {FIELD_HINTS[row.label] && (
+                            <InfoTooltip text={FIELD_HINTS[row.label]} placement="bottom" />
+                          )}
+                        </span>
                         <span>{row.value}</span>
                       </div>
                     ))}
@@ -92,7 +104,7 @@ const AssetInfoSection = ({
 
           <div className="flex flex-col gap-[33px]">
             <h2 className="text-[24px] font-semibold text-primary-mint-900">
-              투자 정보
+              투자 현황
             </h2>
             <div className="grid grid-cols-2 gap-x-5 gap-y-4">
               {investCards.map((card) => (
@@ -100,7 +112,12 @@ const AssetInfoSection = ({
                   key={card.tag}
                   className="flex flex-col items-start gap-[45px] rounded-[16px] bg-white p-[26px]"
                 >
-                  <Tag>{card.tag}</Tag>
+                  <div className="flex items-center gap-1.5">
+                    <Tag>{card.tag}</Tag>
+                    {FIELD_HINTS[card.tag] && (
+                      <InfoTooltip text={FIELD_HINTS[card.tag]} placement="bottom" />
+                    )}
+                  </div>
                   <p className="w-full text-right text-[24px] font-bold text-primary-mint-900">
                     {card.amount}
                   </p>
