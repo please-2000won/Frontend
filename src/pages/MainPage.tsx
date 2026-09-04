@@ -7,15 +7,11 @@ import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
 import { useMainPageData } from '../hooks/useMainPageData';
 import { usePeerGroupAnalysis } from '../hooks/usePeerGroupAnalysis';
-import {
-  useSimilarPeers,
-  type PeerComparePayload,
-} from '../hooks/useSimilarPeers';
+import { useSimilarPeers, type PeerComparePayload } from '../hooks/useSimilarPeers';
 import { saveChatbotContext } from '../utils/analysisStorage';
 import useAuthStore from '../stores/useAuthStore';
 import useGuestModeStore from '../stores/useGuestModeStore';
 
-import { useOutletContext } from 'react-router-dom';
 
 const DEFAULT_NAME = '회원';
 const GUEST_NAME = '게스트';
@@ -24,6 +20,8 @@ type ChatContextType = {
   setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+
+
 const MainPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -31,6 +29,8 @@ const MainPage = () => {
   // 팀원이 로그인 시 채워두는 유저 정보(useAuthStore.userInfo)를 그대로 재사용한다.
   const userInfo = useAuthStore((state) => state.userInfo);
   const name = userInfo?.name ?? (isGuestMode ? GUEST_NAME : DEFAULT_NAME);
+
+  const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
   const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
     useMainPageData(isGuestMode);
@@ -45,8 +45,6 @@ const MainPage = () => {
   } = useSimilarPeers(isGuestMode, hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
-
-  const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
   // 챗봇 페이지로 넘길 컨텍스트(내 금융정보 + 분석 결과)를 로컬스토리지에 담아둔다.
   useEffect(() => {
@@ -88,7 +86,7 @@ const MainPage = () => {
       />
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
-        onReanalyzeClick={reanalyze}
+        onReanalyzeClick={handleReanalyze}
         onAskChatbot={() => setIsChatOpen((prev) => !prev)}
         myProfile={myProfile}
         peerGroupProfile={peerGroupProfile}
