@@ -32,17 +32,19 @@ const TopNavbar = () => {
   }, [isOpen]);
 
   const handleLogout = () => {
-    clearAuth();
-    disableGuestMode();
-    clearAnalysisStorage();
-    setIsOpen(false);
-    navigate('/login');
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      clearAuth();
+      disableGuestMode();
+      clearAnalysisStorage();
+      setIsOpen(false);
+      navigate('/login');
+    }
   };
 
   return (
     <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-system-background">
       <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between px-5">
-        <div>
+        <div className="cursor-pointer" onClick={() => navigate('/')}>
           <img src={logo} alt="peerfolio" className="w-[186px] h-[40px]" />
         </div>
         {!userInfo && isGuestMode && (

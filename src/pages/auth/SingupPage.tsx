@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../../stores/useAuthStore';
 import { sendEmailCode, signup } from '../../api/authAPI';
 
 const SingupPage = () => {
   const navigate = useNavigate();
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -123,6 +125,17 @@ const SingupPage = () => {
       setIsLoginLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (accessToken) {
+      navigate('/', { replace: true });
+    }
+  }, [accessToken, navigate]);
+
+  // 토큰이 있을 경우, 찰나의 순간이라도 로그인 폼이 화면에 깜빡이는 것을 방지
+  if (accessToken) {
+    return null;
+  }
 
   //확인용 인증번호 받기
   const handleAuthCode = async () => {
