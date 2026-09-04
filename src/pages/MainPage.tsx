@@ -20,9 +20,6 @@ import { useOutletContext } from 'react-router-dom';
 const DEFAULT_NAME = '회원';
 const GUEST_NAME = '게스트';
 
-// 챗봇 경로가 확정되지 않아 임시로 사용하는 경로
-const CHATBOT_PATH = '/chatbot';
-
 type ChatContextType = {
   setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -87,7 +84,7 @@ const MainPage = () => {
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
         onReanalyzeClick={reanalyze}
-        onAskChatbot={() => setIsChatOpen(true)}
+        onAskChatbot={() => setIsChatOpen((prev) => !prev)}
         myProfile={myProfile}
         peerGroupProfile={peerGroupProfile}
         aiAnalysisText={aiAnalysisText}
