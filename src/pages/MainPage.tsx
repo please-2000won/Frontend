@@ -7,16 +7,22 @@ import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
 import { useMainPageData } from '../hooks/useMainPageData';
 import { usePeerGroupAnalysis } from '../hooks/usePeerGroupAnalysis';
-import { useSimilarPeers, type PeerComparePayload } from '../hooks/useSimilarPeers';
+import {
+  useSimilarPeers,
+  type PeerComparePayload,
+} from '../hooks/useSimilarPeers';
 import { saveChatbotContext } from '../utils/analysisStorage';
 import useAuthStore from '../stores/useAuthStore';
 import useGuestModeStore from '../stores/useGuestModeStore';
 
+import { useOutletContext } from 'react-router-dom';
+
 const DEFAULT_NAME = '회원';
 const GUEST_NAME = '게스트';
 
-// 챗봇 경로가 확정되지 않아 임시로 사용하는 경로
-const CHATBOT_PATH = '/chatbot';
+type ChatContextType = {
+  setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -28,8 +34,24 @@ const MainPage = () => {
 
   const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
     useMainPageData(isGuestMode);
-  const { peerGroupProfile, aiAnalysisText, risk, analysis, isAnalyzing, isStale, reanalyze } =
-    usePeerGroupAnalysis(isGuestMode, hasAssetInfo, userInfo?.userId, financialInfo);
+
+  // 팀원의 업데이트 내역: financialInfo 파라미터 추가 및 isStale 상태 추가
+  const {
+    peerGroupProfile,
+    aiAnalysisText,
+    risk,
+    analysis,
+    isAnalyzing,
+    isStale,
+    reanalyze,
+  } = usePeerGroupAnalysis(
+    isGuestMode,
+    hasAssetInfo,
+    userInfo?.userId,
+    financialInfo
+  );
+
+  // 팀원의 업데이트 내역: 로딩, 에러 상태 및 refetch 기능 추가
   const {
     peers,
     isLoading: isPeersLoading,
@@ -39,6 +61,8 @@ const MainPage = () => {
   } = useSimilarPeers(isGuestMode, hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
+
+  const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
   // 챗봇 페이지로 넘길 컨텍스트(내 금융정보 + 분석 결과)를 로컬스토리지에 담아둔다.
   useEffect(() => {
@@ -62,7 +86,7 @@ const MainPage = () => {
     if (payload) setCompare(payload);
   };
 
-  // 재분석하면 피어 매칭도 새로 갱신되므로 추천 피어를 다시 불러온다.
+  // 팀원의 업데이트 내역: 재분석하면 피어 매칭도 새로 갱신되므로 추천 피어를 다시 불러온다.
   const handleReanalyze = async () => {
     await reanalyze();
     await refetchPeers();
@@ -81,7 +105,8 @@ const MainPage = () => {
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
         onReanalyzeClick={handleReanalyze}
-        onAskChatbot={() => navigate(CHATBOT_PATH)}
+        // 나의 업데이트 내역: 별도 페이지 라우팅 대신 방금 구현한 우측 챗봇 패널 열기 유지
+        onAskChatbot={() => setIsChatOpen((prev) => !prev)}
         myProfile={myProfile}
         peerGroupProfile={peerGroupProfile}
         aiAnalysisText={aiAnalysisText}
