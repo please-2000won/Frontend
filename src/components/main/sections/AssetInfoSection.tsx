@@ -78,20 +78,36 @@ const AssetInfoSection = ({
                     )}
                   </div>
                   <div className="flex w-full flex-1 flex-col justify-between gap-[15px] text-[20px] font-medium">
-                    {card.rows.map((row) => (
-                      <div
-                        key={row.label}
-                        className={`flex items-center justify-between ${row.emphasis ? 'text-primary-mint-900' : 'text-gray-700'}`}
-                      >
-                        <span className="flex items-center gap-1.5">
-                          {row.label}
-                          {FIELD_HINTS[row.label] && (
-                            <InfoTooltip text={FIELD_HINTS[row.label]} placement="bottom" />
-                          )}
-                        </span>
-                        <span>{row.value}</span>
-                      </div>
-                    ))}
+                    {card.rows.map((row) => {
+                      // 지출/부채 등 음수 값은 부호를 왼쪽 칸으로 빼고 금액은 절댓값만 표시한다.
+                      const isNegative = row.value.trimStart().startsWith('-');
+                      const displayValue = isNegative
+                        ? row.value.replace('-', '')
+                        : row.value;
+
+                      return (
+                        <div
+                          key={row.label}
+                          className={`flex items-center gap-3 ${row.emphasis ? 'text-primary-mint-900' : 'text-gray-700'}`}
+                        >
+                          <span className="w-3 shrink-0 text-center">
+                            {isNegative ? '-' : ''}
+                          </span>
+                          <span className="flex flex-1 items-center justify-between gap-1.5">
+                            <span className="flex items-center gap-1.5">
+                              {row.label}
+                              {FIELD_HINTS[row.label] && (
+                                <InfoTooltip
+                                  text={FIELD_HINTS[row.label]}
+                                  placement="bottom"
+                                />
+                              )}
+                            </span>
+                            <span>{displayValue}</span>
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                   <img src={dividerLine} alt="" className="w-full" />
                   <p className="w-full text-right text-[24px] font-bold text-primary-mint-900">

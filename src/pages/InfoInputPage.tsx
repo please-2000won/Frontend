@@ -188,8 +188,12 @@ const InfoInputPage = () => {
   return (
     <div>
       <div className="max-w-[1080px] my-[64px] mx-auto">
-        <div className="mb-8">
+        <div className="mb-8 flex flex-col gap-3">
           <h1 className="text-[32px] font-semibold text-black">정보 입력</h1>
+          <p className="rounded-lg bg-primary-mint-200 px-4 py-3 text-[15px] font-medium text-primary-mint-900">
+            입력한 값이 실제에 가까울수록 또래 비교와 분석 결과가 정확해져요. 정확한
+            금액을 모르면 대략적인 값이라도 최대한 가깝게 적어주세요.
+          </p>
         </div>
         <div className="mb-8">
           <h2 className="text-primary-mint-900 text-[24px] font-semibold mb-[22px]">
