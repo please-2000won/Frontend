@@ -205,7 +205,7 @@ const SingupPage = () => {
                 />
                 <button
                   type="button"
-                  className={`w-[163px] py-4 px-4 rounded-lg  text-[16px] font-semibold cursor-pointer ${isCodeLoading ? 'bg-white border border-primary-mint-800 text-primary-mint-800' : 'bg-primary-mint-800 border text-white border-primary-mint-800'}`}
+                  className={`w-[163px] py-4 px-4 rounded-lg  text-[16px] font-semibold cursor-pointer disabled:cursor-not-allowed ${isCodeLoading ? 'bg-white border border-primary-mint-800 text-primary-mint-800' : 'bg-primary-mint-800 border text-white border-primary-mint-800'}`}
                   onClick={handleAuthCode}
                   disabled={isCodeLoading}
                 >
@@ -250,7 +250,7 @@ const SingupPage = () => {
                 autoComplete="new-password"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
-              <span className="text-gray-200 text-[13px]">
+              <span className="text-gray-700 text-[13px]">
                 · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
               </span>
               <div className="flex flex-col h-5">
@@ -277,7 +277,7 @@ const SingupPage = () => {
                 autoComplete="new-password"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
-              <span className="text-gray-200 text-[13px]">
+              <span className="text-gray-700 text-[13px]">
                 · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
               </span>
               <div className="flex flex-col h-5">
@@ -291,8 +291,8 @@ const SingupPage = () => {
 
             <button
               type="submit"
-              disabled={!isFormValid && isLoginLoading}
-              className={`${isFormValid ? 'bg-primary-mint-800' : 'bg-gray-300'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer`}
+              disabled={!isFormValid || isLoginLoading}
+              className={`${isFormValid ? 'bg-primary-mint-800' : 'bg-gray-300'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer disabled:cursor-not-allowed`}
             >
               {isLoginLoading ? '가입 진행 중...' : '가입하기'}
             </button>

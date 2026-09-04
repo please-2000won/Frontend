@@ -35,15 +35,30 @@ const MainPage = () => {
   const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
     useMainPageData(isGuestMode);
 
+  // 팀원의 업데이트 내역: financialInfo 파라미터 추가 및 isStale 상태 추가
   const {
     peerGroupProfile,
     aiAnalysisText,
     risk,
     analysis,
     isAnalyzing,
+    isStale,
     reanalyze,
-  } = usePeerGroupAnalysis(isGuestMode, hasAssetInfo, userInfo?.userId);
-  const { peers, getComparison } = useSimilarPeers(isGuestMode, hasAssetInfo);
+  } = usePeerGroupAnalysis(
+    isGuestMode,
+    hasAssetInfo,
+    userInfo?.userId,
+    financialInfo
+  );
+
+  // 팀원의 업데이트 내역: 로딩, 에러 상태 및 refetch 기능 추가
+  const {
+    peers,
+    isLoading: isPeersLoading,
+    isError: isPeersError,
+    getComparison,
+    refetch: refetchPeers,
+  } = useSimilarPeers(isGuestMode, hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
 
@@ -71,6 +86,12 @@ const MainPage = () => {
     if (payload) setCompare(payload);
   };
 
+  // 팀원의 업데이트 내역: 재분석하면 피어 매칭도 새로 갱신되므로 추천 피어를 다시 불러온다.
+  const handleReanalyze = async () => {
+    await reanalyze();
+    await refetchPeers();
+  };
+
   return (
     <div className="flex flex-col">
       <AssetInfoSection
@@ -83,15 +104,22 @@ const MainPage = () => {
       />
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
-        onReanalyzeClick={reanalyze}
+        onReanalyzeClick={handleReanalyze}
+        // 나의 업데이트 내역: 별도 페이지 라우팅 대신 방금 구현한 우측 챗봇 패널 열기 유지
         onAskChatbot={() => setIsChatOpen((prev) => !prev)}
         myProfile={myProfile}
         peerGroupProfile={peerGroupProfile}
         aiAnalysisText={aiAnalysisText}
         risk={risk}
+        isStale={isStale}
       />
       {hasAssetInfo && (
-        <SimilarPeopleSection peers={peers} onSelectPeer={handleSelectPeer} />
+        <SimilarPeopleSection
+          peers={peers}
+          isLoading={isPeersLoading}
+          isError={isPeersError}
+          onSelectPeer={handleSelectPeer}
+        />
       )}
       {compare && (
         <PeerCompareModal
