@@ -62,7 +62,7 @@ export const DEFAULT_PEER_GROUP_PROFILE: PeerFinancialProfile = {
 
 export const ASSET_CARDS: AssetCardData[] = [
   {
-    tag: '총 수입',
+    tag: '월 가용 금액',
     rows: [
       { label: '월 수입', value: '3,000,000원', emphasis: true },
       { label: '월 고정 지출', value: '-1,000,000원' },
@@ -71,9 +71,9 @@ export const ASSET_CARDS: AssetCardData[] = [
     total: '1,000,000원',
   },
   {
-    tag: '보유 자산',
+    tag: '현금성 자산 현황',
     rows: [
-      { label: '현금', value: '2,000,000원', emphasis: true },
+      { label: '보유 현금성 자산', value: '2,000,000원', emphasis: true },
       { label: '부채', value: '-1,000,000원' },
     ],
     total: '1,000,000원',
