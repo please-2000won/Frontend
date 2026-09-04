@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TopNavbar from './TopNavbar';
+import { postChatMessage } from '../../api/chatbot';
 
 import copy from '../../assets/main/copy-gray.svg';
 import send from '../../assets/main/send-plain-white.svg';
@@ -30,21 +31,42 @@ const ChatLayout = () => {
   }, [messages]);
 
   //메시지 전송 함수
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
+    const userText = inputValue;
     const newUserMessage = { id: Date.now(), text: inputValue, isBot: false };
+
     setMessages((prev) => [...prev, newUserMessage]);
     setInputValue('');
 
-    setTimeout(() => {
-      const botResponse: Message = {
+    try {
+      const response = await postChatMessage({ message: userText });
+
+      if (response.isSuccess) {
+        const botResponse: Message = {
+          id: Date.now() + 1,
+          text: response.result.answer,
+          isBot: true,
+        };
+        setMessages((prev) => [...prev, botResponse]);
+      } else {
+        throw new Error(response.message || 'API 응답 실패');
+      }
+    } catch (error) {
+      console.error('챗봇 API 에러:', error);
+
+      const errorResponse: Message = {
         id: Date.now() + 1,
-        text: `'${inputValue}'에 대한 분석을 진행 중입니다...`,
+        text: '서버와 연결이 불안정합니다. 다시 시도해주세요.',
         isBot: true,
       };
-      setMessages((prev) => [...prev, botResponse]);
-    }, 1000);
+      console.log(messages);
+      setMessages((prev) => [...prev, errorResponse]);
+    } finally {
+      // 💡 통신이 성공하든 실패하든 로딩 상태를 끝냅니다.
+      setIsLoading(false);
+    }
   };
 
   //엔터키 입력 처리
@@ -108,7 +130,7 @@ const ChatLayout = () => {
                       )}
                       <div className="flex gap-2 items-end">
                         <div
-                          className={`px-5 py-3 rounded-2xl shadow-sm leading-relaxed text-[20px] ${
+                          className={`px-5 py-3 rounded-2xl shadow-sm leading-relaxed text-[20px] break-all ${
                             msg.isBot
                               ? 'bg-white text-black border border-gray-100 rounded-bl-sm py-4 whitespace-pre-wrap'
                               : 'bg-primary-mint-900 text-white rounded-br-sm'
