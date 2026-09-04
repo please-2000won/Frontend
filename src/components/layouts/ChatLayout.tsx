@@ -89,7 +89,7 @@ const ChatLayout = () => {
             width: isChatOpen ? '50%' : '100%',
           }}
           transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
-          className="min-h-0 overflow-y-auto"
+          className="min-h-0 overflow-y-auto no-scrollbar"
         >
           <main className="w-full">
             <Outlet context={{ isChatOpen, setIsChatOpen }} />

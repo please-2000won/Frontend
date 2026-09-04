@@ -28,7 +28,6 @@ const EMPTY_FORM = {
   alternativeAmount: '',
 };
 
-
 const InfoInputPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -42,8 +41,7 @@ const InfoInputPage = () => {
   // 불러온 직후의 값. 이것과 같으면 "변경 없음"으로 보고 저장을 막는다.
   const [initialFormData, setInitialFormData] = useState(EMPTY_FORM);
 
-  const isDirty =
-    JSON.stringify(formData) !== JSON.stringify(initialFormData);
+  const isDirty = JSON.stringify(formData) !== JSON.stringify(initialFormData);
 
   const handleSubmit = async () => {
     // 기존 정보를 수정하는데 바뀐 값이 없으면 요청하지 않는다.
@@ -114,9 +112,7 @@ const InfoInputPage = () => {
           // 의미 있는 값이 하나라도 있으면 이미 입력한 적이 있는 것으로 본다.
           const alreadyEntered = Boolean(
             profile &&
-              (profile.age ||
-                profile.monthlyIncome ||
-                profile.totalAssetAmount)
+            (profile.age || profile.monthlyIncome || profile.totalAssetAmount)
           );
           setHasExistingInfo(alreadyEntered);
 
@@ -239,7 +235,7 @@ const InfoInputPage = () => {
                     value={formData.age}
                     onChange={handleChange('age')}
                     unit="세"
-                    type="number"
+                    type="text"
                     hint={FIELD_HINTS['나이 (만)']}
                   />
                 </div>
