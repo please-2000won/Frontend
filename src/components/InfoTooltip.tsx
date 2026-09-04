@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface InfoTooltipProps {
   text: string;
@@ -6,9 +6,22 @@ interface InfoTooltipProps {
   placement?: 'top' | 'bottom';
 }
 
-// 라벨 옆의 (i) 아이콘. 마우스를 올리거나 클릭하면 설명이 뜬다.
+// 라벨 옆의 (i) 아이콘. 마우스를 올리면 표시되고, 클릭하면 고정된다.
+// 고정된 상태에서 바깥을 클릭하면 닫힌다.
 const InfoTooltip = ({ text, placement = 'top' }: InfoTooltipProps) => {
   const [pinned, setPinned] = useState(false);
+  const rootRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!pinned) return;
+
+    const handlePointerDown = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setPinned(false);
+    };
+
+    window.addEventListener('mousedown', handlePointerDown);
+    return () => window.removeEventListener('mousedown', handlePointerDown);
+  }, [pinned]);
 
   const position =
     placement === 'bottom'
@@ -16,7 +29,7 @@ const InfoTooltip = ({ text, placement = 'top' }: InfoTooltipProps) => {
       : 'bottom-[calc(100%+8px)]';
 
   return (
-    <span className="group relative inline-flex align-middle">
+    <span ref={rootRef} className="group relative inline-flex align-middle">
       <button
         type="button"
         aria-label="설명 보기"

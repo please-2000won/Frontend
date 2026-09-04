@@ -20,9 +20,9 @@ const SimilarPeopleSection = ({
 }: SimilarPeopleSectionProps) => {
   return (
     <section className="bg-primary-mint-200">
-      <div className="mx-auto flex max-w-[1080px] flex-col gap-8 px-5 py-16">
+      <div className="mx-auto flex max-w-[1080px] flex-col gap-6 px-5 py-12">
         <div className="flex flex-col gap-5 text-primary-mint-900">
-          <h2 className="text-[32px] font-semibold sm:text-[40px]">
+          <h2 className="text-[28px] font-semibold tracking-[-0.04em] sm:text-[34px]">
             Peer Group 사람들은 어떨까?
           </h2>
           <p className="text-[16px] font-medium leading-relaxed sm:text-[20px]">
@@ -37,10 +37,10 @@ const SimilarPeopleSection = ({
             {Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={index}
-                className="flex flex-1 flex-col gap-[45px] rounded-[16px] bg-white p-[26px]"
+                className="flex flex-1 flex-col gap-4 rounded-2xl bg-white p-4"
               >
-                <div className="h-[28px] w-[96px] animate-pulse rounded-[4px] bg-gray-100" />
-                <div className="h-[30px] w-full animate-pulse rounded-[4px] bg-gray-100" />
+                <div className="h-[22px] w-[80px] animate-pulse rounded-[4px] bg-gray-100" />
+                <div className="h-[24px] w-full animate-pulse rounded-[4px] bg-gray-100" />
               </div>
             ))}
           </div>
@@ -59,10 +59,12 @@ const SimilarPeopleSection = ({
                 key={person.peerUserId}
                 type="button"
                 onClick={() => onSelectPeer(person.peerUserId)}
-                className="flex flex-1 cursor-pointer flex-col items-start gap-[45px] rounded-[16px] bg-white p-[26px] text-left transition-shadow hover:shadow-md"
+                className="flex flex-1 cursor-pointer flex-col items-start gap-4 rounded-2xl bg-white p-4 text-left transition-shadow hover:shadow-md"
               >
-                <Tag>유사도 {formatSimilarity(person.similarityScore)}%</Tag>
-                <p className="w-full text-right text-[24px] font-bold text-primary-mint-900">
+                <Tag size="sm">
+                  유사도 {formatSimilarity(person.similarityScore)}%
+                </Tag>
+                <p className="w-full text-right text-[18px] font-bold text-primary-mint-900">
                   {person.nickname}
                 </p>
               </button>

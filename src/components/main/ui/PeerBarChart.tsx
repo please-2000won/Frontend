@@ -24,7 +24,7 @@ const minBarSize = (value: number | null | undefined) =>
 const PeerBarChart = ({ title, metrics, myLabel, otherLabel }: PeerBarChartProps) => {
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-[20px] font-semibold text-primary-mint-900">{title}</h3>
+      <h3 className="text-[18px] font-semibold tracking-[-0.04em] text-primary-mint-900">{title}</h3>
       <ResponsiveContainer width="100%" height={metrics.length * 72 + 20}>
         <BarChart
           data={metrics}

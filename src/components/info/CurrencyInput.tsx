@@ -21,21 +21,22 @@ const CurrencyInput = ({
   hint,
 }: CurrencyInputProps) => {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-1.5">
-        <label className="text-black font-semibold text-[16px]">{label}</label>
+        <span className="text-[15px] font-semibold text-black">{label}</span>
         {hint && <InfoTooltip text={hint} />}
       </div>
-      <div className="flex bg-gray-100 rounded-lg p-4 items-center">
+      {/* label로 감싸 필드 아무 곳이나 클릭해도 입력창에 포커스되도록 한다. */}
+      <label className="flex cursor-text items-center gap-2 rounded-lg bg-gray-100 px-4 py-3.5 focus-within:ring-2 focus-within:ring-primary-mint-800">
         <input
           type={type}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className="w-full text-right text-[20px] rounded-lg outline-none "
+          className="w-full bg-transparent text-right text-[16px] outline-none"
         />
-        <span className="text-gray-700 text-[20px] pl-3">{unit}</span>
-      </div>
+        <span className="shrink-0 text-[16px] text-gray-700">{unit}</span>
+      </label>
     </div>
   );
 };

@@ -42,14 +42,14 @@ const TopNavbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 z-10 h-[80px] w-full border-b border-gray-100 bg-system-background">
+    <nav className="fixed top-0 left-0 z-10 h-[60px] w-full border-b border-gray-100 bg-system-background">
       <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between px-5">
         <div className="cursor-pointer" onClick={() => navigate('/')}>
-          <img src={logo} alt="peerfolio" className="w-[186px] h-[40px]" />
+          <img src={logo} alt="peerfolio" className="h-[26px] w-auto" />
         </div>
         {!userInfo && isGuestMode && (
           <div className="flex items-center gap-3">
-            <span className="text-[16px] text-gray-700">
+            <span className="text-[14px] text-gray-700">
               게스트로 둘러보는 중
             </span>
             <button
@@ -66,7 +66,7 @@ const TopNavbar = () => {
             <button
               type="button"
               onClick={() => setIsOpen((prev) => !prev)}
-              className="cursor-pointer text-[24px] text-black"
+              className="cursor-pointer text-[15px] text-black"
             >
               <span className="font-semibold">{userInfo.name}</span>
               <span className="font-medium"> 님</span>
@@ -79,7 +79,7 @@ const TopNavbar = () => {
             >
               <div className="rounded-[12px] border border-gray-100 bg-white p-5 shadow-lg">
                 <p className="text-[13px] text-gray-700">닉네임</p>
-                <p className="mb-4 text-[18px] font-semibold text-primary-mint-900">
+                <p className="mb-4 text-[16px] font-semibold text-primary-mint-900">
                   {userInfo.nickname}
                 </p>
                 <button
