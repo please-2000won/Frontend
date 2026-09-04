@@ -49,7 +49,7 @@ const RiskAnalysisCard = ({ risk }: RiskAnalysisCardProps) => {
   return (
     <div className="flex flex-col gap-6 rounded-[32px] border border-gray-300 bg-white p-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h3 className="text-[24px] font-semibold tracking-[-1.2px] text-primary-mint-900">
+        <h3 className="text-[24px] font-semibold text-primary-mint-900">
           위험 분석
         </h3>
         <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ const RiskAnalysisCard = ({ risk }: RiskAnalysisCardProps) => {
           <span className="text-[16px] font-medium text-gray-800">종합 위험 점수</span>
           <span className="text-[20px] font-bold text-primary-mint-900">
             {risk.totalRiskScore}
-            <span className="text-[14px] font-medium text-gray-400"> / 100</span>
+            <span className="text-[14px] font-medium text-gray-300"> / 100</span>
           </span>
         </div>
         <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
@@ -96,10 +96,10 @@ const RiskAnalysisCard = ({ risk }: RiskAnalysisCardProps) => {
       )}
 
       <div className="flex flex-col gap-2">
-        <span className="text-[14px] font-semibold text-primary-mint-900">
+        <span className="text-[16px] font-semibold text-primary-mint-900">
           위험 분석 요약
         </span>
-        <p className="text-[16px] font-medium leading-[1.5] tracking-[-0.5px] text-gray-800">
+        <p className="whitespace-pre-line text-[16px] font-medium leading-[1.5] text-gray-800 sm:text-[20px]">
           {risk.summary}
         </p>
       </div>

@@ -30,7 +30,7 @@ const InvestmentPieChart = ({ label, profile }: InvestmentPieChartProps) => {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <span className="text-[16px] font-semibold tracking-[-0.8px] text-primary-mint-900">
+      <span className="text-[16px] font-semibold text-primary-mint-900">
         {label}
       </span>
       <ResponsiveContainer width={220} height={220}>

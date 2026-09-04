@@ -13,7 +13,7 @@ const ChatbotPage = () => {
 
   return (
     <div className="mx-auto flex max-w-[1080px] flex-col gap-6 px-5 py-16">
-      <h1 className="text-[32px] font-semibold tracking-[-1.6px] text-primary-mint-900">
+      <h1 className="text-[32px] font-semibold text-primary-mint-900">
         AI 챗봇에게 질문하기
       </h1>
       <p className="text-[16px] font-medium leading-[1.5] text-gray-700">
@@ -33,7 +33,7 @@ const ChatbotPage = () => {
             )}
           </pre>
         ) : (
-          <p className="text-[14px] text-gray-500">
+          <p className="text-[14px] text-gray-700">
             전달된 데이터가 없어요. 메인 페이지에서 분석을 먼저 진행해 주세요.
           </p>
         )}

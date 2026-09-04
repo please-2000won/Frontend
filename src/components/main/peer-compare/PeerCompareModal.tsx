@@ -51,10 +51,10 @@ const PeerCompareModal = ({
       >
         <div className="flex items-start justify-between gap-5">
           <div className="flex items-center gap-10">
-            <span className="text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">
+            <span className="text-[24px] font-bold text-primary-mint-900">
               나
             </span>
-            <span className="text-[24px] font-bold tracking-[-1.2px] text-primary-mint-900">
+            <span className="text-[24px] font-bold text-primary-mint-900">
               {peerName}
             </span>
           </div>
@@ -69,7 +69,7 @@ const PeerCompareModal = ({
         </div>
 
         <div className="flex items-center justify-center">
-          <div className="inline-flex overflow-hidden rounded-[100px] border border-primary-mint-900 text-[14px] font-semibold tracking-[-0.7px]">
+          <div className="inline-flex overflow-hidden rounded-[100px] border border-primary-mint-900 text-[14px] font-semibold">
             {VIEW_MODE_OPTIONS.map((option) => (
               <button
                 key={option.mode}
