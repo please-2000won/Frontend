@@ -63,7 +63,7 @@ const SingupPage = () => {
       //숫자 포함
       const hasNum = /[0-9]/.test(password);
       //특수문자 포함
-      const hasSpec = /[!@#$%^&*?_]/.test(password);
+      const hasSpec = /[^A-Za-z0-9\s]/.test(password);
       //부족한 문자를 담음
       const missing = [];
       if (!hasEng) missing.push('영문');
