@@ -128,7 +128,6 @@ const SingupPage = () => {
 
   useEffect(() => {
     if (accessToken) {
-      alert('잘못된 접근입니다.');
       navigate('/', { replace: true });
     }
   }, [accessToken, navigate]);
@@ -137,6 +136,7 @@ const SingupPage = () => {
   if (accessToken) {
     return null;
   }
+
   //확인용 인증번호 받기
   const handleAuthCode = async () => {
     if (!email || isLoginLoading) {
