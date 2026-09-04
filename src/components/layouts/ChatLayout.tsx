@@ -6,12 +6,19 @@ import { postChatMessage } from '../../api/chatbot';
 
 import copy from '../../assets/main/copy-gray.svg';
 import send from '../../assets/main/send-plain-white.svg';
+import robot from '../../assets/chatprofile/robot-profile.png';
 
 interface Message {
   id: number;
   text: string;
   isBot: boolean;
 }
+
+const DEFAULT_QUESTIONS = [
+  '내 위험등급은 왜 이렇게 나왔나요?',
+  '방어적 자산이 무엇인가요?',
+  'Peer 평균과 다르면 위험한가요?',
+];
 
 const ChatLayout = () => {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
@@ -31,14 +38,18 @@ const ChatLayout = () => {
   }, [messages]);
 
   //메시지 전송 함수
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+  const handleSendMessage = async (textToSend?: string) => {
+    const userText = textToSend || inputValue;
+    if (!userText.trim()) return;
 
-    const userText = inputValue;
-    const newUserMessage = { id: Date.now(), text: inputValue, isBot: false };
+    const newUserMessage = { id: Date.now(), text: userText, isBot: false };
 
     setMessages((prev) => [...prev, newUserMessage]);
-    setInputValue('');
+
+    //직접 입력한 경우에만 입력창 초기화
+    if (!textToSend) {
+      setInputValue('');
+    }
 
     try {
       setIsLoading(true);
@@ -84,7 +95,6 @@ const ChatLayout = () => {
 
       {/* 네브바 아래 영역 */}
       <div className="flex flex-1 min-h-0 pt-[80px]">
-        {/* 왼쪽: 챗봇 열리면 50%, 닫히면 100% */}
         <motion.div
           animate={{
             width: isChatOpen ? '50%' : '100%',
@@ -127,7 +137,9 @@ const ChatLayout = () => {
                       className={`flex flex-col gap-3 max-w-[55%] ${msg.isBot ? 'items-start' : 'items-end'}`}
                     >
                       {msg.isBot && (
-                        <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0 mt-1"></div>
+                        <div className="w-10 h-10 rounded-full flex-shrink-0 mt-1 border border-primary-mint-900">
+                          <img src={robot} alt="" />
+                        </div>
                       )}
                       <div className="flex gap-2 items-end">
                         <div
@@ -160,7 +172,9 @@ const ChatLayout = () => {
                 {isLoading && (
                   <div className="flex gap-3 w-full">
                     <div className="flex flex-col gap-3 max-w-[55%] items-start">
-                      <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0 mt-1"></div>
+                      <div className="w-10 h-10 rounded-full flex-shrink-0 mt-1 border border-primary-mint-900">
+                        <img src={robot} alt="" />
+                      </div>
                       <div className="flex gap-2 items-end">
                         <div className="px-5 py-5 rounded-2xl shadow-sm bg-white border border-gray-100 rounded-bl-sm flex items-center gap-2">
                           <div
@@ -183,23 +197,41 @@ const ChatLayout = () => {
                 <div ref={messagesEndRef} />
               </div>
               {/*입력창*/}
-              <div className="flex w-full gap-4 ">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  disabled={isLoading}
-                  placeholder="무엇이든 물어보세요!"
-                  className="flex flex-1 p-4 bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-mint-900 disabled:cursor-not-allowed "
-                />
-                <button
-                  onClick={handleSendMessage}
-                  disabled={isLoading} // 로딩 중일 때 클릭 방지
-                  className="bg-primary-mint-900 w-14 h-14 rounded-xl flex items-center justify-center cursor-pointer"
-                >
-                  <img src={send} alt="전송" />
-                </button>
+
+              <div className="flex flex-col w-full gap-3 pt-2">
+                {messages.length === 1 && (
+                  <div className="flex flex-wrap gap-2">
+                    {DEFAULT_QUESTIONS.map((question, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleSendMessage(question)}
+                        disabled={isLoading}
+                        className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-primary-mint-100 hover:border-primary-mint-900 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {question}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex w-full gap-4 ">
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={isLoading}
+                    placeholder="무엇이든 물어보세요!"
+                    className="flex flex-1 p-4 bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-mint-900 disabled:cursor-not-allowed "
+                  />
+                  <button
+                    onClick={() => handleSendMessage}
+                    disabled={isLoading} // 로딩 중일 때 클릭 방지
+                    className="bg-primary-mint-900 w-14 h-14 rounded-xl flex items-center justify-center cursor-pointer"
+                  >
+                    <img src={send} alt="전송" />
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
