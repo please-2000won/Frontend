@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import { sendEmailCode, signup } from '../../api/authAPI';
 
-const SingupPage = () => {
+const SignupPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
 
@@ -99,6 +99,18 @@ const SingupPage = () => {
     }
   }, [password, passwordConfirm]);
 
+  //토큰 없으면 접근 막기
+  useEffect(() => {
+    if (accessToken) {
+      navigate('/', { replace: true });
+    }
+  }, [accessToken, navigate]);
+
+  // 토큰이 있을 경우, 찰나의 순간이라도 로그인 폼이 화면에 깜빡이는 것을 방지
+  if (accessToken) {
+    return null;
+  }
+
   // 회원가입
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,18 +154,6 @@ const SingupPage = () => {
     }
   };
 
-  //토큰 없으면 접근 막기
-  useEffect(() => {
-    if (accessToken) {
-      navigate('/', { replace: true });
-    }
-  }, [accessToken, navigate]);
-
-  // 토큰이 있을 경우, 찰나의 순간이라도 로그인 폼이 화면에 깜빡이는 것을 방지
-  if (accessToken) {
-    return null;
-  }
-
   //확인용 인증번호 받기
   const handleAuthCode = async () => {
     if (!email || isLoginLoading) {
@@ -163,7 +163,7 @@ const SingupPage = () => {
     try {
       setIsCodeLoading(true);
 
-      const result = await sendEmailCode({ email });
+      await sendEmailCode({ email });
 
       alert(
         '인증번호가 발급되었습니다! 메일함을 확인해주세요.\n메일이 보이지 않으면 스팸함도 확인해주세요.'
@@ -200,13 +200,6 @@ const SingupPage = () => {
       setAuthCodeError('');
     }
   };
-  /*useEffect(() => {
-    if (authCode && authCode !== authCodeConfirm) {
-      setAuthCodeError('· 인증번호가 일치하지 않아요.');
-    } else {
-      setAuthCodeError('');
-    }
-  }, [authCode, authCodeConfirm]);*/
 
   //버튼 활성화
   const isFormValid =
@@ -215,6 +208,7 @@ const SingupPage = () => {
     authCode.length > 0 &&
     password.length > 0 &&
     passwordConfirm.length > 0 &&
+    codeSent &&
     !nameError &&
     !emailError &&
     !pwLengthError &&
@@ -344,9 +338,6 @@ const SingupPage = () => {
                 autoComplete="new-password"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
-              <span className="text-gray-700 text-[13px]">
-                · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
-              </span>
               <div className="flex flex-col h-5">
                 {confirmError && (
                   <span className="text-[13px] text-system-red">
@@ -371,4 +362,4 @@ const SingupPage = () => {
   );
 };
 
-export default SingupPage;
+export default SignupPage;
