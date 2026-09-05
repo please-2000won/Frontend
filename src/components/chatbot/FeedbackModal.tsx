@@ -33,11 +33,8 @@ const FeedbackModal = ({
   };
 
   return (
-    // 배경(Backdrop): 화면 전체를 덮고 반투명한 검은색 처리
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      // 모달 본체
       <div className="bg-white p-6 rounded-2xl w-[90%] max-w-[400px] shadow-lg flex flex-col gap-4">
-        {/* 헤더 */}
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold text-gray-800">{title}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-black">
@@ -45,7 +42,6 @@ const FeedbackModal = ({
           </button>
         </div>
 
-        {/* 텍스트 입력창 */}
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -53,7 +49,6 @@ const FeedbackModal = ({
           className="w-full h-32 p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-mint-900 resize-none text-sm"
         />
 
-        {/* 하단 버튼들 */}
         <div className="flex justify-end gap-2 mt-2">
           <button
             onClick={onClose}

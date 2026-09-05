@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-import { postChatMessage } from '../../api/chatbot';
+import { postChatMessage, postChatFeedback } from '../../api/chatbot';
 import FeedbackModal from './FeedbackModal';
 
 import copy_gray from '../../assets/chatbot/copy-gray.svg';
@@ -19,6 +19,8 @@ interface Message {
   id: number;
   text: string;
   isBot: boolean;
+  responseId?: string;
+  question?: string;
 }
 
 const DEFAULT_QUESTIONS = [
@@ -33,7 +35,7 @@ interface ChatRoomProps {
 }
 
 const ChatRoom = ({ onClose }: ChatRoomProps) => {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: '어떤 데이터 분석을 도와드릴까요?', isBot: true },
   ]);
 
@@ -44,6 +46,9 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
   const [feedbackType, setFeedbackType] = useState<'LIKE' | 'DISLIKE' | null>(
     null
   );
+
+  // 피드백 대상 메시지 별도 저장
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
 
   //해당 요소를 부르는게 useRef
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -76,6 +81,8 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
           id: Date.now() + 1,
           text: response.result.answer,
           isBot: true,
+          responseId: response.result.responseId,
+          question: userText,
         };
         console.log(messages);
         setMessages((prev) => [...prev, botResponse]);
@@ -105,11 +112,36 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
     }
   };
 
-  const handleFeedback = (type: 'LIKE' | 'DISLIKE') => {
+  const handleFeedback = (type: 'LIKE' | 'DISLIKE', msg: Message) => {
     setFeedbackType(type);
+    setSelectedMessage(msg);
     setIsFeedbackOpen(true);
   };
 
+  const handleSendFeedback = async (comment: string) => {
+    if (!selectedMessage || !feedbackType) return;
+
+    const { responseId, question, text: answer } = selectedMessage;
+
+    if (!responseId || !question) return;
+
+    try {
+      const feedbackResponse = await postChatFeedback({
+        responseId,
+        message: question,
+        answer,
+        rating: feedbackType,
+        comment,
+      });
+      console.log(feedbackResponse);
+    } catch (error) {
+      console.error('피드백 전송 에러:', error);
+    } finally {
+      setIsFeedbackOpen(false);
+      setFeedbackType(null);
+      setSelectedMessage(null);
+    }
+  };
   return (
     <div className="w-full h-full p-6 flex flex-col">
       {/*헤더 */}
@@ -136,7 +168,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
                   <img src={robot} alt="" />
                 </div>
               )}
-              <div className="flex flex-col  gap-2 items-end">
+              <div className="flex flex-col gap-2 items-end">
                 <div
                   className={`px-5 py-3 rounded-2xl shadow-sm leading-relaxed text-[16px] break-all ${
                     msg.isBot
@@ -165,7 +197,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
                       />
                     </button>
                     <button
-                      onClick={() => handleFeedback('LIKE')}
+                      onClick={() => handleFeedback('LIKE', msg)}
                       className="group cursor-pointer flex-shrink-0 mb-3"
                       title="좋아요"
                     >
@@ -181,7 +213,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
                       />
                     </button>
                     <button
-                      onClick={() => handleFeedback('DISLIKE')}
+                      onClick={() => handleFeedback('DISLIKE', msg)}
                       className="group cursor-pointer flex-shrink-0 mb-3"
                       title="별로예요"
                     >
@@ -259,14 +291,14 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
           />
           <button
             onClick={() => handleSendMessage()}
-            disabled={isLoading} // 로딩 중일 때 클릭 방지
+            disabled={isLoading}
             className="bg-primary-mint-900 w-14 h-14 rounded-xl flex items-center justify-center cursor-pointer"
           >
             <img src={send} alt="전송" />
           </button>
         </div>
       </div>
-      {/* 피드백 모달 렌더링 예시 */}
+
       {isFeedbackOpen && (
         <FeedbackModal
           isOpen={isFeedbackOpen}
@@ -274,13 +306,9 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
           onClose={() => {
             setIsFeedbackOpen(false);
             setFeedbackType(null);
+            setSelectedMessage(null);
           }}
-          onSubmit={(type, comment) => {
-            console.log('피드백 타입:', type, '내용:', comment);
-
-            setIsFeedbackOpen(false);
-            setFeedbackType(null);
-          }}
+          onSubmit={(_type, comment) => handleSendFeedback(comment)}
         />
       )}
     </div>
