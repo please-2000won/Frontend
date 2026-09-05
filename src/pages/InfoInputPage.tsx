@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { saveFinancial, getMyFinancial } from '../api/financial';
 import { createAnalysis } from '../api/analysis';
+import useAuthStore from '../stores/useAuthStore';
 
 import CategoryCard from '../components/info/CategoryCard';
 import CurrencyInput from '../components/info/CurrencyInput';
@@ -30,6 +31,7 @@ const EMPTY_FORM = {
 
 const InfoInputPage = () => {
   const navigate = useNavigate();
+  const accessToken = useAuthStore((state) => state.accessToken);
   const [isLoading, setIsLoading] = useState(false);
   // 최초 입력 시에만 저장 직후 분석까지 진행한다.
   const [hasExistingInfo, setHasExistingInfo] = useState(false);
@@ -171,6 +173,11 @@ const InfoInputPage = () => {
       //추후 콤마 없애고 백에 보내야됨
       setFormDataState((prev) => ({ ...prev, [field]: formattedValue }));
     };
+
+  // 로그인 안 했으면 랜딩 페이지로.
+  if (!accessToken) {
+    return <Navigate to="/landing" replace />;
+  }
 
   // 데이터를 불러오는 중일 때 보여줄 UI (선택 사항)
   if (isFetching) {

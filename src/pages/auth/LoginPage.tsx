@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, getMyInfo } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
-import useGuestModeStore from '../../stores/useGuestModeStore';
 import logo from '../../assets/logo/logo.svg';
 
 const LoginPage = () => {
@@ -11,14 +10,6 @@ const LoginPage = () => {
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
-
-  const enableGuestMode = useGuestModeStore((state) => state.enableGuestMode);
-  const disableGuestMode = useGuestModeStore((state) => state.disableGuestMode);
-
-  const handleGuestClick = () => {
-    enableGuestMode();
-    navigate('/');
-  };
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,7 +31,6 @@ const LoginPage = () => {
       //리프레쉬 토큰을 아직 구현을 안했으므로 추후
       //setAuth(data.accessToken, data.refreshToken, ''); 로 수정
       setAuth(data.accessToken, '');
-      disableGuestMode();
 
       const userInfoData = await getMyInfo();
       setUserInfo(userInfoData);
@@ -66,19 +56,24 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col mid:flex-row min-h-screen w-full">
-      <div className="flex flex-col w-full mid:w-1/2 bg-primary-mint-300 justify-center mid:justify-between px-8 py-16 mid:pl-20 mid:py-10 gap-6 mid:gap-0">
-        <div>
-          <img
-            src={logo}
-            alt="peerfolio"
-            className="w-[160px] mid:w-[311px] h-[auto] mid:h-[67px]"
-          />
+      <div className="relative flex flex-col w-full mid:w-1/2 bg-primary-mint-300 justify-center px-8 py-14 mid:pl-16 mid:py-12 gap-8">
+        <img
+          src={logo}
+          alt="peerfolio"
+          className="h-[28px] mid:h-[32px] w-auto self-start mid:absolute mid:left-16 mid:top-12"
+        />
+        <div className="flex flex-col gap-3">
+          <h1 className="text-[28px] mid:text-[40px] font-semibold leading-tight tracking-[-0.04em] text-primary-mint-900 break-keep">
+            나와 비슷한 사람들은
+            <br />
+            어떻게 모으고 있을까?
+          </h1>
+          <p className="text-[15px] mid:text-[16px] font-medium leading-relaxed tracking-[-0.02em] text-primary-mint-900/70 break-keep">
+            경제적 여건이 비슷한 Peer Group과 비교해
+            <br className="hidden mid:block" />
+            내 투자행동의 위치를 확인해요.
+          </p>
         </div>
-        <h1 className="text-[32px] mid:text-[48px] text-primary-mint-900 font-semibold mt-0 mid:mx-3 break-keep">
-          나와 비슷한 사람들은
-          <br />
-          어떻게 모으고 있을까?
-        </h1>
       </div>
       <div className="flex flex-col w-full mid:w-1/2 items-center justify-center my-auto">
         <div className="flex flex-col w-[90%] max-w-[438px] mx-auto gap-5">
@@ -126,14 +121,6 @@ const LoginPage = () => {
               </button>
             </div>
           </form>
-
-          <button
-            type="button"
-            onClick={handleGuestClick}
-            className="py-4 w-full text-gray-700 text-center text-[16px] underline cursor-pointer"
-          >
-            로그인 없이 목데이터로 둘러보기
-          </button>
         </div>
       </div>
     </div>

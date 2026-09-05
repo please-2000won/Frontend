@@ -20,29 +20,20 @@ interface MainPageData {
   financialInfo: MyFinancialResult | null;
 }
 
-// 게스트 모드일 때는 API를 호출하지 않고 이 목데이터를 그대로 보여준다.
-const GUEST_DATA: MainPageData = {
-  isLoading: false,
-  hasAssetInfo: true,
-  assetCards: ASSET_CARDS,
-  investCards: INVEST_CARDS,
-  myProfile: DEFAULT_MY_PROFILE,
-  financialInfo: null,
-};
-
-// 실제 API 응답이 있으면 그 값을, 실패하거나 데이터가 없으면 더미 데이터를 사용한다.
-export const useMainPageData = (isGuestMode: boolean) => {
-  const [data, setData] = useState<MainPageData>({
-    isLoading: true,
+// 내 금융정보를 조회한다. 실패하거나 데이터가 없으면 더미(플레이스홀더)를 그대로 둔다.
+// enabled=false(로그인 안 됨)면 요청 자체를 하지 않는다. (401 → 강제 리다이렉트 방지)
+export const useMainPageData = (enabled: boolean) => {
+  const [data, setData] = useState<MainPageData>(() => ({
+    isLoading: enabled,
     hasAssetInfo: false,
     assetCards: ASSET_CARDS,
     investCards: INVEST_CARDS,
     myProfile: DEFAULT_MY_PROFILE,
     financialInfo: null,
-  });
+  }));
 
   useEffect(() => {
-    if (isGuestMode) return;
+    if (!enabled) return;
 
     let cancelled = false;
 
@@ -70,7 +61,7 @@ export const useMainPageData = (isGuestMode: boolean) => {
     return () => {
       cancelled = true;
     };
-  }, [isGuestMode]);
+  }, [enabled]);
 
-  return isGuestMode ? GUEST_DATA : data;
+  return data;
 };

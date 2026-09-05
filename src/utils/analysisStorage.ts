@@ -4,8 +4,6 @@ import type { MyFinancialResult } from '../api/financial';
 // 분석은 시간이 걸리므로 마지막 결과를 로컬에 캐싱해두고,
 // 페이지 재진입 시 즉시 보여준 뒤(백그라운드 GET으로) 갱신한다. (stale-while-revalidate)
 const ANALYSIS_KEY = 'peerfolio:analysis-cache';
-// 챗봇에게 넘겨야 하는 컨텍스트(내 금융정보 + 분석 결과)를 담아둔다.
-const CHATBOT_KEY = 'peerfolio:chatbot-context';
 
 interface CachedAnalysis {
   userId: number;
@@ -36,13 +34,6 @@ export const financialFingerprint = (
     a.alternativeAmount,
   ]);
 };
-
-export interface ChatbotContext {
-  updatedAt: number;
-  userId: number;
-  financialInfo: MyFinancialResult | null;
-  analysis: AnalysisResponse | null;
-}
 
 const loadCachedRecord = (userId?: number): CachedAnalysis | null => {
   try {
@@ -82,33 +73,10 @@ export const saveCachedAnalysis = (
   }
 };
 
-export const loadChatbotContext = (): ChatbotContext | null => {
-  try {
-    const raw = localStorage.getItem(CHATBOT_KEY);
-    return raw ? (JSON.parse(raw) as ChatbotContext) : null;
-  } catch {
-    return null;
-  }
-};
-
-export const saveChatbotContext = (
-  context: Omit<ChatbotContext, 'updatedAt'>
-) => {
-  try {
-    localStorage.setItem(
-      CHATBOT_KEY,
-      JSON.stringify({ ...context, updatedAt: Date.now() })
-    );
-  } catch {
-    // 무시
-  }
-};
-
 // 로그아웃 / 회원탈퇴 시 캐시를 비운다.
 export const clearAnalysisStorage = () => {
   try {
     localStorage.removeItem(ANALYSIS_KEY);
-    localStorage.removeItem(CHATBOT_KEY);
   } catch {
     // 무시
   }

@@ -41,6 +41,8 @@ export interface MyFinancialResult {
     alternativeAmount: number;
     totalFinancialAssetAmount: number;
   };
+  // 금융 정보 최종 수정 시각 (ISO date-time)
+  updatedAt?: string;
 }
 
 //내 금융정보 저장(요청 리퀘 있고, 응답 없음)

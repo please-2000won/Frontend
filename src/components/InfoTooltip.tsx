@@ -38,7 +38,7 @@ const InfoTooltip = ({ text, placement = 'top' }: InfoTooltipProps) => {
       </button>
       <span
         role="tooltip"
-        className={`pointer-events-none absolute left-0 z-20 w-[220px] rounded-lg bg-primary-mint-900 px-3 py-2 text-[12px] font-medium leading-[1.45] text-white shadow-lg transition-opacity duration-150 ${position} ${
+        className={`pointer-events-none absolute left-0 z-20 w-max max-w-[240px] break-keep text-pretty rounded-lg bg-primary-mint-900 px-3 py-2 text-[12px] font-medium leading-[1.45] text-white shadow-lg transition-opacity duration-150 ${position} ${
           pinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
         }`}
       >

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import AssetInfoSection from '../components/main/sections/AssetInfoSection';
 import ComparisonSection from '../components/main/sections/ComparisonSection';
 import SimilarPeopleSection from '../components/main/sections/SimilarPeopleSection';
+import MainEmptyState from '../components/main/sections/MainEmptyState';
 import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
 import { useMainPageData } from '../hooks/useMainPageData';
@@ -11,14 +12,11 @@ import {
   useSimilarPeers,
   type PeerComparePayload,
 } from '../hooks/useSimilarPeers';
-import { saveChatbotContext } from '../utils/analysisStorage';
 import useAuthStore from '../stores/useAuthStore';
-import useGuestModeStore from '../stores/useGuestModeStore';
 
 import { useOutletContext } from 'react-router-dom';
 
 const DEFAULT_NAME = '회원';
-const GUEST_NAME = '게스트';
 
 type ChatContextType = {
   setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,29 +25,30 @@ type ChatContextType = {
 const MainPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
-  const isGuestMode = useGuestModeStore((state) => state.isGuestMode);
   // 팀원이 로그인 시 채워두는 유저 정보(useAuthStore.userInfo)를 그대로 재사용한다.
   const userInfo = useAuthStore((state) => state.userInfo);
-  const name = userInfo?.name ?? (isGuestMode ? GUEST_NAME : DEFAULT_NAME);
+  const name = userInfo?.name ?? DEFAULT_NAME;
 
-  const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
-    useMainPageData(isGuestMode);
+  const {
+    isLoading,
+    hasAssetInfo,
+    assetCards,
+    investCards,
+    myProfile,
+    financialInfo,
+  } = useMainPageData(Boolean(accessToken));
 
   // 팀원의 업데이트 내역: financialInfo 파라미터 추가 및 isStale 상태 추가
   const {
     peerGroupProfile,
     aiAnalysisText,
     risk,
-    analysis,
+    peerCount,
+    analyzedAt,
     isAnalyzing,
     isStale,
     reanalyze,
-  } = usePeerGroupAnalysis(
-    isGuestMode,
-    hasAssetInfo,
-    userInfo?.userId,
-    financialInfo
-  );
+  } = usePeerGroupAnalysis(hasAssetInfo, userInfo?.userId, financialInfo);
 
   // 팀원의 업데이트 내역: 로딩, 에러 상태 및 refetch 기능 추가
   const {
@@ -58,25 +57,30 @@ const MainPage = () => {
     isError: isPeersError,
     getComparison,
     refetch: refetchPeers,
-  } = useSimilarPeers(isGuestMode, hasAssetInfo);
+  } = useSimilarPeers(hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
 
   const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
-  // 챗봇 페이지로 넘길 컨텍스트(내 금융정보 + 분석 결과)를 로컬스토리지에 담아둔다.
-  useEffect(() => {
-    if (isGuestMode || (!financialInfo && !analysis)) return;
-    saveChatbotContext({
-      userId: userInfo?.userId ?? 0,
-      financialInfo,
-      analysis,
-    });
-  }, [isGuestMode, financialInfo, analysis, userInfo?.userId]);
+  // 로그인 안 했으면 랜딩 페이지로.
+  if (!accessToken) {
+    return <Navigate to="/landing" replace />;
+  }
 
-  // 비로그인 사용자는 게스트 체험 모드가 아니면 메인페이지를 볼 수 없고 로그인 화면으로 이동해야 한다.
-  if (!accessToken && !isGuestMode) {
-    return <Navigate to="/login" replace />;
+  // 내 금융정보를 불러오는 중에는 판단을 미룬다.
+  if (isLoading) {
+    return (
+      <div className="flex w-full justify-center py-24 text-[15px] text-gray-500">
+        불러오는 중…
+      </div>
+    );
+  }
+
+  // 로그인은 했지만 아직 아무 정보도 입력하지 않은 상태.
+  // 기본 경로에 머무르되, 정보 입력을 유도하는 화면을 보여준다.
+  if (!hasAssetInfo) {
+    return <MainEmptyState />;
   }
 
   const goToInfoInput = () => navigate('/infoInput');
@@ -99,6 +103,7 @@ const MainPage = () => {
         hasAssetInfo={hasAssetInfo}
         assetCards={assetCards}
         investCards={investCards}
+        updatedAt={financialInfo?.updatedAt}
         onWriteClick={goToInfoInput}
         onEditClick={goToInfoInput}
       />
@@ -111,6 +116,8 @@ const MainPage = () => {
         peerGroupProfile={peerGroupProfile}
         aiAnalysisText={aiAnalysisText}
         risk={risk}
+        peerCount={peerCount}
+        analyzedAt={analyzedAt}
         isStale={isStale}
       />
       {hasAssetInfo && (
