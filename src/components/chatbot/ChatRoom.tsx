@@ -112,12 +112,14 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
     }
   };
 
+  //피드백 타입 처리
   const handleFeedback = (type: 'LIKE' | 'DISLIKE', msg: Message) => {
     setFeedbackType(type);
     setSelectedMessage(msg);
     setIsFeedbackOpen(true);
   };
 
+  //피드백 전송
   const handleSendFeedback = async (comment: string) => {
     if (!selectedMessage || !feedbackType) return;
 
@@ -133,7 +135,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
         rating: feedbackType,
         comment,
       });
-      console.log(feedbackResponse);
+      console.log('피드백 응답: ', feedbackResponse);
     } catch (error) {
       console.error('피드백 전송 에러:', error);
     } finally {
@@ -178,7 +180,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
                 >
                   {msg.text}
                 </div>
-                {msg.isBot && (
+                {msg.isBot && msg.id !== 1 && (
                   <div className="flex  gap-3">
                     <button
                       onClick={() => navigator.clipboard.writeText(msg.text)}

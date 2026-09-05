@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-// Props 타입 정의
 interface FeedbackModalProps {
   type: 'LIKE' | 'DISLIKE' | null;
   isOpen: boolean;
@@ -16,7 +15,7 @@ const FeedbackModal = ({
 }: FeedbackModalProps) => {
   const [comment, setComment] = useState('');
 
-  if (!isOpen) return null; // 열려있지 않으면 아무것도 그리지 않음
+  if (!isOpen) return null;
 
   // type에 따라 모달 제목 변경
   const title =
@@ -27,14 +26,35 @@ const FeedbackModal = ({
       : '더 나은 답변을 위해 아쉬운 점을 남겨주세요.';
 
   const handleSubmit = () => {
-    onSubmit(type, comment); // 부모 컴포넌트로 타입과 내용 전달
-    setComment(''); // 입력창 초기화
-    onClose(); // 모달 닫기
+    if (!comment.trim()) return;
+    onSubmit(type, comment);
+    setComment('');
+    onClose();
   };
 
+  const isLike = type === 'LIKE';
+  const MAX_LENGTH = 300;
+
+  //esc키로 닫히도록
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-2xl w-[90%] max-w-[400px] shadow-lg flex flex-col gap-4">
+    <div
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white p-6 rounded-2xl w-[90%] max-w-[400px] shadow-lg flex flex-col gap-4"
+      >
+        {/* 헤더 */}
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold text-gray-800">{title}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-black">
@@ -42,13 +62,16 @@ const FeedbackModal = ({
           </button>
         </div>
 
+        {/* 텍스트 입력창 */}
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder={placeholder}
+          autoFocus
           className="w-full h-32 p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-mint-900 resize-none text-sm"
         />
 
+        {/* 하단 버튼들 */}
         <div className="flex justify-end gap-2 mt-2">
           <button
             onClick={onClose}
@@ -58,7 +81,8 @@ const FeedbackModal = ({
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 rounded-lg bg-primary-mint-900 text-white hover:bg-primary-mint-900/90 text-sm font-semibold"
+            disabled={!comment.trim()}
+            className="px-4 py-2 rounded-lg bg-primary-mint-900 text-white hover:bg-primary-mint-900/90 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
           >
             제출하기
           </button>
