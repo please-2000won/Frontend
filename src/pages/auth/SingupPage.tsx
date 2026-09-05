@@ -10,7 +10,7 @@ const SingupPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [authCode, setAuthCode] = useState('');
-  const [authCodeConfirm, setAuthCodeComfrim] = useState('');
+
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -170,7 +170,6 @@ const SingupPage = () => {
       );
       setCodeSent(true);
       setEmailError('');
-      setAuthCodeComfrim(result.verificationCode);
     } catch (error) {
       const status = (error as { response?: { status?: number } })?.response
         ?.status;
