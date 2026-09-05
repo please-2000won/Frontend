@@ -123,7 +123,6 @@ const MainPage = () => {
       )}
       {compare && (
         <PeerCompareModal
-          myName={name}
           myProfile={compare.myProfile}
           peerName={compare.peerName}
           peerProfile={compare.peerProfile}

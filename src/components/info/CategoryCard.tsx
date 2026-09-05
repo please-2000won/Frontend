@@ -8,13 +8,13 @@ interface CategoryCardProps {
 
 const CategoryCard = ({ title, children }: CategoryCardProps) => {
   return (
-    <div className="bg-white w-full border border-system-background p-[26px] first:rounded-t-2xl last:rounded-b-2xl">
+    <div className="bg-white w-full border border-system-background p-5 first:rounded-t-2xl last:rounded-b-2xl">
       {typeof title === 'string' ? (
-        <div className="bg-primary-mint-900 text-[16px] font-bold text-white px-[10px] py-[5px] rounded-md inline-block mb-5 text-center items-center">
+        <div className="bg-primary-mint-900 text-[13px] font-bold text-white px-2.5 py-1 rounded-md inline-block mb-4 text-center items-center">
           {title}
         </div>
       ) : (
-        title && <div className="mb-5">{title}</div>
+        title && <div className="mb-4">{title}</div>
       )}
       <div>{children}</div>
     </div>

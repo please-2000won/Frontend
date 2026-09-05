@@ -26,23 +26,43 @@ interface RadarDatum {
   otherRaw: number;
 }
 
-const buildRadarData = (my: PeerFinancialProfile, other: PeerFinancialProfile): RadarDatum[] => {
+// 값이 0이어도 최소한 이만큼은 중심에서 벗어나 보이게 한다.
+const MIN_VISIBLE = 8;
+const ZERO_VISIBLE = 3;
+
+const buildRadarData = (
+  my: PeerFinancialProfile,
+  other: PeerFinancialProfile
+): RadarDatum[] => {
   const rows = [
-    { axis: '수입', myRaw: my.totalIncome, otherRaw: other.totalIncome },
-    { axis: '현금', myRaw: my.cash, otherRaw: other.cash },
-    { axis: '국내주식', myRaw: my.domesticStock, otherRaw: other.domesticStock },
-    { axis: '해외주식', myRaw: my.foreignStock, otherRaw: other.foreignStock },
+    { axis: '가용 금액', myRaw: my.totalIncome, otherRaw: other.totalIncome },
+    { axis: '현금성 자산', myRaw: my.cash, otherRaw: other.cash },
+    { axis: '국내 주식', myRaw: my.domesticStock, otherRaw: other.domesticStock },
+    { axis: '해외 주식', myRaw: my.foreignStock, otherRaw: other.foreignStock },
     {
-      axis: '예적금·기타',
+      axis: '예적금·대체',
       myRaw: my.depositBond + my.alternative,
       otherRaw: other.depositBond + other.alternative,
     },
   ];
 
-  return rows.map((row) => {
-    const max = Math.max(row.myRaw, row.otherRaw, 1);
-    return { ...row, my: (row.myRaw / max) * 100, other: (row.otherRaw / max) * 100 };
-  });
+  // 축마다 따로 정규화하면 큰 쪽이 항상 정오각형이 된다.
+  // 전체에서 가장 큰 값을 기준으로 한 번에 정규화해 실제 비율이 드러나게 한다.
+  const globalMax = Math.max(
+    ...rows.flatMap((row) => [row.myRaw, row.otherRaw]),
+    1
+  );
+
+  const scale = (value: number) => {
+    if (value <= 0) return ZERO_VISIBLE;
+    return Math.max((value / globalMax) * 100, MIN_VISIBLE);
+  };
+
+  return rows.map((row) => ({
+    ...row,
+    my: scale(row.myRaw),
+    other: scale(row.otherRaw),
+  }));
 };
 
 interface RadarTooltipProps {
@@ -78,10 +98,14 @@ const PeerCompareRadarChart = ({
   const data = buildRadarData(myProfile, peerProfile);
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <RadarChart data={data} outerRadius="62%" margin={{ top: 30, right: 50, bottom: 30, left: 50 }}>
+    <ResponsiveContainer width="100%" height={360}>
+      <RadarChart
+        data={data}
+        outerRadius="70%"
+        margin={{ top: 12, right: 56, bottom: 4, left: 56 }}
+      >
         <PolarGrid stroke="#e5e5e5" />
-        <PolarAngleAxis dataKey="axis" tick={{ fontSize: 13, fill: '#555' }} />
+        <PolarAngleAxis dataKey="axis" tick={{ fontSize: 12, fill: '#555555' }} />
         <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
         <Tooltip content={<RadarTooltip myName={myName} peerName={peerName} />} />
         <Radar
@@ -89,8 +113,8 @@ const PeerCompareRadarChart = ({
           dataKey="my"
           stroke="#013e39"
           fill="#013e39"
-          fillOpacity={0.25}
-          animationDuration={700}
+          fillOpacity={0.22}
+          animationDuration={600}
         />
         <Radar
           name={peerName}
@@ -98,9 +122,9 @@ const PeerCompareRadarChart = ({
           stroke="#75e0d7"
           fill="#75e0d7"
           fillOpacity={0.4}
-          animationDuration={700}
+          animationDuration={600}
         />
-        <Legend wrapperStyle={{ fontSize: 13 }} />
+        <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
       </RadarChart>
     </ResponsiveContainer>
   );

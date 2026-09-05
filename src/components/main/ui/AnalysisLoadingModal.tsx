@@ -9,7 +9,7 @@ const AnalysisLoadingModal = ({ open }: AnalysisLoadingModalProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="flex flex-col items-center gap-5 rounded-[24px] bg-white px-10 py-9 shadow-xl">
+      <div className="flex flex-col items-center gap-4 rounded-2xl bg-white px-8 py-7 shadow-xl">
         <span
           className="size-12 animate-spin rounded-full border-4 border-primary-mint-200 border-t-primary-mint-800"
           role="status"
