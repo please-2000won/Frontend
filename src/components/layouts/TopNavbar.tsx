@@ -59,27 +59,27 @@ const TopNavbar = () => {
                 isOpen ? 'visible opacity-100' : 'invisible opacity-0'
               }`}
             >
-              <div className="rounded-[12px] border border-gray-100 bg-white p-5 shadow-lg">
-                <p className="text-[13px] text-gray-700">닉네임</p>
-                <p className="mb-4 text-[16px] font-semibold text-primary-mint-900">
-                  {userInfo.nickname}
-                </p>
+              <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg">
+                <div className="flex flex-col gap-0.5">
+                  <p className="text-[12px] text-gray-500">닉네임</p>
+                  <p className="text-[16px] font-semibold text-primary-mint-900">
+                    {userInfo.nickname}
+                  </p>
+                </div>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red mb-3"
+                  className="w-full cursor-pointer rounded-lg border border-primary-mint-800 py-2.5 text-[14px] font-semibold text-primary-mint-800 transition-colors hover:bg-primary-mint-200"
                 >
                   로그아웃
                 </button>
-                <div className="flex w-full justify-end mt-auto">
-                  <button
-                    type="button"
-                    onClick={() => navigate('/withdraw')}
-                    className="text-[12px] text-gray-300 hover:text-gray-600 underline cursor-pointer"
-                  >
-                    회원탈퇴
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/withdraw')}
+                  className="cursor-pointer text-center text-[12px] text-gray-500 underline underline-offset-2 transition-colors hover:text-system-red"
+                >
+                  회원탈퇴
+                </button>
               </div>
             </div>
           </div>

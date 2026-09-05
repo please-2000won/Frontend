@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import AssetInfoSection from '../components/main/sections/AssetInfoSection';
 import ComparisonSection from '../components/main/sections/ComparisonSection';
 import SimilarPeopleSection from '../components/main/sections/SimilarPeopleSection';
+import MainEmptyState from '../components/main/sections/MainEmptyState';
 import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
 import { useMainPageData } from '../hooks/useMainPageData';
@@ -28,8 +29,14 @@ const MainPage = () => {
   const userInfo = useAuthStore((state) => state.userInfo);
   const name = userInfo?.name ?? DEFAULT_NAME;
 
-  const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
-    useMainPageData();
+  const {
+    isLoading,
+    hasAssetInfo,
+    assetCards,
+    investCards,
+    myProfile,
+    financialInfo,
+  } = useMainPageData(Boolean(accessToken));
 
   // 팀원의 업데이트 내역: financialInfo 파라미터 추가 및 isStale 상태 추가
   const {
@@ -55,9 +62,24 @@ const MainPage = () => {
 
   const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
-  // 비로그인 사용자는 메인페이지를 볼 수 없고 로그인 화면으로 이동해야 한다.
+  // 로그인 안 했으면 랜딩 페이지로.
   if (!accessToken) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/landing" replace />;
+  }
+
+  // 내 금융정보를 불러오는 중에는 판단을 미룬다.
+  if (isLoading) {
+    return (
+      <div className="flex w-full justify-center py-24 text-[15px] text-gray-500">
+        불러오는 중…
+      </div>
+    );
+  }
+
+  // 로그인은 했지만 아직 아무 정보도 입력하지 않은 상태.
+  // 기본 경로에 머무르되, 정보 입력을 유도하는 화면을 보여준다.
+  if (!hasAssetInfo) {
+    return <MainEmptyState />;
   }
 
   const goToInfoInput = () => navigate('/infoInput');

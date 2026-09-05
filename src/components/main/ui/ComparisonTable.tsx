@@ -67,16 +67,16 @@ const ComparisonTable = ({ groups, myLabel, otherLabel }: ComparisonTableProps) 
 
             return (
               <Fragment key={metric.label}>
-                <div className="break-keep px-1 py-3 text-center text-[13px] font-bold text-primary-mint-900 sm:px-2 sm:text-[14px]">
+                <div className="flex items-center justify-center break-keep px-1 py-3 text-center text-[13px] font-bold text-primary-mint-900 sm:px-2 sm:text-[14px]">
                   {formatWon(metric.my)}
                 </div>
-                <div className="flex flex-col items-center gap-1 px-1 py-3 text-center sm:px-2">
+                <div className="flex flex-col items-center justify-center gap-1 px-1 py-3 text-center sm:px-2">
                   <span className="break-keep text-[12px] text-gray-700 sm:text-[13px]">
                     {metric.label}
                   </span>
                   {diff !== null && <DiffBadge diff={diff} />}
                 </div>
-                <div className="break-keep px-1 py-3 text-center text-[13px] font-bold text-primary-mint-900 sm:px-2 sm:text-[14px]">
+                <div className="flex items-center justify-center break-keep px-1 py-3 text-center text-[13px] font-bold text-primary-mint-900 sm:px-2 sm:text-[14px]">
                   {formatWon(metric.other)}
                 </div>
               </Fragment>

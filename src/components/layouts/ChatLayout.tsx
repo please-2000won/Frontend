@@ -11,8 +11,8 @@ const ChatLayout = () => {
     <div className="bg-system-background h-screen flex flex-col overflow-hidden">
       <TopNavbar />
 
-      {/* 네브바 아래 영역 */}
-      <div className="flex flex-1 min-h-0 pt-[80px]">
+      {/* 네브바 아래 영역 (네브바 높이 60px만큼만 띄운다) */}
+      <div className="flex flex-1 min-h-0 pt-[60px]">
         <motion.div
           animate={{
             width: isChatOpen ? '50%' : '100%',

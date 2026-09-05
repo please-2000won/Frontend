@@ -21,17 +21,20 @@ interface MainPageData {
 }
 
 // 내 금융정보를 조회한다. 실패하거나 데이터가 없으면 더미(플레이스홀더)를 그대로 둔다.
-export const useMainPageData = () => {
-  const [data, setData] = useState<MainPageData>({
-    isLoading: true,
+// enabled=false(로그인 안 됨)면 요청 자체를 하지 않는다. (401 → 강제 리다이렉트 방지)
+export const useMainPageData = (enabled: boolean) => {
+  const [data, setData] = useState<MainPageData>(() => ({
+    isLoading: enabled,
     hasAssetInfo: false,
     assetCards: ASSET_CARDS,
     investCards: INVEST_CARDS,
     myProfile: DEFAULT_MY_PROFILE,
     financialInfo: null,
-  });
+  }));
 
   useEffect(() => {
+    if (!enabled) return;
+
     let cancelled = false;
 
     const fetchData = async () => {
@@ -58,7 +61,7 @@ export const useMainPageData = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [enabled]);
 
   return data;
 };

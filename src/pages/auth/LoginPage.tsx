@@ -64,20 +64,11 @@ const LoginPage = () => {
             className="w-[160px] mid:w-[311px] h-[auto] mid:h-[67px]"
           />
         </div>
-        <div className="flex flex-col gap-6 mid:gap-8">
-          <h1 className="text-[32px] mid:text-[48px] text-primary-mint-900 font-semibold mt-0 mid:mx-3 break-keep">
-            나와 비슷한 사람들은
-            <br />
-            어떻게 모으고 있을까?
-          </h1>
-          <button
-            type="button"
-            onClick={() => navigate('/landing')}
-            className="w-fit cursor-pointer rounded-full border border-primary-mint-900 px-5 py-2.5 text-[14px] font-semibold text-primary-mint-900 transition-colors hover:bg-primary-mint-200 mid:mx-3"
-          >
-            Peerfolio가 궁금하다면? 소개 보기
-          </button>
-        </div>
+        <h1 className="text-[32px] mid:text-[48px] text-primary-mint-900 font-semibold mt-0 mid:mx-3 break-keep">
+          나와 비슷한 사람들은
+          <br />
+          어떻게 모으고 있을까?
+        </h1>
       </div>
       <div className="flex flex-col w-full mid:w-1/2 items-center justify-center my-auto">
         <div className="flex flex-col w-[90%] max-w-[438px] mx-auto gap-5">

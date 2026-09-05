@@ -68,7 +68,8 @@ api.interceptors.response.use(
         console.error('토큰 재발급 실패, 로그아웃', refreshError);
 
         useAuthStore.getState().clearAuth();
-        window.location.href = '/login';
+        // 로그인 안 된 상태의 진입점은 항상 랜딩 페이지.
+        window.location.href = '/landing';
 
         return Promise.reject(refreshError);
       }

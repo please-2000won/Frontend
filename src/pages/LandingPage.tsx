@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../stores/useAuthStore';
+import MiniMock from '../components/main/ui/MiniMock';
 import logo from '../assets/logo/logo.svg';
 
 // 기획서(docs/plan.md) 3.1 "해결하려는 문제"에서 발췌
@@ -224,107 +226,46 @@ const PreviewCard = () => (
 const CARD_CLASSNAME =
   'h-full rounded-2xl border border-gray-100 bg-white p-6 transition-shadow duration-200 hover:shadow-[0_12px_32px_-16px_rgba(1,62,57,0.25)]';
 
-// 각 단계의 실제 앱 화면을 축소한 미니 목업. 이모지 대신 "이 서비스가 실제로
-// 이렇게 생겼다"를 보여주기 위해 우리 컴포넌트 톤 그대로 작게 그린다.
-const StepMock = ({ id }: { id: string }) => {
-  const frame =
-    'flex h-[150px] w-full flex-col justify-center gap-2.5 overflow-hidden rounded-xl bg-primary-mint-200/40 p-4';
 
-  if (id === 'profile') {
-    return (
-      <div className={frame}>
-        {['월 수입', '월 고정 지출'].map((label) => (
-          <div key={label} className="flex flex-col gap-1">
-            <span className="text-[11px] font-semibold text-gray-500">{label}</span>
-            <div className="flex items-center justify-end rounded-md bg-white px-2.5 py-1.5 text-[12px] font-bold text-primary-mint-900 ring-1 ring-gray-200">
-              3,000,000
-              <span className="ml-1 text-[10px] font-medium text-gray-400">원</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+// 히어로 / 마무리 섹션에서 공통으로 쓰는 CTA 버튼 묶음.
+// 로그인 상태면 "재무 정보 입력하고 시작하기" 하나, 아니면 가입/로그인 두 개를 보여준다.
+const CtaButtons = ({ loggedIn }: { loggedIn: boolean }) => {
+  const navigate = useNavigate();
 
-  if (id === 'peer') {
+  if (loggedIn) {
     return (
-      <div className={`${frame} items-center`}>
-        <div className="flex -space-x-2">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <span
-              key={i}
-              className={`size-7 rounded-full ring-2 ring-white ${
-                i === 2 ? 'bg-primary-mint-800' : 'bg-primary-mint-300'
-              }`}
-            />
-          ))}
-        </div>
-        <span className="rounded-md bg-primary-mint-900 px-2.5 py-1 text-[11px] font-bold text-white">
-          Peer Group 평균
+      <LandingButton variant="primary" onClick={() => navigate('/infoInput')}>
+        재무 정보 입력하고 시작하기
+        <span
+          aria-hidden
+          className="transition-transform group-hover:translate-x-0.5"
+        >
+          →
         </span>
-      </div>
+      </LandingButton>
     );
   }
 
-  if (id === 'risk') {
-    return (
-      <div className={frame}>
-        <div className="flex items-end justify-between">
-          <span className="text-[11px] font-medium text-gray-500">종합 위험 점수</span>
-          <span className="text-[19px] font-bold text-primary-mint-900">62</span>
-        </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-white">
-          <div className="h-full w-[62%] rounded-full bg-gradient-to-r from-amber-400 to-amber-500" />
-        </div>
-        <span className="w-fit rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
-          MEDIUM
-        </span>
-      </div>
-    );
-  }
-
-  if (id === 'compare') {
-    const bars = [
-      { label: '나', width: 74, color: 'bg-primary-mint-900' },
-      { label: '상대', width: 46, color: 'bg-primary-mint-300' },
-    ];
-    return (
-      <div className={`${frame} gap-3`}>
-        {bars.map((bar) => (
-          <div key={bar.label} className="flex items-center gap-2.5">
-            <span className="w-6 shrink-0 text-[11px] font-semibold text-gray-500">
-              {bar.label}
-            </span>
-            <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-white">
-              <div
-                className={`h-full rounded-full ${bar.color}`}
-                style={{ width: `${bar.width}%` }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  // chat
   return (
-    <div className={`${frame} gap-2.5`}>
-      <div className="w-fit max-w-[88%] rounded-lg rounded-bl-sm bg-white px-2.5 py-1.5 text-[11px] text-gray-700 ring-1 ring-gray-200">
-        무엇을 도와드릴까요?
-      </div>
-      <div className="ml-auto w-fit max-w-[88%] rounded-lg rounded-br-sm bg-primary-mint-900 px-2.5 py-1.5 text-[11px] text-white">
-        방어적 자산이 뭔가요?
-      </div>
-    </div>
+    <>
+      <LandingButton variant="primary" onClick={() => navigate('/signup')}>
+        무료로 시작하기
+        <span
+          aria-hidden
+          className="transition-transform group-hover:translate-x-0.5"
+        >
+          →
+        </span>
+      </LandingButton>
+      <LandingButton variant="outline" onClick={() => navigate('/login')}>
+        로그인
+      </LandingButton>
+    </>
   );
 };
 
 const LandingPage = () => {
-  const navigate = useNavigate();
-
-  const goSignup = () => navigate('/signup');
-  const goLogin = () => navigate('/login');
+  const loggedIn = Boolean(useAuthStore((state) => state.accessToken));
 
   return (
     <div className="flex flex-col overflow-x-hidden">
@@ -392,18 +333,7 @@ const LandingPage = () => {
               transition={{ duration: 0.6 }}
               className="flex flex-wrap items-center gap-4"
             >
-              <LandingButton variant="primary" onClick={goSignup}>
-                무료로 시작하기
-                <span
-                  aria-hidden
-                  className="transition-transform group-hover:translate-x-0.5"
-                >
-                  →
-                </span>
-              </LandingButton>
-              <LandingButton variant="outline" onClick={goLogin}>
-                로그인
-              </LandingButton>
+              <CtaButtons loggedIn={loggedIn} />
             </motion.div>
           </motion.div>
 
@@ -452,7 +382,7 @@ const LandingPage = () => {
                   <span className="text-[13px] font-bold tracking-[0.08em] text-primary-mint-800">
                     {String(index + 1).padStart(2, '0')}
                   </span>
-                  <StepMock id={step.mock} />
+                  <MiniMock id={step.mock} />
                   <h3 className="text-[20px] font-bold tracking-[-0.02em] text-primary-mint-900">
                     {step.title}
                   </h3>
@@ -521,18 +451,7 @@ const LandingPage = () => {
             지금 바로 내 투자행동을 점검해보세요
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <LandingButton variant="primary" onClick={goSignup}>
-              무료로 시작하기
-              <span
-                aria-hidden
-                className="transition-transform group-hover:translate-x-0.5"
-              >
-                →
-              </span>
-            </LandingButton>
-            <LandingButton variant="outline" onClick={goLogin}>
-              로그인
-            </LandingButton>
+            <CtaButtons loggedIn={loggedIn} />
           </div>
         </Reveal>
       </section>
