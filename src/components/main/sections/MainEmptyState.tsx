@@ -33,14 +33,15 @@ const MainEmptyState = () => {
           <span className="rounded-lg bg-white/70 px-3 py-1.5 text-[13px] font-semibold text-primary-mint-900">
             아직 재무 정보가 없어요
           </span>
-          <h1 className="text-[28px] font-bold leading-tight tracking-[-0.04em] text-primary-mint-900 sm:text-[38px]">
+          <h1 className="break-keep text-[28px] font-bold leading-tight tracking-[-0.04em] text-primary-mint-900 sm:text-[38px]">
             재무 정보를 입력하면,
             <br />
             또래와 비교한 내 위치가 보여요
           </h1>
-          <p className="max-w-[560px] text-[15px] font-medium leading-relaxed text-primary-mint-900/75 sm:text-[17px]">
-            월수입·고정지출·저축목표·보유자산·부채와 투자자산 금액을 한 번만
-            입력하면, 나와 비슷한 Peer Group과 비교한 AI 분석이 만들어져요.
+          <p className="max-w-[620px] break-keep text-[15px] font-medium leading-relaxed tracking-[-0.02em] text-primary-mint-900/75 sm:text-[16px]">
+            월수입·고정지출·저축목표·보유자산·부채와 투자자산 금액을 한 번만 입력하면,
+            <br className="hidden sm:block" />
+            나와 비슷한 Peer Group과 비교한 AI 분석이 만들어져요.
           </p>
           <PillButton variant="filled" size="lg" onClick={goInput}>
             재무 정보 입력하기
@@ -68,11 +69,6 @@ const MainEmptyState = () => {
                 </p>
               </div>
             ))}
-          </div>
-          <div>
-            <PillButton variant="filled" size="lg" onClick={goInput}>
-              재무 정보 입력하기
-            </PillButton>
           </div>
         </div>
       </section>

@@ -44,6 +44,7 @@ const MainPage = () => {
     aiAnalysisText,
     risk,
     peerCount,
+    analyzedAt,
     isAnalyzing,
     isStale,
     reanalyze,
@@ -102,6 +103,7 @@ const MainPage = () => {
         hasAssetInfo={hasAssetInfo}
         assetCards={assetCards}
         investCards={investCards}
+        updatedAt={financialInfo?.updatedAt}
         onWriteClick={goToInfoInput}
         onEditClick={goToInfoInput}
       />
@@ -115,6 +117,7 @@ const MainPage = () => {
         aiAnalysisText={aiAnalysisText}
         risk={risk}
         peerCount={peerCount}
+        analyzedAt={analyzedAt}
         isStale={isStale}
       />
       {hasAssetInfo && (

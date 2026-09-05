@@ -322,10 +322,13 @@ const LandingPage = () => {
             <motion.p
               variants={fadeUp}
               transition={{ duration: 0.6 }}
-              className="text-[16px] font-medium leading-relaxed text-primary-mint-900/75 sm:text-[19px]"
+              className="break-keep text-[16px] font-medium leading-relaxed tracking-[-0.02em] text-primary-mint-900/75 sm:text-[18px]"
             >
-              나와 경제적 여건이 비슷한 Peer Group과 비교하고, AI가 위험 요인을
-              짚어주고, 막히는 용어는 챗봇에게 바로 물어보세요.
+              나와 경제적 여건이 비슷한 Peer Group과 비교하고,
+              <br className="hidden sm:block" />
+              AI가 위험 요인을 짚어주고,
+              <br className="hidden sm:block" />
+              막히는 용어는 챗봇에게 바로 물어보세요.
             </motion.p>
 
             <motion.div

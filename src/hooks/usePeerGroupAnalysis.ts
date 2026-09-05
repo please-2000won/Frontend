@@ -23,6 +23,8 @@ interface PeerGroupAnalysisData {
   analysis: AnalysisResponse | null;
   // 이번 분석이 비교한 피어 그룹 인원수
   peerCount: number | null;
+  // 이번 분석이 생성된 시각 (ISO date-time)
+  analyzedAt: string | null;
   // 현재 보여주는 분석이 기준으로 삼은 자산 정보의 지문
   analyzedFingerprint: string | null;
 }
@@ -34,6 +36,7 @@ const INITIAL_DATA: PeerGroupAnalysisData = {
   risk: null,
   analysis: null,
   peerCount: null,
+  analyzedAt: null,
   analyzedFingerprint: null,
 };
 
@@ -55,6 +58,7 @@ const toPeerGroupData = (
   },
   analysis,
   peerCount: analysis.peerCount,
+  analyzedAt: analysis.createdAt ?? null,
   analyzedFingerprint,
 });
 
