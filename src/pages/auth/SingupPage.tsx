@@ -263,7 +263,11 @@ const SingupPage = () => {
                 />
                 <button
                   type="button"
-                  className={`w-full sm:w-auto shrink-0 whitespace-nowrap py-4 px-5 rounded-lg text-[16px] font-semibold cursor-pointer disabled:cursor-not-allowed ${isCodeLoading ? 'bg-white border border-primary-mint-800 text-primary-mint-800' : 'bg-primary-mint-800 border text-white border-primary-mint-800'}`}
+                  className={`w-full sm:w-[132px] shrink-0 flex items-center justify-center whitespace-nowrap py-4 px-5 rounded-lg text-[16px] font-semibold cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:active:scale-100 ${
+                    isCodeLoading
+                      ? 'bg-white border border-primary-mint-800 text-primary-mint-800'
+                      : 'bg-primary-mint-800 border text-white border-primary-mint-800'
+                  }`}
                   onClick={handleAuthCode}
                   disabled={isCodeLoading}
                 >

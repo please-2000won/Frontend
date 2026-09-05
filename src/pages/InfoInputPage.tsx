@@ -192,7 +192,9 @@ const InfoInputPage = () => {
     <div>
       <div className="max-w-[1080px] my-10 sm:my-[64px] mx-auto px-5">
         <div className="mb-8 flex flex-col gap-2">
-          <h1 className="text-[24px] font-semibold tracking-[-0.04em] text-black">정보 입력</h1>
+          <h1 className="text-[24px] font-semibold tracking-[-0.04em] text-black">
+            정보 입력
+          </h1>
           <p className="text-[14px] text-gray-700">
             입력한 값이 실제에 가까울수록 또래 비교와 분석 결과가 정확해져요.
           </p>
@@ -203,8 +205,8 @@ const InfoInputPage = () => {
               재무 현황
             </h2>
             <p className="text-[14px] text-gray-700">
-              매달 들어오고 나가는 돈과 현재 가진 현금성 자산·부채를 입력해 주세요.
-              세전이 아닌 실수령액 기준으로 적어주세요.
+              매달 들어오고 나가는 돈과 현재 가진 현금성 자산·부채를 입력해
+              주세요. 세전이 아닌 실수령액 기준으로 적어주세요.
             </p>
           </div>
           <div className="flex flex-col gap-0.5">
@@ -314,7 +316,7 @@ const InfoInputPage = () => {
           <button
             type="button"
             disabled={isLoading}
-            className="flex-1 py-4 border border-primary-mint-800 bg-white text-[16px] text-primary-mint-800 rounded-lg font-semibold cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex-1 py-4 border border-primary-mint-800 bg-white text-[16px] text-primary-mint-800 rounded-lg font-semibold cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => {
               navigate(-1);
             }}
@@ -325,7 +327,7 @@ const InfoInputPage = () => {
             type="button"
             disabled={isLoading || (hasExistingInfo && !isDirty)}
             onClick={handleSubmit}
-            className="flex-1 py-4 border border-primary-mint-800 bg-primary-mint-800 text-[16px] text-white rounded-lg font-semibold cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex-1 py-4 border border-primary-mint-800 bg-primary-mint-800 text-[16px] text-white rounded-lg font-semibold cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isLoading
               ? '저장 중...'
