@@ -4,7 +4,6 @@ import type { MyFinancialResult } from '../api/financial';
 import {
   AI_ANALYSIS_TEXT,
   DEFAULT_PEER_GROUP_PROFILE,
-  DEFAULT_RISK,
   type PeerFinancialProfile,
   type RiskInfo,
 } from '../constants/main/mockData';
@@ -22,6 +21,8 @@ interface PeerGroupAnalysisData {
   aiAnalysisText: string;
   risk: RiskInfo | null;
   analysis: AnalysisResponse | null;
+  // 이번 분석이 비교한 피어 그룹 인원수
+  peerCount: number | null;
   // 현재 보여주는 분석이 기준으로 삼은 자산 정보의 지문
   analyzedFingerprint: string | null;
 }
@@ -32,16 +33,7 @@ const INITIAL_DATA: PeerGroupAnalysisData = {
   aiAnalysisText: AI_ANALYSIS_TEXT,
   risk: null,
   analysis: null,
-  analyzedFingerprint: null,
-};
-
-// 게스트 모드일 때는 API를 호출하지 않고 목데이터를 그대로 보여준다.
-const GUEST_DATA: PeerGroupAnalysisData = {
-  isLoading: false,
-  peerGroupProfile: DEFAULT_PEER_GROUP_PROFILE,
-  aiAnalysisText: AI_ANALYSIS_TEXT,
-  risk: DEFAULT_RISK,
-  analysis: null,
+  peerCount: null,
   analyzedFingerprint: null,
 };
 
@@ -62,6 +54,7 @@ const toPeerGroupData = (
       analysis.riskResult.investmentConcentrationRiskScore,
   },
   analysis,
+  peerCount: analysis.peerCount,
   analyzedFingerprint,
 });
 
@@ -69,7 +62,6 @@ const toPeerGroupData = (
 // GET은 "페이지에 새로 접근했을 때" 최근 분석 결과를 불러오는 용도로만 쓴다.
 // 새 분석 생성(POST)은 "다시 분석하기"에서만 한다. (reanalyze)
 export const usePeerGroupAnalysis = (
-  isGuestMode: boolean,
   hasAssetInfo: boolean,
   userId?: number,
   financialInfo?: MyFinancialResult | null
@@ -78,7 +70,6 @@ export const usePeerGroupAnalysis = (
 
   // 캐시가 있으면 우선 보여주고 뒤에서 갱신한다. (stale-while-revalidate)
   const [data, setData] = useState<PeerGroupAnalysisData>(() => {
-    if (isGuestMode) return GUEST_DATA;
     const cached = loadCachedAnalysis(userId);
     return cached
       ? toPeerGroupData(cached, loadAnalyzedFingerprint(userId))
@@ -87,7 +78,7 @@ export const usePeerGroupAnalysis = (
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
-    if (isGuestMode || !hasAssetInfo) return;
+    if (!hasAssetInfo) return;
 
     let cancelled = false;
 
@@ -111,11 +102,11 @@ export const usePeerGroupAnalysis = (
     return () => {
       cancelled = true;
     };
-  }, [isGuestMode, hasAssetInfo, userId, currentFingerprint]);
+  }, [hasAssetInfo, userId, currentFingerprint]);
 
   // "다시 분석하기" 버튼에서 사용: 항상 새 분석을 생성한다. (GET 없이 POST만)
   const reanalyze = useCallback(async () => {
-    if (isGuestMode || isAnalyzing) return;
+    if (isAnalyzing) return;
     setIsAnalyzing(true);
     try {
       const analysis = await createAnalysis();
@@ -127,19 +118,14 @@ export const usePeerGroupAnalysis = (
     } finally {
       setIsAnalyzing(false);
     }
-  }, [isGuestMode, isAnalyzing, userId, currentFingerprint]);
+  }, [isAnalyzing, userId, currentFingerprint]);
 
   // 현재 자산 정보가 분석 기준과 달라졌는지 (분석 결과가 예전 정보 기준인지)
   const isStale =
-    !isGuestMode &&
     data.analysis != null &&
     data.analyzedFingerprint != null &&
     currentFingerprint != null &&
     data.analyzedFingerprint !== currentFingerprint;
-
-  if (isGuestMode) {
-    return { ...GUEST_DATA, isAnalyzing: false, isStale: false, reanalyze };
-  }
 
   return { ...data, isAnalyzing, isStale, reanalyze };
 };

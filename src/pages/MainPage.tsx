@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import AssetInfoSection from '../components/main/sections/AssetInfoSection';
 import ComparisonSection from '../components/main/sections/ComparisonSection';
@@ -11,14 +11,11 @@ import {
   useSimilarPeers,
   type PeerComparePayload,
 } from '../hooks/useSimilarPeers';
-import { saveChatbotContext } from '../utils/analysisStorage';
 import useAuthStore from '../stores/useAuthStore';
-import useGuestModeStore from '../stores/useGuestModeStore';
 
 import { useOutletContext } from 'react-router-dom';
 
 const DEFAULT_NAME = '회원';
-const GUEST_NAME = '게스트';
 
 type ChatContextType = {
   setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,29 +24,23 @@ type ChatContextType = {
 const MainPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
-  const isGuestMode = useGuestModeStore((state) => state.isGuestMode);
   // 팀원이 로그인 시 채워두는 유저 정보(useAuthStore.userInfo)를 그대로 재사용한다.
   const userInfo = useAuthStore((state) => state.userInfo);
-  const name = userInfo?.name ?? (isGuestMode ? GUEST_NAME : DEFAULT_NAME);
+  const name = userInfo?.name ?? DEFAULT_NAME;
 
   const { hasAssetInfo, assetCards, investCards, myProfile, financialInfo } =
-    useMainPageData(isGuestMode);
+    useMainPageData();
 
   // 팀원의 업데이트 내역: financialInfo 파라미터 추가 및 isStale 상태 추가
   const {
     peerGroupProfile,
     aiAnalysisText,
     risk,
-    analysis,
+    peerCount,
     isAnalyzing,
     isStale,
     reanalyze,
-  } = usePeerGroupAnalysis(
-    isGuestMode,
-    hasAssetInfo,
-    userInfo?.userId,
-    financialInfo
-  );
+  } = usePeerGroupAnalysis(hasAssetInfo, userInfo?.userId, financialInfo);
 
   // 팀원의 업데이트 내역: 로딩, 에러 상태 및 refetch 기능 추가
   const {
@@ -58,24 +49,14 @@ const MainPage = () => {
     isError: isPeersError,
     getComparison,
     refetch: refetchPeers,
-  } = useSimilarPeers(isGuestMode, hasAssetInfo);
+  } = useSimilarPeers(hasAssetInfo);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
 
   const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
-  // 챗봇 페이지로 넘길 컨텍스트(내 금융정보 + 분석 결과)를 로컬스토리지에 담아둔다.
-  useEffect(() => {
-    if (isGuestMode || (!financialInfo && !analysis)) return;
-    saveChatbotContext({
-      userId: userInfo?.userId ?? 0,
-      financialInfo,
-      analysis,
-    });
-  }, [isGuestMode, financialInfo, analysis, userInfo?.userId]);
-
-  // 비로그인 사용자는 게스트 체험 모드가 아니면 메인페이지를 볼 수 없고 로그인 화면으로 이동해야 한다.
-  if (!accessToken && !isGuestMode) {
+  // 비로그인 사용자는 메인페이지를 볼 수 없고 로그인 화면으로 이동해야 한다.
+  if (!accessToken) {
     return <Navigate to="/login" replace />;
   }
 
@@ -111,6 +92,7 @@ const MainPage = () => {
         peerGroupProfile={peerGroupProfile}
         aiAnalysisText={aiAnalysisText}
         risk={risk}
+        peerCount={peerCount}
         isStale={isStale}
       />
       {hasAssetInfo && (

@@ -1,5 +1,6 @@
 import PeerBarChart from '../ui/PeerBarChart';
 import PeerPieChart from '../ui/PeerPieChart';
+import ComparisonTable from '../ui/ComparisonTable';
 import RiskAnalysisCard from '../ui/RiskAnalysisCard';
 import type { PeerFinancialProfile, RiskInfo } from '../../../constants/main/mockData';
 import { buildComparisonGroups } from '../../../utils/buildComparisonGroups';
@@ -12,6 +13,8 @@ interface ComparisonSectionProps {
   peerGroupProfile: PeerFinancialProfile;
   aiAnalysisText: string;
   risk: RiskInfo | null;
+  // 이번 분석이 비교한 피어 그룹 인원수
+  peerCount?: number | null;
   // 현재 분석 결과가 예전 자산 정보 기준일 때 true
   isStale?: boolean;
 }
@@ -24,6 +27,7 @@ const ComparisonSection = ({
   peerGroupProfile,
   aiAnalysisText,
   risk,
+  peerCount,
   isStale = false,
 }: ComparisonSectionProps) => {
   const groups = buildComparisonGroups(myProfile, peerGroupProfile);
@@ -46,6 +50,15 @@ const ComparisonSection = ({
 
         {hasAssetInfo && (
           <>
+            {peerCount != null && (
+              <p className="text-[13px] font-medium text-gray-700">
+                <span className="font-bold text-primary-mint-900">
+                  {peerCount.toLocaleString('ko-KR')}명
+                </span>
+                의 Peer Group과 비교한 결과예요.
+              </p>
+            )}
+
             {isStale && (
               <div className="flex flex-col gap-4 rounded-2xl border-2 border-amber-400 bg-amber-50 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 <div className="flex items-start gap-4">
@@ -92,6 +105,10 @@ const ComparisonSection = ({
             </div>
 
             {risk && <RiskAnalysisCard risk={risk} />}
+
+            <div className="rounded-2xl border border-gray-300 bg-white p-5">
+              <ComparisonTable groups={groups} myLabel="나" otherLabel="Peer Group 평균" />
+            </div>
 
             <div className="flex flex-col gap-10">
               {groups.map((group) => (

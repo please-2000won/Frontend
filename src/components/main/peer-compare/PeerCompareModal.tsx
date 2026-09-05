@@ -3,9 +3,9 @@ import type { PeerFinancialProfile } from '../../../constants/main/mockData';
 import { buildComparisonGroups } from '../../../utils/buildComparisonGroups';
 import PeerBarChart from '../ui/PeerBarChart';
 import PeerPieChart from '../ui/PeerPieChart';
-import PeerCompareRadarChart from './PeerCompareRadarChart';
+import ComparisonTable from '../ui/ComparisonTable';
 
-type PeerCompareViewMode = 'bar' | 'pie' | 'radar';
+type PeerCompareViewMode = 'bar' | 'pie' | 'table';
 
 interface PeerCompareModalProps {
   myProfile: PeerFinancialProfile;
@@ -17,7 +17,7 @@ interface PeerCompareModalProps {
 const VIEW_MODE_OPTIONS: { mode: PeerCompareViewMode; label: string }[] = [
   { mode: 'bar', label: '막대' },
   { mode: 'pie', label: '원형' },
-  { mode: 'radar', label: '레이더' },
+  { mode: 'table', label: '표' },
 ];
 
 const MY_LABEL = '나';
@@ -108,13 +108,8 @@ const PeerCompareModal = ({
                 otherProfile={peerProfile}
               />
             )}
-            {viewMode === 'radar' && (
-              <PeerCompareRadarChart
-                myName={MY_LABEL}
-                peerName={peerName}
-                myProfile={myProfile}
-                peerProfile={peerProfile}
-              />
+            {viewMode === 'table' && (
+              <ComparisonTable groups={groups} myLabel={MY_LABEL} otherLabel={peerName} />
             )}
           </div>
         </div>

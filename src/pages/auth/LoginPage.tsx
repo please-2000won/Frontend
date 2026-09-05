@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, getMyInfo } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
-import useGuestModeStore from '../../stores/useGuestModeStore';
 import logo from '../../assets/logo/logo.svg';
 
 const LoginPage = () => {
@@ -11,14 +10,6 @@ const LoginPage = () => {
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
-
-  const enableGuestMode = useGuestModeStore((state) => state.enableGuestMode);
-  const disableGuestMode = useGuestModeStore((state) => state.disableGuestMode);
-
-  const handleGuestClick = () => {
-    enableGuestMode();
-    navigate('/');
-  };
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,7 +31,6 @@ const LoginPage = () => {
       //리프레쉬 토큰을 아직 구현을 안했으므로 추후
       //setAuth(data.accessToken, data.refreshToken, ''); 로 수정
       setAuth(data.accessToken, '');
-      disableGuestMode();
 
       const userInfoData = await getMyInfo();
       setUserInfo(userInfoData);
@@ -74,11 +64,20 @@ const LoginPage = () => {
             className="w-[160px] mid:w-[311px] h-[auto] mid:h-[67px]"
           />
         </div>
-        <h1 className="text-[32px] mid:text-[48px] text-primary-mint-900 font-semibold mt-0 mid:mx-3 break-keep">
-          나와 비슷한 사람들은
-          <br />
-          어떻게 모으고 있을까?
-        </h1>
+        <div className="flex flex-col gap-6 mid:gap-8">
+          <h1 className="text-[32px] mid:text-[48px] text-primary-mint-900 font-semibold mt-0 mid:mx-3 break-keep">
+            나와 비슷한 사람들은
+            <br />
+            어떻게 모으고 있을까?
+          </h1>
+          <button
+            type="button"
+            onClick={() => navigate('/landing')}
+            className="w-fit cursor-pointer rounded-full border border-primary-mint-900 px-5 py-2.5 text-[14px] font-semibold text-primary-mint-900 transition-colors hover:bg-primary-mint-200 mid:mx-3"
+          >
+            Peerfolio가 궁금하다면? 소개 보기
+          </button>
+        </div>
       </div>
       <div className="flex flex-col w-full mid:w-1/2 items-center justify-center my-auto">
         <div className="flex flex-col w-[90%] max-w-[438px] mx-auto gap-5">
@@ -126,14 +125,6 @@ const LoginPage = () => {
               </button>
             </div>
           </form>
-
-          <button
-            type="button"
-            onClick={handleGuestClick}
-            className="py-4 w-full text-gray-700 text-center text-[16px] underline cursor-pointer"
-          >
-            로그인 없이 목데이터로 둘러보기
-          </button>
         </div>
       </div>
     </div>

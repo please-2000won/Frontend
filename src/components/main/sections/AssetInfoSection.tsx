@@ -77,7 +77,7 @@ const AssetInfoSection = ({
                       <InfoTooltip text={FIELD_HINTS[card.tag]} placement="bottom" />
                     )}
                   </div>
-                  <div className="flex w-full flex-1 flex-col justify-between gap-2.5 text-[16px] font-medium">
+                  <div className="mt-2.5 flex w-full flex-1 flex-col justify-between gap-2.5 text-[16px] font-medium">
                     {card.rows.map((row) => {
                       // 지출/부채 등 음수 값은 부호를 왼쪽 칸으로 빼고 금액은 절댓값만 표시한다.
                       const isNegative = row.value.trimStart().startsWith('-');

@@ -2,14 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo/logo.svg';
 import useAuthStore from '../../stores/useAuthStore';
-import useGuestModeStore from '../../stores/useGuestModeStore';
 import { clearAnalysisStorage } from '../../utils/analysisStorage';
 
 const TopNavbar = () => {
   const userInfo = useAuthStore((state) => state.userInfo);
   const clearAuth = useAuthStore((state) => state.clearAuth);
-  const isGuestMode = useGuestModeStore((state) => state.isGuestMode);
-  const disableGuestMode = useGuestModeStore((state) => state.disableGuestMode);
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +31,6 @@ const TopNavbar = () => {
   const handleLogout = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
       clearAuth();
-      disableGuestMode();
       clearAnalysisStorage();
       setIsOpen(false);
       navigate('/login');
@@ -47,20 +43,6 @@ const TopNavbar = () => {
         <div className="cursor-pointer" onClick={() => navigate('/')}>
           <img src={logo} alt="peerfolio" className="h-[26px] w-auto" />
         </div>
-        {!userInfo && isGuestMode && (
-          <div className="flex items-center gap-3">
-            <span className="text-[14px] text-gray-700">
-              게스트로 둘러보는 중
-            </span>
-            <button
-              type="button"
-              onClick={() => navigate('/login')}
-              className="cursor-pointer rounded-full border border-primary-mint-900 px-4 py-1.5 text-[14px] font-semibold text-primary-mint-900"
-            >
-              로그인하기
-            </button>
-          </div>
-        )}
         {userInfo && (
           <div ref={containerRef} className="group relative">
             <button
