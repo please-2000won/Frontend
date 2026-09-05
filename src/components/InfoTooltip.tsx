@@ -24,9 +24,7 @@ const InfoTooltip = ({ text, placement = 'top' }: InfoTooltipProps) => {
   }, [pinned]);
 
   const position =
-    placement === 'bottom'
-      ? 'top-[calc(100%+8px)]'
-      : 'bottom-[calc(100%+8px)]';
+    placement === 'bottom' ? 'top-[calc(100%+8px)]' : 'bottom-[calc(100%+8px)]';
 
   return (
     <span ref={rootRef} className="group relative inline-flex align-middle">

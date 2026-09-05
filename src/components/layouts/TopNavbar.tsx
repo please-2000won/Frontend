@@ -71,13 +71,15 @@ const TopNavbar = () => {
                 >
                   로그아웃
                 </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/withdraw')}
-                  className="w-full cursor-pointer rounded-[8px] bg-gray-100 py-[10px] text-[14px] font-semibold text-system-red"
-                >
-                  회원탈퇴
-                </button>
+                <div className="flex w-full justify-end mt-auto">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/withdraw')}
+                    className="text-[12px] text-gray-300 hover:text-gray-600 underline cursor-pointer"
+                  >
+                    회원탈퇴
+                  </button>
+                </div>
               </div>
             </div>
           </div>
