@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import TopNavbar from './TopNavbar';
 import ChatRoom from '../chatbot/ChatRoom';

@@ -32,8 +32,7 @@ const FeedbackModal = ({
     onClose();
   };
 
-  const isLike = type === 'LIKE';
-  const MAX_LENGTH = 300;
+  //const MAX_LENGTH = 300;
 
   //esc키로 닫히도록
   useEffect(() => {
