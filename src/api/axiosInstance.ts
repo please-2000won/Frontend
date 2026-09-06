@@ -45,8 +45,16 @@ api.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
+    const requestUrl = originalRequest?.url || '';
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // 로그인, 회원가입, 인증코드 발송, 리프레시 등 인증 관련 API는 401 발생 시 토큰 갱신을 시도하지 않고 즉시 reject
+    const isAuthUrl =
+      requestUrl.includes('/api/v1/auth/login') ||
+      requestUrl.includes('/api/v1/auth/signup') ||
+      requestUrl.includes('/api/v1/auth/email-code') ||
+      requestUrl.includes('/api/v1/auth/refresh');
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthUrl) {
       originalRequest._retry = true;
       try {
         const refreshToken = useAuthStore.getState().refreshToken;
@@ -90,8 +98,17 @@ api.interceptors.response.use(
         } catch {
           // ignore
         }
-        // 로그인 안 된 상태의 진입점은 항상 랜딩 페이지.
-        window.location.href = '/landing';
+
+        // 로그인/회원가입/랜딩 페이지에 이미 있는 경우 불필요하게 리다이렉트하지 않음
+        const currentPath = window.location.pathname;
+        const isAuthPage =
+          currentPath === '/login' ||
+          currentPath === '/signup' ||
+          currentPath === '/landing';
+
+        if (!isAuthPage) {
+          window.location.href = '/landing';
+        }
 
         return Promise.reject(refreshError);
       }
