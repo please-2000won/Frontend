@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createAnalysis, getLatestAnalysis, type AnalysisResponse } from '../api/analysis';
 import type { MyFinancialResult } from '../api/financial';
-import {
-  AI_ANALYSIS_TEXT,
-  DEFAULT_PEER_GROUP_PROFILE,
-  type PeerFinancialProfile,
-  type RiskInfo,
+import type {
+  PeerFinancialProfile,
+  RiskInfo,
 } from '../constants/main/mockData';
 import { mapToPeerGroupProfile } from '../utils/mapFinancialInfo';
 import {
@@ -17,7 +15,8 @@ import {
 
 interface PeerGroupAnalysisData {
   isLoading: boolean;
-  peerGroupProfile: PeerFinancialProfile;
+  isError: boolean;
+  peerGroupProfile: PeerFinancialProfile | null;
   aiAnalysisText: string;
   risk: RiskInfo | null;
   analysis: AnalysisResponse | null;
@@ -30,9 +29,10 @@ interface PeerGroupAnalysisData {
 }
 
 const INITIAL_DATA: PeerGroupAnalysisData = {
-  isLoading: true,
-  peerGroupProfile: DEFAULT_PEER_GROUP_PROFILE,
-  aiAnalysisText: AI_ANALYSIS_TEXT,
+  isLoading: false,
+  isError: false,
+  peerGroupProfile: null,
+  aiAnalysisText: '',
   risk: null,
   analysis: null,
   peerCount: null,
@@ -45,16 +45,17 @@ const toPeerGroupData = (
   analyzedFingerprint: string | null
 ): PeerGroupAnalysisData => ({
   isLoading: false,
+  isError: false,
   peerGroupProfile: mapToPeerGroupProfile(analysis),
-  aiAnalysisText: analysis.analysisComment || AI_ANALYSIS_TEXT,
+  aiAnalysisText: analysis.analysisComment || '',
   risk: {
-    riskLevel: analysis.riskResult.riskLevel,
-    summary: analysis.riskResult.summary,
-    totalRiskScore: analysis.totalRiskScore,
-    incomeBalanceRiskScore: analysis.riskResult.incomeBalanceRiskScore,
-    debtRiskScore: analysis.riskResult.debtRiskScore,
+    riskLevel: analysis.riskResult?.riskLevel ?? 'LOW',
+    summary: analysis.riskResult?.summary ?? '',
+    totalRiskScore: analysis.totalRiskScore ?? 0,
+    incomeBalanceRiskScore: analysis.riskResult?.incomeBalanceRiskScore,
+    debtRiskScore: analysis.riskResult?.debtRiskScore,
     investmentConcentrationRiskScore:
-      analysis.riskResult.investmentConcentrationRiskScore,
+      analysis.riskResult?.investmentConcentrationRiskScore,
   },
   analysis,
   peerCount: analysis.peerCount,
@@ -65,6 +66,7 @@ const toPeerGroupData = (
 // 금융정보(hasAssetInfo)가 있어야 비교할 피어 그룹이 존재하므로, 있을 때만 조회한다.
 // GET은 "페이지에 새로 접근했을 때" 최근 분석 결과를 불러오는 용도로만 쓴다.
 // 새 분석 생성(POST)은 "다시 분석하기"에서만 한다. (reanalyze)
+// 계정(userId)이 변경되면 이전 사용자의 분석 상태를 즉시 완전 초기화한다.
 export const usePeerGroupAnalysis = (
   hasAssetInfo: boolean,
   userId?: number,
@@ -72,17 +74,38 @@ export const usePeerGroupAnalysis = (
 ) => {
   const currentFingerprint = financialFingerprint(financialInfo);
 
-  // 캐시가 있으면 우선 보여주고 뒤에서 갱신한다. (stale-while-revalidate)
   const [data, setData] = useState<PeerGroupAnalysisData>(() => {
     const cached = loadCachedAnalysis(userId);
     return cached
       ? toPeerGroupData(cached, loadAnalyzedFingerprint(userId))
-      : INITIAL_DATA;
+      : { ...INITIAL_DATA, isLoading: hasAssetInfo };
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  useEffect(() => {
+  const fetchLatest = useCallback(async () => {
     if (!hasAssetInfo) return;
+    setData((prev) => ({ ...prev, isLoading: true, isError: false }));
+    try {
+      const analysis = await getLatestAnalysis();
+      const fingerprint = loadAnalyzedFingerprint(userId) ?? currentFingerprint;
+      setData(toPeerGroupData(analysis, fingerprint));
+      saveCachedAnalysis(analysis, userId, fingerprint);
+    } catch {
+      setData({ ...INITIAL_DATA, isLoading: false, isError: true });
+    }
+  }, [hasAssetInfo, userId, currentFingerprint]);
+
+  useEffect(() => {
+    if (!hasAssetInfo) {
+      setData(INITIAL_DATA);
+      return;
+    }
+
+    // 계정이 바뀌거나 금융정보가 변경되면 이전 분석 데이터를 즉시 초기화
+    setData({
+      ...INITIAL_DATA,
+      isLoading: true,
+    });
 
     let cancelled = false;
 
@@ -90,14 +113,13 @@ export const usePeerGroupAnalysis = (
       try {
         const analysis = await getLatestAnalysis();
         if (cancelled) return;
-        // GET은 이 분석이 어떤 자산 정보 기준인지 알 수 없다.
-        // 이전에 저장해둔 지문이 있으면 그대로 쓰고,
-        // 없으면 지금 자산 정보 기준이라고 낙관적으로 가정한다.
         const fingerprint = loadAnalyzedFingerprint(userId) ?? currentFingerprint;
         setData(toPeerGroupData(analysis, fingerprint));
         saveCachedAnalysis(analysis, userId, fingerprint);
       } catch {
-        if (!cancelled) setData((prev) => ({ ...prev, isLoading: false }));
+        if (!cancelled) {
+          setData({ ...INITIAL_DATA, isLoading: false, isError: true });
+        }
       }
     };
 
@@ -108,7 +130,7 @@ export const usePeerGroupAnalysis = (
     };
   }, [hasAssetInfo, userId, currentFingerprint]);
 
-  // "다시 분석하기" 버튼에서 사용: 항상 새 분석을 생성한다. (GET 없이 POST만)
+  // "다시 분석하기" / "새로 분석하기" 버튼에서 사용: 항상 새 분석을 생성한다. (GET 없이 POST만)
   const reanalyze = useCallback(async () => {
     if (isAnalyzing) return;
     setIsAnalyzing(true);
@@ -118,7 +140,7 @@ export const usePeerGroupAnalysis = (
       setData(toPeerGroupData(analysis, currentFingerprint));
       saveCachedAnalysis(analysis, userId, currentFingerprint);
     } catch {
-      // 실패 시 기존 데이터를 유지한다.
+      alert('분석을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -131,5 +153,5 @@ export const usePeerGroupAnalysis = (
     currentFingerprint != null &&
     data.analyzedFingerprint !== currentFingerprint;
 
-  return { ...data, isAnalyzing, isStale, reanalyze };
+  return { ...data, isAnalyzing, isStale, reanalyze, refetch: fetchLatest };
 };

@@ -10,9 +10,25 @@ const api = axios.create({
 //요청 인터셉터
 api.interceptors.request.use(
   (config) => {
-    const token = useAuthStore.getState().accessToken;
+    let token = useAuthStore.getState().accessToken;
+
+    // 만약 zustand 스토어에 없다면 로컬스토리지 auth-storage 직접 확인
+    if (!token) {
+      try {
+        const raw = localStorage.getItem('auth-storage');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          token = parsed?.state?.accessToken ?? null;
+        }
+      } catch {
+        // 무시
+      }
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      delete config.headers.Authorization;
     }
     return config;
   },
@@ -68,6 +84,12 @@ api.interceptors.response.use(
         console.error('토큰 재발급 실패, 로그아웃', refreshError);
 
         useAuthStore.getState().clearAuth();
+        try {
+          localStorage.clear();
+          sessionStorage.clear();
+        } catch {
+          // ignore
+        }
         // 로그인 안 된 상태의 진입점은 항상 랜딩 페이지.
         window.location.href = '/landing';
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { login, getMyInfo } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
+import { clearAppStorage } from '../../utils/analysisStorage';
 import logo from '../../assets/logo/logo.svg';
 import Button from '../../components/common/Button';
 
@@ -10,6 +11,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
 
+  const clearAuth = useAuthStore((state) => state.clearAuth);
   const setAuth = useAuthStore((state) => state.setAuth);
   const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
@@ -26,6 +28,10 @@ const LoginPage = () => {
 
     try {
       setIsLoading(true);
+
+      // 이전 사용자의 잔여 토큰, 캐시, 스토리지 완전 초기화
+      clearAuth();
+      clearAppStorage();
 
       const data = await login({ email, password });
 

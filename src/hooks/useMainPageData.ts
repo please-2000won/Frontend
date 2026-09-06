@@ -1,67 +1,97 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getMyFinancial, type MyFinancialResult } from '../api/financial';
-import {
-  ASSET_CARDS,
-  DEFAULT_MY_PROFILE,
-  INVEST_CARDS,
-  type AssetCardData,
-  type InvestCardData,
-  type PeerFinancialProfile,
+import type {
+  AssetCardData,
+  InvestCardData,
+  PeerFinancialProfile,
 } from '../constants/main/mockData';
 import { mapToAssetCards, mapToInvestCards, mapToProfile } from '../utils/mapFinancialInfo';
 
 interface MainPageData {
   isLoading: boolean;
+  isError: boolean;
   hasAssetInfo: boolean;
   assetCards: AssetCardData[];
   investCards: InvestCardData[];
-  myProfile: PeerFinancialProfile;
+  myProfile: PeerFinancialProfile | null;
   // 챗봇 컨텍스트로 넘기기 위한 원본 응답
   financialInfo: MyFinancialResult | null;
 }
 
-// 내 금융정보를 조회한다. 실패하거나 데이터가 없으면 더미(플레이스홀더)를 그대로 둔다.
+const INITIAL_DATA: MainPageData = {
+  isLoading: false,
+  isError: false,
+  hasAssetInfo: false,
+  assetCards: [],
+  investCards: [],
+  myProfile: null,
+  financialInfo: null,
+};
+
+// 내 금융정보를 조회한다.
 // enabled=false(로그인 안 됨)면 요청 자체를 하지 않는다. (401 → 강제 리다이렉트 방지)
-export const useMainPageData = (enabled: boolean) => {
+// userId가 바뀌면 이전 사용자의 데이터를 즉시 리셋하고 새로 조회한다.
+export const useMainPageData = (enabled: boolean, userId?: number) => {
   const [data, setData] = useState<MainPageData>(() => ({
+    ...INITIAL_DATA,
     isLoading: enabled,
-    hasAssetInfo: false,
-    assetCards: ASSET_CARDS,
-    investCards: INVEST_CARDS,
-    myProfile: DEFAULT_MY_PROFILE,
-    financialInfo: null,
   }));
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!enabled) return;
+    setData((prev) => ({ ...prev, isLoading: true, isError: false }));
+    try {
+      const info = await getMyFinancial();
+      setData({
+        isLoading: false,
+        isError: false,
+        hasAssetInfo: true,
+        assetCards: mapToAssetCards(info),
+        investCards: mapToInvestCards(info),
+        myProfile: mapToProfile(info),
+        financialInfo: info,
+      });
+    } catch {
+      setData((prev) => ({ ...prev, isLoading: false, isError: true }));
+    }
+  }, [enabled]);
+
+  useEffect(() => {
+    if (!enabled) {
+      setData(INITIAL_DATA);
+      return;
+    }
+
+    // 계정이 바뀌면 이전 데이터를 즉시 초기화
+    setData({
+      ...INITIAL_DATA,
+      isLoading: true,
+    });
 
     let cancelled = false;
 
-    const fetchData = async () => {
-      try {
-        const info = await getMyFinancial();
+    getMyFinancial()
+      .then((info) => {
         if (cancelled) return;
-
         setData({
           isLoading: false,
+          isError: false,
           hasAssetInfo: true,
           assetCards: mapToAssetCards(info),
           investCards: mapToInvestCards(info),
           myProfile: mapToProfile(info),
           financialInfo: info,
         });
-      } catch {
+      })
+      .catch(() => {
         if (cancelled) return;
-        setData((prev) => ({ ...prev, isLoading: false }));
-      }
-    };
-
-    fetchData();
+        setData((prev) => ({ ...prev, isLoading: false, isError: true }));
+      });
 
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [enabled, userId]);
 
-  return data;
+  return { ...data, refetch: fetchData };
 };

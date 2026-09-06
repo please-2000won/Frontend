@@ -1,7 +1,5 @@
-import Tag from '../ui/Tag';
 import PillButton from '../ui/PillButton';
 import InfoTooltip from '../../InfoTooltip';
-import dividerLine from '../../../assets/main/divider-line.svg';
 import type { AssetCardData, InvestCardData } from '../../../constants/main/mockData';
 import { FIELD_HINTS } from '../../../constants/fieldHints';
 import { formatDateTime, formatTimeAgo } from '../../../utils/formatDate';
@@ -31,12 +29,15 @@ const AssetInfoSection = ({
       <section className="bg-primary-mint-200">
         <div className="mx-auto flex max-w-[1080px] flex-col items-start justify-between gap-10 px-5 py-16 sm:flex-row sm:items-center">
           <div className="flex flex-col gap-5 text-primary-mint-900">
-            <h1 className="text-[28px] font-semibold leading-tight tracking-[-0.04em] sm:text-[34px]">
+            <span className="text-[13px] font-bold tracking-[0.08em] text-primary-mint-800 uppercase">
+              Financial Overview
+            </span>
+            <h1 className="text-[28px] font-bold leading-tight tracking-[-0.04em] sm:text-[34px]">
               자산 정보를 등록하고,
               <br />
               본인의 투자행동을 점검해요
             </h1>
-            <p className="text-[16px] font-medium leading-relaxed sm:text-[20px]">
+            <p className="text-[16px] font-medium leading-relaxed sm:text-[20px] text-primary-mint-900/80">
               자산 정보와 함께 입력한 정보들을 기반으로
               <br />
               비슷한 사람들의 평균을 확인할 수 있어요.
@@ -52,105 +53,148 @@ const AssetInfoSection = ({
 
   return (
     <section className="bg-primary-mint-200">
-      <div className="mx-auto flex max-w-[1080px] flex-col gap-6 px-5 py-12">
-        <div className="flex items-center justify-between gap-5">
-          <h1 className="text-[28px] font-semibold tracking-[-0.04em] text-primary-mint-900 sm:text-[34px]">
-            {name} 님, 반갑습니다
-          </h1>
-          <PillButton variant="outline" onClick={onEditClick}>
-            정보 수정하기
-          </PillButton>
+      <div className="mx-auto flex max-w-[1080px] flex-col gap-8 px-5 py-12">
+        {/* 상단 프로필 환영 헤더 */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1">
+            <span className="text-[12px] font-bold tracking-[0.06em] text-primary-mint-800 uppercase">
+              My Portfolio
+            </span>
+            <h1 className="text-[28px] font-bold tracking-[-0.04em] text-primary-mint-900 sm:text-[34px]">
+              {name} 님, 반갑습니다
+            </h1>
+          </div>
+          <div className="self-start sm:self-auto">
+            <PillButton variant="outline" onClick={onEditClick}>
+              정보 수정하기
+            </PillButton>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
+          {/* 1. 재무 현황 섹션 */}
           <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <h2 className="text-[20px] font-semibold tracking-[-0.04em] text-primary-mint-900">
-                재무 현황
-              </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-[20px] font-bold tracking-[-0.03em] text-primary-mint-900 sm:text-[22px]">
+                  재무 현황
+                </h2>
+                <span className="rounded-full bg-primary-mint-900/10 px-2 py-0.5 text-[11px] font-semibold text-primary-mint-900">
+                  수입 · 지출 · 자산
+                </span>
+              </div>
               {updatedAt && (
                 <span
-                  className="text-[12px] font-medium text-primary-mint-900/60"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1 text-[12px] font-medium text-primary-mint-900 shadow-2xs backdrop-blur-xs"
                   title={formatDateTime(updatedAt)}
                 >
+                  <span className="size-1.5 rounded-full bg-primary-mint-800 animate-pulse" />
                   마지막 수정 · {formatTimeAgo(updatedAt)}
                 </span>
               )}
             </div>
-            {/* 두 카드 높이를 맞추고(items-stretch), 행 영역을 flex-1 + justify-between으로
-                둬서 첫 행끼리·마지막 행끼리 같은 높이에 오게 한다. (부채 ↔ 월 저축 계획) */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-stretch">
               {assetCards.map((card) => (
                 <div
                   key={card.tag}
-                  className="flex w-full flex-col items-start gap-2.5 rounded-2xl bg-white p-4 sm:w-[530px]"
+                  className="flex w-full flex-1 flex-col justify-between rounded-2xl border border-white/80 bg-white p-6 shadow-[0_4px_20px_rgba(1,62,57,0.06)] transition-all duration-200 hover:shadow-[0_8px_24px_rgba(1,62,57,0.09)] sm:max-w-[530px]"
                 >
-                  <div className="flex items-center gap-1.5">
-                    <Tag>{card.tag}</Tag>
-                    {FIELD_HINTS[card.tag] && (
-                      <InfoTooltip text={FIELD_HINTS[card.tag]} placement="bottom" />
-                    )}
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-3.5">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-[17px] font-bold text-gray-900">
+                        {card.tag}
+                      </h3>
+                      {FIELD_HINTS[card.tag] && (
+                        <InfoTooltip text={FIELD_HINTS[card.tag]} placement="bottom" />
+                      )}
+                    </div>
                   </div>
-                  <div className="mt-2.5 flex w-full flex-1 flex-col justify-between gap-2.5 text-[16px] font-medium">
+
+                  <div className="my-4 flex w-full flex-1 flex-col justify-between gap-3 text-[15px] font-medium">
                     {card.rows.map((row) => {
-                      // 지출/부채 등 음수 값은 부호를 왼쪽 칸으로 빼고 금액은 절댓값만 표시한다.
                       const isNegative = row.value.trimStart().startsWith('-');
                       const displayValue = isNegative
-                        ? row.value.replace('-', '')
+                        ? row.value.replace('-', '').trim()
                         : row.value;
 
                       return (
                         <div
                           key={row.label}
-                          className={`flex items-center gap-3 ${row.emphasis ? 'text-primary-mint-900' : 'text-gray-700'}`}
+                          className={`flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-gray-50/70 ${
+                            row.emphasis ? 'font-semibold text-primary-mint-900' : 'text-gray-700'
+                          }`}
                         >
-                          <span className="w-3 shrink-0 text-center">
-                            {isNegative ? '-' : ''}
-                          </span>
-                          <span className="flex flex-1 items-center justify-between gap-1.5">
-                            <span className="flex items-center gap-1.5">
-                              {row.label}
-                              {FIELD_HINTS[row.label] && (
-                                <InfoTooltip
-                                  text={FIELD_HINTS[row.label]}
-                                  placement="bottom"
-                                />
+                          <span className="flex items-center gap-1.5">
+                            <span className="text-gray-900">
+                              {isNegative && (
+                                <span className="mr-1 font-bold text-gray-500">
+                                  -
+                                </span>
                               )}
+                              {row.label}
                             </span>
-                            <span>{displayValue}</span>
+                            {FIELD_HINTS[row.label] && (
+                              <InfoTooltip
+                                text={FIELD_HINTS[row.label]}
+                                placement="bottom"
+                              />
+                            )}
+                          </span>
+                          <span className="font-semibold text-gray-900">
+                            {displayValue}
                           </span>
                         </div>
                       );
                     })}
                   </div>
-                  <img src={dividerLine} alt="" className="w-full" />
-                  <p className="w-full text-right text-[20px] font-bold text-primary-mint-900">
-                    {card.total}
-                  </p>
+
+                  <div className="flex justify-end border-t border-gray-100 pt-3.5">
+                    <p className="text-[22px] font-bold tracking-tight text-primary-mint-900">
+                      {card.total}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* 2. 투자 현황 섹션 (아이콘 제거 및 라벨+금액 위주로 심플화) */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-[20px] font-semibold tracking-[-0.04em] text-primary-mint-900">
-              투자 현황
-            </h2>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3">
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-[20px] font-bold tracking-[-0.03em] text-primary-mint-900 sm:text-[22px]">
+                투자 현황
+              </h2>
+              <span className="rounded-full bg-primary-mint-900/10 px-2 py-0.5 text-[11px] font-semibold text-primary-mint-900">
+                자산군별 배분
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {investCards.map((card) => (
                 <div
                   key={card.tag}
-                  className="flex flex-col items-start gap-3 rounded-2xl bg-white p-4"
+                  className="group flex flex-col justify-between gap-4 rounded-2xl border border-white/80 bg-white p-5 shadow-[0_4px_20px_rgba(1,62,57,0.06)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(1,62,57,0.09)]"
                 >
-                  <div className="flex items-center gap-1.5">
-                    <Tag>{card.tag}</Tag>
-                    {FIELD_HINTS[card.tag] && (
-                      <InfoTooltip text={FIELD_HINTS[card.tag]} placement="bottom" />
-                    )}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[17px] font-bold text-gray-900">
+                        {card.tag}
+                      </span>
+                      {FIELD_HINTS[card.tag] && (
+                        <InfoTooltip
+                          text={FIELD_HINTS[card.tag]}
+                          placement="bottom"
+                        />
+                      )}
+                    </div>
                   </div>
-                  <p className="w-full text-right text-[20px] font-bold text-primary-mint-900">
-                    {card.amount}
-                  </p>
+
+                  <div className="flex items-baseline justify-end border-t border-gray-50 pt-3">
+                    <span className="text-[22px] font-bold tracking-tight text-primary-mint-900">
+                      {card.amount}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
