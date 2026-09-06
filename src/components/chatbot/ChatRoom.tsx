@@ -163,7 +163,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
             className={`flex ${msg.isBot ? 'gap-3 w-full' : 'justify-end'}`}
           >
             <div
-              className={`flex flex-col gap-3 max-w-[55%] ${msg.isBot ? 'items-start' : 'items-end'}`}
+              className={`flex flex-col gap-3 max-w-[85%] sm:max-w-[75%] lg:max-w-[65%] ${msg.isBot ? 'items-start' : 'items-end'}`}
             >
               {msg.isBot && (
                 <div className="w-10 h-10 rounded-full flex-shrink-0 mt-1 border border-primary-mint-900">
