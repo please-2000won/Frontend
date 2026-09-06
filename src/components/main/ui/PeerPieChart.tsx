@@ -64,8 +64,8 @@ const InvestmentPieChart = ({ label, profile }: InvestmentPieChartProps) => {
               className="size-[10px] shrink-0 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-gray-700">
-              {entry.name} {entry.percent}%
+            <span className="text-gray-800 font-medium">
+              {entry.name} <strong className="font-bold text-gray-900">{entry.percent}%</strong>
             </span>
           </div>
         ))}

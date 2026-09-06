@@ -47,7 +47,7 @@ const RiskAnalysisCard = ({ risk }: RiskAnalysisCardProps) => {
   );
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-gray-300 bg-white p-5">
+    <div className="flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-5 shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h3 className="text-[18px] font-semibold tracking-[-0.04em] text-primary-mint-900">
           위험 분석

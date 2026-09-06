@@ -44,22 +44,22 @@ const ComparisonTable = ({ groups, myLabel, otherLabel }: ComparisonTableProps) 
   return (
     <div className="grid grid-cols-3 gap-x-1">
       <div className="flex flex-col items-center gap-2 px-1 pb-2">
-        <span className="break-keep text-center text-[13px] font-semibold text-primary-mint-900 sm:text-[14px]">
+        <span className="break-keep text-center text-[14px] font-bold text-primary-mint-900 sm:text-[15px]">
           {myLabel}
         </span>
-        <span className="h-px w-full bg-primary-mint-900" />
+        <span className="h-0.5 w-full bg-primary-mint-900/80 rounded-full" />
       </div>
       <div />
       <div className="flex flex-col items-center gap-2 px-1 pb-2">
-        <span className="break-keep text-center text-[13px] font-semibold text-primary-mint-900 sm:text-[14px]">
+        <span className="break-keep text-center text-[14px] font-bold text-primary-mint-900 sm:text-[15px]">
           {otherLabel}
         </span>
-        <span className="h-px w-full bg-primary-mint-900" />
+        <span className="h-0.5 w-full bg-primary-mint-900/80 rounded-full" />
       </div>
 
       {groups.map((group) => (
         <Fragment key={group.title}>
-          <div className="col-span-3 mt-2 rounded-md bg-primary-mint-900 py-1.5 text-center text-[11px] font-bold text-white first:mt-0 sm:text-[12px]">
+          <div className="col-span-3 mt-3 mb-1 rounded-lg bg-primary-mint-900 py-1.5 text-center text-[12px] font-bold text-white first:mt-1 sm:text-[13px] shadow-2xs">
             {group.title}
           </div>
           {group.metrics.map((metric) => {
@@ -67,16 +67,16 @@ const ComparisonTable = ({ groups, myLabel, otherLabel }: ComparisonTableProps) 
 
             return (
               <Fragment key={metric.label}>
-                <div className="flex items-center justify-center break-keep px-1 py-3 text-center text-[13px] font-bold text-primary-mint-900 sm:px-2 sm:text-[14px]">
+                <div className="flex items-center justify-center break-keep px-1 py-3 text-center text-[16px] font-bold tracking-tight text-primary-mint-900 sm:px-2 sm:text-[18px]">
                   {formatWon(metric.my)}
                 </div>
                 <div className="flex flex-col items-center justify-center gap-1 px-1 py-3 text-center sm:px-2">
-                  <span className="break-keep text-[12px] text-gray-700 sm:text-[13px]">
+                  <span className="break-keep text-[13px] font-medium text-gray-800 sm:text-[14px]">
                     {metric.label}
                   </span>
                   {diff !== null && <DiffBadge diff={diff} />}
                 </div>
-                <div className="flex items-center justify-center break-keep px-1 py-3 text-center text-[13px] font-bold text-primary-mint-900 sm:px-2 sm:text-[14px]">
+                <div className="flex items-center justify-center break-keep px-1 py-3 text-center text-[16px] font-bold tracking-tight text-primary-mint-900 sm:px-2 sm:text-[18px]">
                   {formatWon(metric.other)}
                 </div>
               </Fragment>

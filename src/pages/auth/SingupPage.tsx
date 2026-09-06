@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import { sendEmailCode, signup } from '../../api/authAPI';
+import { clearAppStorage } from '../../utils/analysisStorage';
 import Button from '../../components/common/Button';
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -134,6 +136,10 @@ const SignupPage = () => {
     try {
       setIsLoginLoading(true);
       await signup({ name, email, verificationCode: authCode, password });
+
+      // 회원가입 성공 시 이전 로그인 잔여 데이터/캐시 완전 삭제
+      clearAuth();
+      clearAppStorage();
 
       alert('회원가입이 완료되었습니다! 로그인 후 이용해주세요.');
       navigate('/login');

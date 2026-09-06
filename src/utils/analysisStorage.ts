@@ -1,19 +1,6 @@
 import type { AnalysisResponse } from '../api/analysis';
 import type { MyFinancialResult } from '../api/financial';
 
-// 분석은 시간이 걸리므로 마지막 결과를 로컬에 캐싱해두고,
-// 페이지 재진입 시 즉시 보여준 뒤(백그라운드 GET으로) 갱신한다. (stale-while-revalidate)
-const ANALYSIS_KEY = 'peerfolio:analysis-cache';
-
-interface CachedAnalysis {
-  userId: number;
-  cachedAt: number;
-  analysis: AnalysisResponse;
-  // 이 분석이 어떤 자산 정보를 기준으로 만들어졌는지 나타내는 지문.
-  // 현재 자산 정보의 지문과 다르면 분석 결과가 예전 정보 기준이라는 뜻이다.
-  financialFingerprint?: string | null;
-}
-
 // 분석 결과에 영향을 주는 숫자 필드만 뽑아 안정적인 문자열로 만든다.
 export const financialFingerprint = (
   info: MyFinancialResult | null | undefined
@@ -35,49 +22,31 @@ export const financialFingerprint = (
   ]);
 };
 
-const loadCachedRecord = (userId?: number): CachedAnalysis | null => {
-  try {
-    const raw = localStorage.getItem(ANALYSIS_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as CachedAnalysis;
-    // 다른 계정으로 로그인한 경우 캐시를 쓰지 않는다.
-    if (userId != null && parsed.userId !== userId) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-};
+// 캐싱으로 인한 잘못된/과거 데이터 노출을 방지하기 위해 로컬 캐시 조회는 항상 null을 반환하도록 비활성화한다.
+export const loadCachedAnalysis = (_userId?: number): AnalysisResponse | null =>
+  null;
 
-export const loadCachedAnalysis = (userId?: number): AnalysisResponse | null =>
-  loadCachedRecord(userId)?.analysis ?? null;
+export const loadAnalyzedFingerprint = (_userId?: number): string | null =>
+  null;
 
-// 캐시된 분석이 어떤 자산 정보를 기준으로 만들어졌는지의 지문.
-export const loadAnalyzedFingerprint = (userId?: number): string | null =>
-  loadCachedRecord(userId)?.financialFingerprint ?? null;
-
+// 분석 결과 캐싱을 비활성화하여 항상 백엔드 최신 API 결과를 사용하도록 한다.
 export const saveCachedAnalysis = (
-  analysis: AnalysisResponse,
-  userId?: number,
-  financialFingerprintValue?: string | null
+  _analysis: AnalysisResponse,
+  _userId?: number,
+  _financialFingerprintValue?: string | null
 ) => {
-  try {
-    const payload: CachedAnalysis = {
-      userId: userId ?? 0,
-      cachedAt: Date.now(),
-      analysis,
-      financialFingerprint: financialFingerprintValue ?? null,
-    };
-    localStorage.setItem(ANALYSIS_KEY, JSON.stringify(payload));
-  } catch {
-    // 저장 실패(용량 초과/프라이빗 모드 등)는 무시한다.
-  }
+  // 캐싱 비활성화: 항상 서버 최신 데이터를 조회
 };
 
-// 로그아웃 / 회원탈퇴 시 캐시를 비운다.
-export const clearAnalysisStorage = () => {
+// 로그아웃 / 회원탈퇴 시 브라우저 스토리지(로컬 및 세션)를 완전히 비운다.
+export const clearAppStorage = () => {
   try {
-    localStorage.removeItem(ANALYSIS_KEY);
+    localStorage.clear();
+    sessionStorage.clear();
   } catch {
     // 무시
   }
 };
+
+// 이전 코드와의 호환성을 위해 유지
+export const clearAnalysisStorage = clearAppStorage;

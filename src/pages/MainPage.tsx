@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useOutletContext } from 'react-router-dom';
 import AssetInfoSection from '../components/main/sections/AssetInfoSection';
 import ComparisonSection from '../components/main/sections/ComparisonSection';
 import SimilarPeopleSection from '../components/main/sections/SimilarPeopleSection';
 import MainEmptyState from '../components/main/sections/MainEmptyState';
 import PeerCompareModal from '../components/main/peer-compare/PeerCompareModal';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
+import Button from '../components/common/Button';
 import { useMainPageData } from '../hooks/useMainPageData';
 import { usePeerGroupAnalysis } from '../hooks/usePeerGroupAnalysis';
 import {
@@ -13,8 +14,6 @@ import {
   type PeerComparePayload,
 } from '../hooks/useSimilarPeers';
 import useAuthStore from '../stores/useAuthStore';
-
-import { useOutletContext } from 'react-router-dom';
 
 const DEFAULT_NAME = '회원';
 
@@ -25,50 +24,53 @@ type ChatContextType = {
 const MainPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
-  // 팀원이 로그인 시 채워두는 유저 정보(useAuthStore.userInfo)를 그대로 재사용한다.
+  // 로그인 시 채워둔 유저 정보를 재사용한다.
   const userInfo = useAuthStore((state) => state.userInfo);
   const name = userInfo?.name ?? DEFAULT_NAME;
 
   const {
     isLoading,
+    isError: isMainError,
     hasAssetInfo,
     assetCards,
     investCards,
     myProfile,
     financialInfo,
-  } = useMainPageData(Boolean(accessToken));
+    refetch: refetchMain,
+  } = useMainPageData(Boolean(accessToken), userInfo?.userId);
 
-  // 팀원의 업데이트 내역: financialInfo 파라미터 추가 및 isStale 상태 추가
   const {
     peerGroupProfile,
     aiAnalysisText,
     risk,
     peerCount,
     analyzedAt,
+    isLoading: isAnalysisLoading,
+    isError: isAnalysisError,
     isAnalyzing,
     isStale,
     reanalyze,
+    refetch: refetchAnalysis,
   } = usePeerGroupAnalysis(hasAssetInfo, userInfo?.userId, financialInfo);
 
-  // 팀원의 업데이트 내역: 로딩, 에러 상태 및 refetch 기능 추가
   const {
     peers,
     isLoading: isPeersLoading,
     isError: isPeersError,
     getComparison,
     refetch: refetchPeers,
-  } = useSimilarPeers(hasAssetInfo);
+  } = useSimilarPeers(hasAssetInfo, userInfo?.userId);
 
   const [compare, setCompare] = useState<PeerComparePayload | null>(null);
 
   const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
-  // 로그인 안 했으면 랜딩 페이지로.
+  // 로그인 안 했으면 랜딩 페이지로 이동.
   if (!accessToken) {
     return <Navigate to="/landing" replace />;
   }
 
-  // 내 금융정보를 불러오는 중에는 판단을 미룬다.
+  // 내 금융정보를 불러오는 중에는 로딩 표시.
   if (isLoading) {
     return (
       <div className="flex w-full justify-center py-24 text-[15px] text-gray-500">
@@ -77,8 +79,22 @@ const MainPage = () => {
     );
   }
 
+  // 내 자산 정보 조회에 실패한 경우
+  if (isMainError) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 px-5 text-center">
+        <div className="text-[32px]">⚠️</div>
+        <p className="text-[16px] font-medium text-gray-800">
+          자산 정보를 불러오는 데 실패했습니다.
+        </p>
+        <Button variant="secondary" size="md" onClick={() => refetchMain()}>
+          다시 시도
+        </Button>
+      </div>
+    );
+  }
+
   // 로그인은 했지만 아직 아무 정보도 입력하지 않은 상태.
-  // 기본 경로에 머무르되, 정보 입력을 유도하는 화면을 보여준다.
   if (!hasAssetInfo) {
     return <MainEmptyState />;
   }
@@ -90,7 +106,7 @@ const MainPage = () => {
     if (payload) setCompare(payload);
   };
 
-  // 팀원의 업데이트 내역: 재분석하면 피어 매칭도 새로 갱신되므로 추천 피어를 다시 불러온다.
+  // 재분석 시 피어 매칭도 갱신
   const handleReanalyze = async () => {
     await reanalyze();
     await refetchPeers();
@@ -110,7 +126,6 @@ const MainPage = () => {
       <ComparisonSection
         hasAssetInfo={hasAssetInfo}
         onReanalyzeClick={handleReanalyze}
-        // 나의 업데이트 내역: 별도 페이지 라우팅 대신 방금 구현한 우측 챗봇 패널 열기 유지
         onAskChatbot={() => setIsChatOpen((prev) => !prev)}
         myProfile={myProfile}
         peerGroupProfile={peerGroupProfile}
@@ -119,6 +134,10 @@ const MainPage = () => {
         peerCount={peerCount}
         analyzedAt={analyzedAt}
         isStale={isStale}
+        isLoading={isAnalysisLoading}
+        isError={isAnalysisError}
+        onRetry={refetchAnalysis}
+        isAnalyzing={isAnalyzing}
       />
       {hasAssetInfo && (
         <SimilarPeopleSection
