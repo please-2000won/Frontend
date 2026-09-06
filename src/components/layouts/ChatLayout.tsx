@@ -1,87 +1,19 @@
 import { Outlet } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import TopNavbar from './TopNavbar';
 import ChatRoom from '../chatbot/ChatRoom';
 
-const useIsDesktop = () => {
-  const [isDesktop, setIsDesktop] = useState(
-    typeof window !== 'undefined' ? window.innerWidth >= 1024 : true
-  );
-  useEffect(() => {
-    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  return isDesktop;
-};
-
-const TRANSITION =
-  'transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]';
-const FADE_TRANSITION = 'transition-opacity duration-300 ease-out';
-
-type Mode = 'desktop' | 'mobile';
-
 const ChatLayout = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const isDesktop = useIsDesktop();
-
-  const [isChatMounted, setIsChatMounted] = useState(false);
-  const [isChatExpanded, setIsChatExpanded] = useState(false);
-
-  const [displayMode, setDisplayMode] = useState<Mode>(
-    isDesktop ? 'desktop' : 'mobile'
-  );
-  const [isSwitchingMode, setIsSwitchingMode] = useState(false);
-  // 이번 전환이 "모바일 → 데스크탑(넓어지는)" 방향인지 기억
-  const [isGrowingToDesktop, setIsGrowingToDesktop] = useState(false);
-
-  useEffect(() => {
-    const targetMode: Mode = isDesktop ? 'desktop' : 'mobile';
-    if (targetMode === displayMode) return;
-
-    if (!isChatOpen) {
-      setDisplayMode(targetMode);
-      return;
-    }
-
-    const growing = targetMode === 'desktop';
-    setIsGrowingToDesktop(growing);
-    setIsSwitchingMode(true); // 1) 숨김
-
-    const id1 = requestAnimationFrame(() => {
-      // 2) 숨겨진 채로 모드 교체 + 최종 상태로 스냅
-      setDisplayMode(targetMode);
-      setIsChatMounted(true);
-      setIsChatExpanded(true);
-
-      requestAnimationFrame(() => setIsSwitchingMode(false)); // 3) 다시 보여줌
-    });
-    return () => cancelAnimationFrame(id1);
-  }, [isDesktop, isChatOpen, displayMode]);
-
-  // 사용자가 직접 열고 닫을 때의 정상 애니메이션
-  useEffect(() => {
-    if (isChatOpen) {
-      setIsChatMounted(true);
-      const id = requestAnimationFrame(() =>
-        requestAnimationFrame(() => setIsChatExpanded(true))
-      );
-      return () => cancelAnimationFrame(id);
-    } else {
-      setIsChatExpanded(false);
-      const timeout = setTimeout(() => setIsChatMounted(false), 500);
-      return () => clearTimeout(timeout);
-    }
-  }, [isChatOpen]);
 
   return (
     <div className="bg-system-background h-screen flex flex-col overflow-hidden">
       <TopNavbar />
-      <div className="flex flex-1 min-h-0 pt-[60px]">
+      <div className="flex flex-1 min-h-0 pt-[60px] relative">
+        {/* 본문: lg 이상에서 채팅 열리면 절반으로 줄어듦 */}
         <div
-          className={`min-h-0 overflow-y-auto no-scrollbar ${TRANSITION} ${
-            displayMode === 'desktop' && isChatExpanded ? 'w-1/2' : 'w-full'
+          className={`min-h-0 overflow-y-auto no-scrollbar w-full transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isChatOpen ? 'lg:w-1/2' : 'lg:w-full'
           }`}
         >
           <main className="w-full">
@@ -89,53 +21,31 @@ const ChatLayout = () => {
           </main>
         </div>
 
-        {/* 데스크탑 패널: 넓어지는 방향일 때만 페이드인 적용 */}
-        {isChatMounted && displayMode === 'desktop' && (
-          <div
-            className={`h-full flex-shrink-0 bg-system-background text-black border-l border-gray-200 overflow-hidden ${
-              isSwitchingMode ? '' : TRANSITION
-            } ${isGrowingToDesktop ? FADE_TRANSITION : ''} ${
-              isChatExpanded ? 'w-1/2' : 'w-0'
-            } ${
-              isSwitchingMode && isGrowingToDesktop
-                ? 'opacity-0'
-                : 'opacity-100'
-            }`}
-          >
-            <div className="h-full w-[50vw] sm:w-full">
-              <ChatRoom onClose={() => setIsChatOpen(false)} />
-            </div>
-          </div>
-        )}
+        {/*
+          채팅 패널: ChatRoom 인스턴스는 이 하나뿐!
+          화면 크기가 lg 기준(1024px)을 넘나들어도 컴포넌트가 리마운트되지 않으므로
+          대화 내용(messages state)이 절대 초기화되지 않음.
 
-        {/* 모바일 패널: 좁아지는 방향일 때만 페이드인 적용 */}
-        <AnimatePresence>
-          {isChatOpen && displayMode === 'mobile' && (
-            <motion.div
-              key="mobile-chat"
-              initial={{ x: '100%' }}
-              animate={{
-                x: 0,
-                opacity: isSwitchingMode && !isGrowingToDesktop ? 0 : 1,
-              }}
-              exit={{
-                x: '100%',
-                transition: { duration: isSwitchingMode ? 0 : 0.5 },
-              }}
-              transition={{
-                x: {
-                  type: isSwitchingMode ? 'tween' : 'spring',
-                  bounce: 0,
-                  duration: isSwitchingMode ? 0 : 0.5,
-                },
-                opacity: { duration: 0.3, ease: 'easeOut' },
-              }}
-              className="fixed inset-0 top-[60px] z-50 bg-system-background text-black overflow-hidden w-full"
-            >
-              <ChatRoom onClose={() => setIsChatOpen(false)} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          - 모바일(lg 미만): fixed + translate-x로 전체화면 슬라이드 인/아웃
+          - 데스크탑(lg 이상): static 배치 + width만 트랜지션 (0 <-> 50%)
+        */}
+        <div
+          className={`
+            fixed inset-0 top-[60px] z-50 w-full
+            lg:static lg:inset-auto lg:top-auto lg:z-auto
+            lg:h-full lg:flex-shrink-0 lg:border-l lg:border-gray-200
+            bg-system-background text-black overflow-hidden
+            transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+            ${isChatOpen ? 'translate-x-0' : 'translate-x-full'}
+            lg:translate-x-0
+            lg:transition-[width] lg:duration-500 lg:ease-[cubic-bezier(0.16,1,0.3,1)]
+            ${isChatOpen ? 'lg:w-1/2' : 'lg:w-0'}
+          `}
+        >
+          <div className="h-full w-full">
+            <ChatRoom onClose={() => setIsChatOpen(false)} />
+          </div>
+        </div>
       </div>
     </div>
   );
