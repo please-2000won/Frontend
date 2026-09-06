@@ -10,7 +10,7 @@ import {
   financialFingerprint,
   loadAnalyzedFingerprint,
   loadCachedAnalysis,
-  saveCachedAnalysis,
+  saveAnalyzedFingerprint,
 } from '../utils/analysisStorage';
 
 interface PeerGroupAnalysisData {
@@ -87,9 +87,13 @@ export const usePeerGroupAnalysis = (
     setData((prev) => ({ ...prev, isLoading: true, isError: false }));
     try {
       const analysis = await getLatestAnalysis();
-      const fingerprint = loadAnalyzedFingerprint(userId) ?? currentFingerprint;
+      const storedFingerprint = loadAnalyzedFingerprint(userId);
+      let fingerprint = storedFingerprint;
+      if (!fingerprint && !analysis.canReanalyze && currentFingerprint) {
+        fingerprint = currentFingerprint;
+        saveAnalyzedFingerprint(userId, currentFingerprint);
+      }
       setData(toPeerGroupData(analysis, fingerprint));
-      saveCachedAnalysis(analysis, userId, fingerprint);
     } catch {
       setData({ ...INITIAL_DATA, isLoading: false, isError: true });
     }
@@ -101,7 +105,7 @@ export const usePeerGroupAnalysis = (
       return;
     }
 
-    // 계정이 바뀌거나 금융정보가 변경되면 이전 분석 데이터를 즉시 초기화
+    // 계정이 바뀌면 이전 분석 데이터를 즉시 초기화
     setData({
       ...INITIAL_DATA,
       isLoading: true,
@@ -113,9 +117,13 @@ export const usePeerGroupAnalysis = (
       try {
         const analysis = await getLatestAnalysis();
         if (cancelled) return;
-        const fingerprint = loadAnalyzedFingerprint(userId) ?? currentFingerprint;
+        const storedFingerprint = loadAnalyzedFingerprint(userId);
+        let fingerprint = storedFingerprint;
+        if (!fingerprint && !analysis.canReanalyze && currentFingerprint) {
+          fingerprint = currentFingerprint;
+          saveAnalyzedFingerprint(userId, currentFingerprint);
+        }
         setData(toPeerGroupData(analysis, fingerprint));
-        saveCachedAnalysis(analysis, userId, fingerprint);
       } catch {
         if (!cancelled) {
           setData({ ...INITIAL_DATA, isLoading: false, isError: true });
@@ -128,7 +136,7 @@ export const usePeerGroupAnalysis = (
     return () => {
       cancelled = true;
     };
-  }, [hasAssetInfo, userId, currentFingerprint]);
+  }, [hasAssetInfo, userId]);
 
   // "다시 분석하기" / "새로 분석하기" 버튼에서 사용: 항상 새 분석을 생성한다. (GET 없이 POST만)
   const reanalyze = useCallback(async () => {
@@ -138,7 +146,7 @@ export const usePeerGroupAnalysis = (
       const analysis = await createAnalysis();
       // 방금 만든 분석은 현재 자산 정보 기준이다.
       setData(toPeerGroupData(analysis, currentFingerprint));
-      saveCachedAnalysis(analysis, userId, currentFingerprint);
+      saveAnalyzedFingerprint(userId, currentFingerprint);
     } catch {
       alert('분석을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.');
     } finally {
@@ -147,11 +155,20 @@ export const usePeerGroupAnalysis = (
   }, [isAnalyzing, userId, currentFingerprint]);
 
   // 현재 자산 정보가 분석 기준과 달라졌는지 (분석 결과가 예전 정보 기준인지)
-  const isStale =
-    data.analysis != null &&
-    data.analyzedFingerprint != null &&
-    currentFingerprint != null &&
-    data.analyzedFingerprint !== currentFingerprint;
+  const isStale = Boolean(
+    // 1) 백엔드에서 직접 계산한 재분석 필요 플래그 (금융정보 해시 불일치)
+    data.analysis?.canReanalyze ||
+    // 2) 분석 생성 당시의 자산 지문과 현재 자산 지문 불일치
+    (data.analysis != null &&
+      data.analyzedFingerprint != null &&
+      currentFingerprint != null &&
+      data.analyzedFingerprint !== currentFingerprint) ||
+    // 3) 금융 정보 최종 수정 시각(updatedAt)이 분석 생성 시각(createdAt)보다 뒤인 경우
+    (financialInfo?.updatedAt &&
+      data.analyzedAt &&
+      new Date(financialInfo.updatedAt).getTime() >
+        new Date(data.analyzedAt).getTime())
+  );
 
   return { ...data, isAnalyzing, isStale, reanalyze, refetch: fetchLatest };
 };
