@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo/logo.svg';
 import useAuthStore from '../../stores/useAuthStore';
@@ -10,30 +9,10 @@ const TopNavbar = () => {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const navigate = useNavigate();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener('mousedown', handleClickOutside);
-    return () => window.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
-
   const handleLogout = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
       clearAuth();
       clearAnalysisStorage();
-      setIsOpen(false);
       navigate('/login');
     }
   };
@@ -50,29 +29,18 @@ const TopNavbar = () => {
           <img src={logo} alt="peerfolio" className="h-[26px] w-auto" />
         </button>
         {userInfo && (
-          <div ref={containerRef} className="group relative">
-            <button
-              type="button"
-              onClick={() => setIsOpen((prev) => !prev)}
-              className="flex items-center gap-1 cursor-pointer rounded-lg px-2.5 py-1.5 text-[15px] text-black transition-all hover:bg-gray-100/80 active:scale-[0.98]"
-            >
+          <div className="group relative flex h-full items-center">
+            <div className="flex items-center gap-1.5 cursor-pointer rounded-lg px-2.5 py-1.5 text-[15px] text-black transition-all group-hover:bg-gray-100/80">
               <span className="font-semibold">{userInfo.name}</span>
               <span className="font-medium"> 님</span>
-              <span
-                className={`text-[10px] text-gray-500 transition-transform duration-200 ${
-                  isOpen ? 'rotate-180' : ''
-                }`}
-              >
+              <span className="text-[10px] text-gray-500 transition-transform duration-200 group-hover:rotate-180">
                 ▼
               </span>
-            </button>
+            </div>
 
-            <div
-              className={`absolute top-full right-0 z-20 w-[220px] pt-2 transition-opacity group-hover:visible group-hover:opacity-100 ${
-                isOpen ? 'visible opacity-100' : 'invisible opacity-0'
-              }`}
-            >
-              <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg">
+            {/* GNB 테두리선 아래로 10px 여백을 두고 공중에 뜨는 플로팅 드롭다운 */}
+            <div className="invisible absolute top-full right-0 z-20 w-[220px] pt-2.5 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+              <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-xl ring-1 ring-black/5">
                 <div className="flex flex-col gap-0.5">
                   <p className="text-[12px] text-gray-500">닉네임</p>
                   <p className="text-[16px] font-semibold text-primary-mint-900">
