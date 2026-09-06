@@ -32,7 +32,7 @@ const InfoTooltip = ({ text, placement = 'top' }: InfoTooltipProps) => {
         type="button"
         aria-label="설명 보기"
         onClick={() => setPinned((v) => !v)}
-        className="flex size-[16px] cursor-pointer items-center justify-center rounded-full border border-gray-300 text-[11px] font-bold leading-none text-gray-700"
+        className="flex size-[16px] cursor-pointer items-center justify-center rounded-full border border-gray-300 text-[11px] font-bold leading-none text-gray-700 transition-all duration-150 hover:border-primary-mint-800 hover:text-primary-mint-800 active:scale-90"
       >
         i
       </button>

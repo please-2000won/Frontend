@@ -58,7 +58,7 @@ const PeerCompareModal = ({
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-700 hover:bg-gray-100"
+            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-700 transition-all duration-150 hover:bg-gray-100 active:scale-95"
           >
             ✕
           </button>
@@ -73,10 +73,10 @@ const PeerCompareModal = ({
                   key={option.mode}
                   type="button"
                   onClick={() => setViewMode(option.mode)}
-                  className={`cursor-pointer px-4 py-1.5 transition-colors ${
+                  className={`cursor-pointer px-4 py-1.5 transition-all duration-200 active:scale-95 ${
                     viewMode === option.mode
                       ? 'bg-primary-mint-900 text-white'
-                      : 'bg-white text-primary-mint-900'
+                      : 'bg-white text-primary-mint-900 hover:bg-primary-mint-200/50'
                   }`}
                 >
                   {option.label}

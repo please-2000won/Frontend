@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import { sendEmailCode, signup } from '../../api/authAPI';
+import Button from '../../components/common/Button';
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -254,18 +255,16 @@ const SignupPage = () => {
                   autoComplete="new-email"
                   className="bg-gray-100 p-4 rounded-lg w-full sm:flex-1 sm:min-w-0"
                 />
-                <button
+                <Button
                   type="button"
-                  className={`w-full sm:w-[132px] shrink-0 flex items-center justify-center whitespace-nowrap py-4 px-5 rounded-lg text-[16px] font-semibold cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:active:scale-100 ${
-                    isCodeLoading
-                      ? 'bg-white border border-primary-mint-800 text-primary-mint-800'
-                      : 'bg-primary-mint-800 border text-white border-primary-mint-800'
-                  }`}
+                  variant={isCodeLoading ? 'secondary' : 'primary'}
+                  size="lg"
+                  className="w-full sm:w-[132px] shrink-0"
                   onClick={handleAuthCode}
                   disabled={isCodeLoading}
                 >
                   {isCodeLoading ? '발송 중...' : '인증코드 발송'}
-                </button>
+                </Button>
               </div>
               <div className="h-5">
                 {emailError && (
@@ -347,14 +346,15 @@ const SignupPage = () => {
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
               disabled={!isFormValid || isLoginLoading}
-              className={`${isFormValid ? 'bg-primary-mint-800 hover:bg-primary-mint-850 active:scale-[0.98]' : 'bg-gray-300'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer transition-all duration-200 disabled:cursor-not-allowed
-               disabled:cursor-not-allowed`}
             >
               {isLoginLoading ? '가입 진행 중...' : '가입하기'}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

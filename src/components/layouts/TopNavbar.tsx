@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo/logo.svg';
 import useAuthStore from '../../stores/useAuthStore';
 import { clearAnalysisStorage } from '../../utils/analysisStorage';
+import Button from '../common/Button';
 
 const TopNavbar = () => {
   const userInfo = useAuthStore((state) => state.userInfo);
@@ -40,18 +41,30 @@ const TopNavbar = () => {
   return (
     <nav className="fixed top-0 left-0 z-10 h-[60px] w-full border-b border-gray-100 bg-system-background">
       <div className="mx-auto flex h-full max-w-[1080px] items-center justify-between px-5">
-        <div className="cursor-pointer" onClick={() => navigate('/')}>
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="cursor-pointer transition-all hover:opacity-80 active:scale-[0.98]"
+          aria-label="홈으로 이동"
+        >
           <img src={logo} alt="peerfolio" className="h-[26px] w-auto" />
-        </div>
+        </button>
         {userInfo && (
           <div ref={containerRef} className="group relative">
             <button
               type="button"
               onClick={() => setIsOpen((prev) => !prev)}
-              className="cursor-pointer text-[15px] text-black"
+              className="flex items-center gap-1 cursor-pointer rounded-lg px-2.5 py-1.5 text-[15px] text-black transition-all hover:bg-gray-100/80 active:scale-[0.98]"
             >
               <span className="font-semibold">{userInfo.name}</span>
               <span className="font-medium"> 님</span>
+              <span
+                className={`text-[10px] text-gray-500 transition-transform duration-200 ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
+              >
+                ▼
+              </span>
             </button>
 
             <div
@@ -66,17 +79,19 @@ const TopNavbar = () => {
                     {userInfo.nickname}
                   </p>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
+                  fullWidth
                   onClick={handleLogout}
-                  className="w-full cursor-pointer rounded-lg border border-primary-mint-800 py-2.5 text-[14px] font-semibold text-primary-mint-800 transition-colors hover:bg-primary-mint-200"
                 >
                   로그아웃
-                </button>
+                </Button>
                 <button
                   type="button"
                   onClick={() => navigate('/withdraw')}
-                  className="cursor-pointer text-center text-[12px] text-gray-500 underline underline-offset-2 transition-colors hover:text-system-red"
+                  className="cursor-pointer text-center text-[12px] text-gray-500 underline underline-offset-2 transition-colors hover:text-system-red active:opacity-70"
                 >
                   회원탈퇴
                 </button>
