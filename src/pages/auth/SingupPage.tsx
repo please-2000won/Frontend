@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import { sendEmailCode, signup } from '../../api/authAPI';
 
-const SingupPage = () => {
+const SignupPage = () => {
   const navigate = useNavigate();
   const accessToken = useAuthStore((state) => state.accessToken);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [authCode, setAuthCode] = useState('');
-  const [authCodeConfirm, setAuthCodeComfrim] = useState('');
+
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -26,6 +26,10 @@ const SingupPage = () => {
   const [pwLengthError, setPwLengthError] = useState('');
   const [pwFormatError, setPwFormatError] = useState('');
   const [confirmError, setConfirmError] = useState('');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   //이름 형식
   useEffect(() => {
@@ -95,6 +99,18 @@ const SingupPage = () => {
     }
   }, [password, passwordConfirm]);
 
+  //토큰 없으면 접근 막기
+  useEffect(() => {
+    if (accessToken) {
+      navigate('/', { replace: true });
+    }
+  }, [accessToken, navigate]);
+
+  // 토큰이 있을 경우, 찰나의 순간이라도 로그인 폼이 화면에 깜빡이는 것을 방지
+  if (accessToken) {
+    return null;
+  }
+
   // 회원가입
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +124,11 @@ const SingupPage = () => {
       isLoginLoading
     )
       return;
+
+    if (!codeSent) {
+      setEmailError('· 인증코드 발송을 먼저 진행해주세요.');
+      return;
+    }
 
     try {
       setIsLoginLoading(true);
@@ -133,17 +154,6 @@ const SingupPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (accessToken) {
-      navigate('/', { replace: true });
-    }
-  }, [accessToken, navigate]);
-
-  // 토큰이 있을 경우, 찰나의 순간이라도 로그인 폼이 화면에 깜빡이는 것을 방지
-  if (accessToken) {
-    return null;
-  }
-
   //확인용 인증번호 받기
   const handleAuthCode = async () => {
     if (!email || isLoginLoading) {
@@ -153,14 +163,13 @@ const SingupPage = () => {
     try {
       setIsCodeLoading(true);
 
-      const result = await sendEmailCode({ email });
+      await sendEmailCode({ email });
 
       alert(
         '인증번호가 발급되었습니다! 메일함을 확인해주세요.\n메일이 보이지 않으면 스팸함도 확인해주세요.'
       );
       setCodeSent(true);
-      setAuthCodeComfrim(result.verificationCode);
-      console.log(authCodeConfirm);
+      setEmailError('');
     } catch (error) {
       const status = (error as { response?: { status?: number } })?.response
         ?.status;
@@ -175,19 +184,31 @@ const SingupPage = () => {
     }
   };
 
-  /*useEffect(() => {
-    if (authCode && authCode !== authCodeConfirm) {
-      setAuthCodeError('· 인증번호가 일치하지 않아요.');
-    } else {
+  //이메일이 바뀌었다면 확인
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (codeSent) {
+      setCodeSent(false);
+      setAuthCode('');
+    }
+  };
+
+  // 인증코드 재입력 시 이전 에러 초기화
+  const handleAuthCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthCode(e.target.value);
+    if (authCodeError) {
       setAuthCodeError('');
     }
-  }, [authCode, authCodeConfirm]);*/
+  };
 
   //버튼 활성화
   const isFormValid =
     name.length > 0 &&
     email.length > 0 &&
     authCode.length > 0 &&
+    password.length > 0 &&
+    passwordConfirm.length > 0 &&
+    codeSent &&
     !nameError &&
     !emailError &&
     !pwLengthError &&
@@ -229,13 +250,17 @@ const SingupPage = () => {
                   type="email"
                   placeholder="이메일"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   autoComplete="new-email"
                   className="bg-gray-100 p-4 rounded-lg w-full sm:flex-1 sm:min-w-0"
                 />
                 <button
                   type="button"
-                  className={`w-full sm:w-auto shrink-0 whitespace-nowrap py-4 px-5 rounded-lg text-[16px] font-semibold cursor-pointer disabled:cursor-not-allowed ${isCodeLoading ? 'bg-white border border-primary-mint-800 text-primary-mint-800' : 'bg-primary-mint-800 border text-white border-primary-mint-800'}`}
+                  className={`w-full sm:w-[132px] shrink-0 flex items-center justify-center whitespace-nowrap py-4 px-5 rounded-lg text-[16px] font-semibold cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:active:scale-100 ${
+                    isCodeLoading
+                      ? 'bg-white border border-primary-mint-800 text-primary-mint-800'
+                      : 'bg-primary-mint-800 border text-white border-primary-mint-800'
+                  }`}
                   onClick={handleAuthCode}
                   disabled={isCodeLoading}
                 >
@@ -257,7 +282,7 @@ const SingupPage = () => {
                 type="text"
                 placeholder="6자리 입력"
                 value={authCode}
-                onChange={(e) => setAuthCode(e.target.value)}
+                onChange={handleAuthCodeChange}
                 autoComplete="one-time-code"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
@@ -313,9 +338,6 @@ const SingupPage = () => {
                 autoComplete="new-password"
                 className="bg-gray-100 p-4 w-full rounded-lg"
               />
-              <span className="text-gray-700 text-[13px]">
-                · 영문/숫자/특수문자를 각각 1개 이상 포함해야 해요.
-              </span>
               <div className="flex flex-col h-5">
                 {confirmError && (
                   <span className="text-[13px] text-system-red">
@@ -328,7 +350,8 @@ const SingupPage = () => {
             <button
               type="submit"
               disabled={!isFormValid || isLoginLoading}
-              className={`${isFormValid ? 'bg-primary-mint-800' : 'bg-gray-300'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer disabled:cursor-not-allowed`}
+              className={`${isFormValid ? 'bg-primary-mint-800 hover:bg-primary-mint-850 active:scale-[0.98]' : 'bg-gray-300'} px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer transition-all duration-200 disabled:cursor-not-allowed
+               disabled:cursor-not-allowed`}
             >
               {isLoginLoading ? '가입 진행 중...' : '가입하기'}
             </button>
@@ -339,4 +362,4 @@ const SingupPage = () => {
   );
 };
 
-export default SingupPage;
+export default SignupPage;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { login, getMyInfo } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
 import logo from '../../assets/logo/logo.svg';
@@ -54,28 +55,49 @@ const LoginPage = () => {
     return null;
   }
 
+  //모션
+  const fadeUp = {
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="flex flex-col mid:flex-row min-h-screen w-full">
-      <div className="relative flex flex-col w-full mid:w-1/2 bg-primary-mint-300 justify-center px-8 py-14 mid:pl-16 mid:py-12 gap-8">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full">
+      <div className="relative flex flex-col w-full lg:w-1/2 min-h-[35vh] lg:min-h-0 bg-gradient-to-br from-primary-mint-300 to-primary-mint-200  justify-center px-8 py-14 lg:pl-16 lg:py-12 gap-8">
         <img
           src={logo}
           alt="peerfolio"
-          className="h-[28px] mid:h-[32px] w-auto self-start mid:absolute mid:left-16 mid:top-12"
+          className="h-[32px] lg:h-[32px] w-auto self-start mb-12 lg:absolute lg:left-16 lg:top-12"
         />
-        <div className="flex flex-col gap-3">
-          <h1 className="text-[28px] mid:text-[40px] font-semibold leading-tight tracking-[-0.04em] text-primary-mint-900 break-keep">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: {},
+            show: { transition: { staggerChildren: 0.1 } },
+          }}
+          className="flex flex-col gap-3"
+        >
+          <motion.h1
+            variants={fadeUp}
+            transition={{ duration: 1, ease: 'easeOut' }}
+            className="text-[28px] lg:text-[40px] font-semibold leading-tight tracking-[-0.04em] text-primary-mint-900 break-keep"
+          >
             나와 비슷한 사람들은
             <br />
             어떻게 모으고 있을까?
-          </h1>
-          <p className="text-[15px] mid:text-[16px] font-medium leading-relaxed tracking-[-0.02em] text-primary-mint-900/70 break-keep">
+          </motion.h1>
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 1, ease: 'easeOut' }}
+            className="text-[15px] lg:text-[16px] font-medium leading-relaxed tracking-[-0.02em] text-primary-mint-900/70 break-keep"
+          >
             경제적 여건이 비슷한 Peer Group과 비교해
-            <br className="hidden mid:block" />
-            내 투자행동의 위치를 확인해요.
-          </p>
-        </div>
+            <br className="hidden lg:block" />내 투자행동의 위치를 확인해요.
+          </motion.p>
+        </motion.div>
       </div>
-      <div className="flex flex-col w-full mid:w-1/2 items-center justify-center my-auto">
+      <div className="flex flex-col w-full lg:w-1/2 items-center justify-center mt-10 lg:my-auto">
         <div className="flex flex-col w-[90%] max-w-[438px] mx-auto gap-5">
           <div className="flex flex-col gap-3">
             <h1 className="text-black text-[32px] font-semibold">로그인</h1>
@@ -106,13 +128,13 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={isLoading || !email || !password}
-                className={`py-4 w-full rounded-lg text-white text-[16px] cursor-pointer disabled:cursor-not-allowed ${email && password ? 'bg-primary-mint-800' : 'bg-gray-300'}`}
+                className={`py-4 w-full rounded-lg text-white text-[16px] cursor-pointer transition-all duration-200 disabled:cursor-not-allowed ${email && password ? 'bg-primary-mint-800 hover:bg-primary-mint-850 active:scale-[0.98]' : 'bg-gray-300'}`}
               >
                 {isLoading ? '로그인 중...' : '로그인'}
               </button>
               <button
                 type="button"
-                className="py-4 w-full bg-white text-primary-mint-800 border border-primary-mint-800 rounded-lg text-center text-[16px] font-semibold cursor-pointer"
+                className="py-4 w-full bg-white text-primary-mint-800 border border-primary-mint-800 rounded-lg text-center text-[16px] font-semibold cursor-pointer transition-all duration-200 hover:bg-primary-mint-200 active:scale-[0.98]"
                 onClick={() => {
                   navigate('/signup');
                 }}

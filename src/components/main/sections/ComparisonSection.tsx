@@ -2,7 +2,10 @@ import PeerBarChart from '../ui/PeerBarChart';
 import PeerPieChart from '../ui/PeerPieChart';
 import ComparisonTable from '../ui/ComparisonTable';
 import RiskAnalysisCard from '../ui/RiskAnalysisCard';
-import type { PeerFinancialProfile, RiskInfo } from '../../../constants/main/mockData';
+import type {
+  PeerFinancialProfile,
+  RiskInfo,
+} from '../../../constants/main/mockData';
 import { buildComparisonGroups } from '../../../utils/buildComparisonGroups';
 import { formatDateTime, formatTimeAgo } from '../../../utils/formatDate';
 
@@ -65,7 +68,10 @@ const ComparisonSection = ({
                   </>
                 )}
                 {analyzedAt && (
-                  <span className="text-gray-500" title={formatDateTime(analyzedAt)}>
+                  <span
+                    className="text-gray-500"
+                    title={formatDateTime(analyzedAt)}
+                  >
                     {peerCount != null ? ' · ' : ''}
                     {formatTimeAgo(analyzedAt)} 분석
                   </span>
@@ -84,8 +90,8 @@ const ComparisonSection = ({
                       지금 보이는 분석은 예전 자산 정보 기준이에요
                     </p>
                     <p className="text-[16px] font-medium leading-[1.5] text-amber-800">
-                      자산 정보를 수정했어요. 최신 비교 결과를 보려면 다시 분석해
-                      주세요.
+                      자산 정보를 수정했어요. 최신 비교 결과를 보려면 다시
+                      분석해 주세요.
                     </p>
                   </div>
                 </div>
@@ -121,7 +127,11 @@ const ComparisonSection = ({
             {risk && <RiskAnalysisCard risk={risk} />}
 
             <div className="rounded-2xl border border-gray-300 bg-white p-5">
-              <ComparisonTable groups={groups} myLabel="나" otherLabel="Peer Group 평균" />
+              <ComparisonTable
+                groups={groups}
+                myLabel="나"
+                otherLabel="Peer Group 평균"
+              />
             </div>
 
             <div className="flex flex-col gap-10">
