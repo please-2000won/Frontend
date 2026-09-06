@@ -7,6 +7,7 @@ import useAuthStore from '../stores/useAuthStore';
 import CategoryCard from '../components/info/CategoryCard';
 import CurrencyInput from '../components/info/CurrencyInput';
 import AnalysisLoadingModal from '../components/main/ui/AnalysisLoadingModal';
+import Button from '../components/common/Button';
 import { FIELD_HINTS } from '../constants/fieldHints';
 
 // 헤더의 태그 칩
@@ -313,28 +314,32 @@ const InfoInputPage = () => {
           </div>
         </div>
         <div className="flex flex-col-reverse gap-3 mt-8 sm:flex-row sm:gap-8">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="lg"
+            className="flex-1"
             disabled={isLoading}
-            className="flex-1 py-4 border border-primary-mint-800 bg-white text-[16px] text-primary-mint-800 rounded-lg font-semibold cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => {
               navigate(-1);
             }}
           >
             취소하기
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="primary"
+            size="lg"
+            className="flex-1"
             disabled={isLoading || (hasExistingInfo && !isDirty)}
             onClick={handleSubmit}
-            className="flex-1 py-4 border border-primary-mint-800 bg-primary-mint-800 text-[16px] text-white rounded-lg font-semibold cursor-pointer transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isLoading
               ? '저장 중...'
               : hasExistingInfo
                 ? '저장하기'
                 : '저장하고 분석하기'}
-          </button>
+          </Button>
         </div>
       </div>
 

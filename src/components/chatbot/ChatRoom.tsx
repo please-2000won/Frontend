@@ -273,7 +273,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
                 key={index}
                 onClick={() => handleSendMessage(question)}
                 disabled={isLoading}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-primary-mint-100 hover:border-primary-mint-900 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3.5 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 hover:bg-primary-mint-200/40 hover:border-primary-mint-800/40 hover:text-primary-mint-900 transition-all duration-200 active:scale-[0.98] shadow-xs disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 cursor-pointer"
               >
                 {question}
               </button>
@@ -294,7 +294,7 @@ const ChatRoom = ({ onClose }: ChatRoomProps) => {
           <button
             onClick={() => handleSendMessage()}
             disabled={isLoading}
-            className="bg-primary-mint-900 w-14 h-14 rounded-xl flex items-center justify-center cursor-pointer"
+            className="bg-primary-mint-900 w-14 h-14 rounded-xl flex items-center justify-center cursor-pointer shadow-xs transition-all duration-150 hover:bg-primary-mint-850 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
           >
             <img src={send} alt="전송" />
           </button>

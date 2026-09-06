@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { login, getMyInfo } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
 import logo from '../../assets/logo/logo.svg';
+import Button from '../../components/common/Button';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -125,22 +126,26 @@ const LoginPage = () => {
               />
             </div>
             <div className="pt-5 flex flex-col gap-3">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
                 disabled={isLoading || !email || !password}
-                className={`py-4 w-full rounded-lg text-white text-[16px] cursor-pointer transition-all duration-200 disabled:cursor-not-allowed ${email && password ? 'bg-primary-mint-800 hover:bg-primary-mint-850 active:scale-[0.98]' : 'bg-gray-300'}`}
               >
                 {isLoading ? '로그인 중...' : '로그인'}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="py-4 w-full bg-white text-primary-mint-800 border border-primary-mint-800 rounded-lg text-center text-[16px] font-semibold cursor-pointer transition-all duration-200 hover:bg-primary-mint-200 active:scale-[0.98]"
+                variant="secondary"
+                size="lg"
+                fullWidth
                 onClick={() => {
                   navigate('/signup');
                 }}
               >
                 이메일로 시작하기
-              </button>
+              </Button>
             </div>
           </form>
         </div>

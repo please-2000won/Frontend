@@ -3,6 +3,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
 import MiniMock from '../components/main/ui/MiniMock';
+import Button from '../components/common/Button';
 import logo from '../assets/logo/logo.svg';
 
 // 기획서(docs/plan.md) 3.1 "해결하려는 문제"에서 발췌
@@ -95,15 +96,7 @@ const PREVIEW_ROWS = [
 
 type LandingButtonVariant = 'primary' | 'outline';
 
-const LANDING_BUTTON_CLASSNAMES: Record<LandingButtonVariant, string> = {
-  primary:
-    'bg-gradient-to-r from-primary-mint-800 to-primary-mint-900 text-white shadow-lg shadow-primary-mint-900/25 hover:-translate-y-0.5 hover:shadow-xl',
-  outline:
-    'border border-primary-mint-900/20 bg-white/80 text-primary-mint-900 backdrop-blur hover:border-primary-mint-900/40 hover:bg-white',
-};
-
-// 히어로/마무리 CTA에서 공통으로 쓰는 버튼. 완전히 둥근 필 대신 각진 라운드로
-// 톤을 낮추고, 그라데이션 채움으로 강조를 준다.
+// 히어로/마무리 CTA에서 공통으로 쓰는 버튼. 공통 Button 컴포넌트의 규격을 기반으로 한다.
 const LandingButton = ({
   variant = 'primary',
   className = '',
@@ -112,13 +105,18 @@ const LandingButton = ({
 }: {
   variant?: LandingButtonVariant;
 } & ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <button
-    type="button"
-    className={`group inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-[15px] font-semibold transition-all sm:text-[16px] ${LANDING_BUTTON_CLASSNAMES[variant]} ${className}`}
+  <Button
+    variant={variant === 'primary' ? 'primary' : 'secondary'}
+    size="lg"
+    className={
+      variant === 'primary'
+        ? `shadow-lg shadow-primary-mint-900/25 ${className}`
+        : className
+    }
     {...props}
   >
     {children}
-  </button>
+  </Button>
 );
 
 const fadeUp = {

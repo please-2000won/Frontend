@@ -59,7 +59,7 @@ const SimilarPeopleSection = ({
                 key={person.peerUserId}
                 type="button"
                 onClick={() => onSelectPeer(person.peerUserId)}
-                className="flex flex-1 cursor-pointer flex-col items-start gap-4 rounded-2xl bg-white p-4 text-left transition-shadow hover:shadow-md"
+                className="flex flex-1 cursor-pointer flex-col items-start gap-4 rounded-2xl bg-white p-4 text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0"
               >
                 <Tag size="sm">
                   유사도 {formatSimilarity(person.similarityScore)}%

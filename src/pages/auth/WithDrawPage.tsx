@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { withDraw } from '../../api/authAPI';
 import useAuthStore from '../../stores/useAuthStore';
 import { clearAnalysisStorage } from '../../utils/analysisStorage';
+import Button from '../../components/common/Button';
 
 const WithdrawPage = () => {
   const navigate = useNavigate();
@@ -87,25 +88,28 @@ const WithdrawPage = () => {
             </div>
 
             {/* 탈퇴 버튼 */}
-            <button
+            <Button
               type="submit"
+              variant="danger"
+              size="lg"
+              fullWidth
               disabled={!isFormValid || isLoading}
-              className={`${
-                isFormValid ? 'bg-red-500' : 'bg-gray-300'
-              } px-20 py-4 text-[16px] font-semibold text-white rounded-lg cursor-pointer disabled:cursor-not-allowed mt-4`}
+              className="mt-4"
             >
               {isLoading ? '탈퇴 처리 중...' : '탈퇴하기'}
-            </button>
+            </Button>
 
             {/* 취소 버튼 (옵션) */}
-            <button
+            <Button
               type="button"
+              variant="neutral"
+              size="lg"
+              fullWidth
               disabled={isLoading}
               onClick={() => navigate(-1)}
-              className="px-20 py-4 text-[16px] font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer disabled:cursor-not-allowed"
             >
               취소
-            </button>
+            </Button>
           </form>
         </div>
       </div>
