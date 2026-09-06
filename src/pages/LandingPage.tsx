@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/useAuthStore';
+import { getMyFinancial } from '../api/financial';
 import MiniMock from '../components/main/ui/MiniMock';
 import Button from '../components/common/Button';
 import logo from '../assets/logo/logo.svg';
@@ -152,7 +154,7 @@ const PreviewCard = () => (
   <div className="relative w-full max-w-[380px]">
     <div
       aria-hidden
-      className="absolute inset-0 translate-y-6 scale-95 rounded-[32px] bg-gradient-to-br from-primary-mint-500 to-primary-mint-900 opacity-40 blur-2xl"
+      className="pointer-events-none absolute inset-0 translate-y-6 scale-95 rounded-[32px] bg-gradient-to-br from-primary-mint-500 to-primary-mint-900 opacity-40 blur-2xl"
     />
     <motion.div
       initial={{ opacity: 0, y: 20, rotate: 4 }}
@@ -226,11 +228,37 @@ const CARD_CLASSNAME =
 
 
 // 히어로 / 마무리 섹션에서 공통으로 쓰는 CTA 버튼 묶음.
-// 로그인 상태면 "재무 정보 입력하고 시작하기" 하나, 아니면 가입/로그인 두 개를 보여준다.
-const CtaButtons = ({ loggedIn }: { loggedIn: boolean }) => {
+// 로그인 상태이고 이미 자산이 있으면 "내 분석 결과 보러가기"와 "자산 정보 수정"을,
+// 아직 자산이 없으면 "재무 정보 입력하고 시작하기"를, 비로그인이면 가입/로그인 버튼을 보여준다.
+const CtaButtons = ({
+  loggedIn,
+  hasAssetInfo,
+}: {
+  loggedIn: boolean;
+  hasAssetInfo: boolean | null;
+}) => {
   const navigate = useNavigate();
 
   if (loggedIn) {
+    if (hasAssetInfo) {
+      return (
+        <div className="flex flex-wrap items-center gap-3">
+          <LandingButton variant="primary" onClick={() => navigate('/')}>
+            내 분석 결과 보러가기
+            <span
+              aria-hidden
+              className="transition-transform group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </LandingButton>
+          <LandingButton variant="outline" onClick={() => navigate('/infoInput')}>
+            자산 정보 수정
+          </LandingButton>
+        </div>
+      );
+    }
+
     return (
       <LandingButton variant="primary" onClick={() => navigate('/infoInput')}>
         재무 정보 입력하고 시작하기
@@ -263,12 +291,63 @@ const CtaButtons = ({ loggedIn }: { loggedIn: boolean }) => {
 };
 
 const LandingPage = () => {
-  const loggedIn = Boolean(useAuthStore((state) => state.accessToken));
+  const navigate = useNavigate();
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  let effectiveToken = accessToken;
+  if (!effectiveToken) {
+    try {
+      const raw = localStorage.getItem('auth-storage');
+      if (raw) {
+        effectiveToken = JSON.parse(raw)?.state?.accessToken ?? null;
+      }
+    } catch {
+      // ignore
+    }
+  }
+  const loggedIn = Boolean(effectiveToken);
+
+  const [hasAssetInfo, setHasAssetInfo] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (loggedIn) {
+      getMyFinancial()
+        .then((info) => {
+          setHasAssetInfo(Boolean(info && info.financialProfile));
+        })
+        .catch(() => {
+          setHasAssetInfo(false);
+        });
+    } else {
+      setHasAssetInfo(false);
+    }
+  }, [loggedIn]);
 
   return (
-    <div className="flex flex-col overflow-x-hidden">
+    <div className="flex flex-col w-full overflow-x-clip">
+      {/* 로그인된 사용자를 위한 상단 대시보드 바로가기 GNB */}
+      {loggedIn && (
+        <nav className="sticky top-0 z-50 flex h-[56px] w-full items-center justify-between border-b border-primary-mint-900/10 bg-white/80 px-5 backdrop-blur">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="cursor-pointer transition-opacity hover:opacity-80"
+            aria-label="홈으로 이동"
+          >
+            <img src={logo} alt="peerfolio" className="h-[24px] w-auto" />
+          </button>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => navigate('/')}
+          >
+            대시보드로 이동
+          </Button>
+        </nav>
+      )}
+
       {/* 히어로 */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-primary-mint-300 to-primary-mint-200">
+      <section className="relative overflow-clip bg-gradient-to-b from-primary-mint-300 to-primary-mint-200">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-24 -top-32 size-[420px] rounded-full bg-primary-mint-500/40 blur-3xl"
@@ -288,13 +367,20 @@ const LandingPage = () => {
             }}
             className="flex max-w-[560px] flex-col items-start gap-7"
           >
-            <motion.img
-              variants={fadeUp}
-              transition={{ duration: 0.5 }}
-              src={logo}
-              alt="peerfolio"
-              className="h-[28px] w-auto"
-            />
+            <button
+              type="button"
+              onClick={() => navigate(loggedIn ? '/' : '/landing')}
+              className="cursor-pointer transition-opacity hover:opacity-80"
+              aria-label="홈으로 이동"
+            >
+              <motion.img
+                variants={fadeUp}
+                transition={{ duration: 0.5 }}
+                src={logo}
+                alt="peerfolio"
+                className="h-[28px] w-auto"
+              />
+            </button>
 
             <motion.span
               variants={fadeUp}
@@ -334,7 +420,7 @@ const LandingPage = () => {
               transition={{ duration: 0.6 }}
               className="flex flex-wrap items-center gap-4"
             >
-              <CtaButtons loggedIn={loggedIn} />
+              <CtaButtons loggedIn={loggedIn} hasAssetInfo={hasAssetInfo} />
             </motion.div>
           </motion.div>
 
@@ -452,7 +538,7 @@ const LandingPage = () => {
             지금 바로 내 투자행동을 점검해보세요
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <CtaButtons loggedIn={loggedIn} />
+            <CtaButtons loggedIn={loggedIn} hasAssetInfo={hasAssetInfo} />
           </div>
         </Reveal>
       </section>

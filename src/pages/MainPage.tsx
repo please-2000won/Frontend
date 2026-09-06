@@ -65,8 +65,20 @@ const MainPage = () => {
 
   const { setIsChatOpen } = useOutletContext<ChatContextType>();
 
-  // 로그인 안 했으면 랜딩 페이지로 이동.
-  if (!accessToken) {
+  // 로그인 안 했으면 랜딩 페이지로 이동 (Zustand 동기화 전 로컬스토리지 fallback 확인)
+  let effectiveToken = accessToken;
+  if (!effectiveToken) {
+    try {
+      const raw = localStorage.getItem('auth-storage');
+      if (raw) {
+        effectiveToken = JSON.parse(raw)?.state?.accessToken ?? null;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!effectiveToken) {
     return <Navigate to="/landing" replace />;
   }
 
