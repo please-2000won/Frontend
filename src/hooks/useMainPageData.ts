@@ -31,6 +31,7 @@ const INITIAL_DATA: MainPageData = {
 // 내 금융정보를 조회한다.
 // enabled=false(로그인 안 됨)면 요청 자체를 하지 않는다. (401 → 강제 리다이렉트 방지)
 // userId가 바뀌면 이전 사용자의 데이터를 즉시 리셋하고 새로 조회한다.
+// 자산 정보가 없는 경우(404 등)는 에러가 아니라 hasAssetInfo: false(정보 미입력 상태)로 처리한다.
 export const useMainPageData = (enabled: boolean, userId?: number) => {
   const [data, setData] = useState<MainPageData>(() => ({
     ...INITIAL_DATA,
@@ -42,6 +43,17 @@ export const useMainPageData = (enabled: boolean, userId?: number) => {
     setData((prev) => ({ ...prev, isLoading: true, isError: false }));
     try {
       const info = await getMyFinancial();
+      if (!info || !info.financialProfile) {
+        // 데이터가 없거나 비어있는 경우 -> 자산 미입력 상태
+        setData({
+          ...INITIAL_DATA,
+          isLoading: false,
+          hasAssetInfo: false,
+          isError: false,
+        });
+        return;
+      }
+
       setData({
         isLoading: false,
         isError: false,
@@ -51,8 +63,32 @@ export const useMainPageData = (enabled: boolean, userId?: number) => {
         myProfile: mapToProfile(info),
         financialInfo: info,
       });
-    } catch {
-      setData((prev) => ({ ...prev, isLoading: false, isError: true }));
+    } catch (error: unknown) {
+      const err = error as {
+        response?: {
+          status?: number;
+          data?: { code?: string; message?: string };
+        };
+      };
+      const status = err?.response?.status;
+      const message = err?.response?.data?.message ?? '';
+      // 404 등 자산 정보가 아직 등록되지 않은 경우: 에러가 아니라 '미입력(hasAssetInfo: false)' 상태!
+      if (
+        status === 404 ||
+        status === 204 ||
+        message.includes('존재하지') ||
+        message.includes('없습니다')
+      ) {
+        setData({
+          ...INITIAL_DATA,
+          isLoading: false,
+          hasAssetInfo: false,
+          isError: false,
+        });
+      } else {
+        // 실제 통신 장애나 서버 오류인 경우에만 isError: true
+        setData((prev) => ({ ...prev, isLoading: false, isError: true }));
+      }
     }
   }, [enabled]);
 
@@ -73,6 +109,16 @@ export const useMainPageData = (enabled: boolean, userId?: number) => {
     getMyFinancial()
       .then((info) => {
         if (cancelled) return;
+        if (!info || !info.financialProfile) {
+          setData({
+            ...INITIAL_DATA,
+            isLoading: false,
+            hasAssetInfo: false,
+            isError: false,
+          });
+          return;
+        }
+
         setData({
           isLoading: false,
           isError: false,
@@ -83,9 +129,33 @@ export const useMainPageData = (enabled: boolean, userId?: number) => {
           financialInfo: info,
         });
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (cancelled) return;
-        setData((prev) => ({ ...prev, isLoading: false, isError: true }));
+        const err = error as {
+          response?: {
+            status?: number;
+            data?: { code?: string; message?: string };
+          };
+        };
+        const status = err?.response?.status;
+        const message = err?.response?.data?.message ?? '';
+        // 404 등 자산 정보가 아직 등록되지 않은 경우: 에러가 아니라 '미입력(hasAssetInfo: false)' 상태!
+        if (
+          status === 404 ||
+          status === 204 ||
+          message.includes('존재하지') ||
+          message.includes('없습니다')
+        ) {
+          setData({
+            ...INITIAL_DATA,
+            isLoading: false,
+            hasAssetInfo: false,
+            isError: false,
+          });
+        } else {
+          // 실제 통신 장애나 서버 오류인 경우에만 isError: true
+          setData((prev) => ({ ...prev, isLoading: false, isError: true }));
+        }
       });
 
     return () => {

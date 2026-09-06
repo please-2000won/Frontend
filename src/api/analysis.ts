@@ -48,6 +48,8 @@ export interface AnalysisResponse {
   totalRiskScore: number;
   analysisComment: string;
   createdAt: string;
+  // 금융 정보가 수정되어 재분석이 가능한지 여부 (백엔드 해시 비교 결과)
+  canReanalyze?: boolean;
 }
 
 // 가장 최근 피어 그룹 평균 + AI 분석 결과 조회

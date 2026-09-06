@@ -79,27 +79,43 @@ const MainPage = () => {
     );
   }
 
-  // 내 자산 정보 조회에 실패한 경우
+  const goToInfoInput = () => navigate('/infoInput');
+
+  // 로그인은 했지만 아직 아무 정보도 입력하지 않은 상태 -> 바로 MainEmptyState 표시!
+  if (!hasAssetInfo && !isMainError) {
+    return <MainEmptyState />;
+  }
+
+  // 서버 장애 등 실제 에러인 경우
   if (isMainError) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 px-5 text-center">
-        <div className="text-[32px]">⚠️</div>
-        <p className="text-[16px] font-medium text-gray-800">
-          자산 정보를 불러오는 데 실패했습니다.
-        </p>
-        <Button variant="secondary" size="md" onClick={() => refetchMain()}>
-          다시 시도
-        </Button>
+      <div className="flex min-h-[460px] flex-col items-center justify-center gap-5 px-5 text-center">
+        <div className="flex size-14 items-center justify-center rounded-full bg-amber-50 text-[28px]">
+          ⚠️
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[18px] font-bold text-gray-900">
+            자산 정보를 불러오는 데 실패했습니다.
+          </p>
+          <p className="text-[14px] text-gray-500">
+            일시적인 오류이거나 아직 등록된 자산 정보가 없을 수 있어요.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="secondary" size="md" onClick={() => refetchMain()}>
+            다시 시도
+          </Button>
+          <Button variant="primary" size="md" onClick={goToInfoInput}>
+            자산 정보 입력하기
+          </Button>
+        </div>
       </div>
     );
   }
 
-  // 로그인은 했지만 아직 아무 정보도 입력하지 않은 상태.
   if (!hasAssetInfo) {
     return <MainEmptyState />;
   }
-
-  const goToInfoInput = () => navigate('/infoInput');
 
   const handleSelectPeer = async (peerUserId: number) => {
     const payload = await getComparison(peerUserId);

@@ -8,9 +8,13 @@ interface SimilarPeopleSectionProps {
   onSelectPeer: (peerUserId: number) => void;
 }
 
-// 유사도 점수가 0~1(비율)로 오든 0~100(퍼센트)으로 오든 퍼센트로 표시한다.
-const formatSimilarity = (score: number) =>
-  Math.round(score > 1 ? score : score * 100);
+// 백엔드에서 전달하는 similarityScore는 이미 완성된 퍼센티지(%) 수치입니다.
+// 임의로 100을 곱하지 않고, 소수점 둘째 자리까지의 수치를 그대로 표시합니다.
+const formatSimilarity = (score: number): string => {
+  if (score == null || isNaN(score)) return '0';
+  const rounded = Math.round(score * 100) / 100;
+  return rounded.toString();
+};
 
 const SimilarPeopleSection = ({
   peers,
